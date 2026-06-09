@@ -42,9 +42,6 @@ export default function ComparisonHomeSection() {
     return (
         <section id="compare" className="py-32 bg-black text-white border-b border-white/5 relative overflow-hidden">
             {/* HUD accents */}
-            <div className="absolute top-8 left-8 label text-blue-500/20 font-mono hidden lg:block">
-                SYSTEM_CHECK : OPTIMAL
-            </div>
             <div className="absolute bottom-8 right-8 label text-blue-500/20 font-mono hidden lg:block">
                 ALGO : REAL_TIME_v4
             </div>
