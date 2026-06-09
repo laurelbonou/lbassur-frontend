@@ -26,14 +26,6 @@ export default function Hero() {
         <section id="home" className="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden bg-black">
             {/* Background Image with Liquid Glass Overlay */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                <motion.img
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 10, ease: "easeOut" }}
-                    src="/images/corporate/hero_corporate_glass_1777915646132.png"
-                    alt="Hero Background"
-                    className="absolute inset-0 w-full h-full object-cover"
-                />
                 {/* Liquid Glass Overlay Effect */}
                 <div className="absolute inset-0 backdrop-blur-[4px] bg-black/40 z-0"></div>
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-black/50 to-black mix-blend-overlay"></div>

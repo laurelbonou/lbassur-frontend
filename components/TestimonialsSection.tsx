@@ -29,11 +29,6 @@ export default function TestimonialsSection() {
         <section className="py-32 bg-black border-b border-white/5 relative overflow-hidden">
             {/* Background Image with Liquid Glass */}
             <div className="absolute inset-0 z-0">
-                <img
-                    src="/images/corporate/black_businesswoman_corporate_1777914579889.png"
-                    alt="Professionnelle LBASSUR"
-                    className="w-full h-full object-cover opacity-30"
-                />
                 <div className="absolute inset-0 backdrop-blur-[10px] bg-black/60"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
             </div>

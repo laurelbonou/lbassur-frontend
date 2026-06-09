@@ -181,11 +181,6 @@ export default function BookingSection() {
                         {/* Agency photo */}
                         <div className="border border-white/5 overflow-hidden group">
                             <div className="relative h-44">
-                                <img
-                                    src="/images/corporate/black_business_team_1777914501514.png"
-                                    alt="Agence LBASSUR"
-                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
-                                />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                                 <div className="absolute bottom-4 left-4 z-10">
                                     <p className="label text-blue-400 mb-1 drop-shadow-md">Votre Courtier de Confiance</p>

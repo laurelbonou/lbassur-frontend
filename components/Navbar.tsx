@@ -6,17 +6,18 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const centerLinks = [
-    { name: "Accueil",  href: "/" },
-    { name: "Comparer", href: "/#compare" },
+    { name: "A Propos", href: "/a-propos" },
     { name: "Services", href: "/services" },
-    { name: "Glossaire",href: "/#glossaire" },
+    { name: "Actualités", href: "/actualites" },
+    { name: "Carrières", href: "/carrieres" },
 ];
 
 const allMobileLinks = [
     { name: "Accueil",    href: "/" },
-    { name: "Comparer",   href: "/#compare" },
+    { name: "A Propos",   href: "/a-propos" },
     { name: "Services",   href: "/services" },
-    { name: "Glossaire",  href: "/#glossaire" },
+    { name: "Actualités", href: "/actualites" },
+    { name: "Carrières",  href: "/carrieres" },
     { name: "Simulation", href: "/simulation" },
     { name: "Rendez-vous",href: "/#booking" },
 ];
@@ -56,12 +57,12 @@ export default function Navbar() {
                 </Link>
 
                 {/* ── Center nav links (Tesla style) ── */}
-                <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-10">
+                <div className="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 px-4">
                     {centerLinks.map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="relative text-[14px] uppercase tracking-[0.2em] font-bold text-gray-500 hover:text-white transition-colors duration-300 group"
+                            className="relative text-[11px] xl:text-[13px] uppercase tracking-[0.15em] xl:tracking-[0.2em] font-bold text-gray-400 hover:text-white transition-colors duration-300 group whitespace-nowrap"
                         >
                             {link.name}
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-blue-500 transition-all duration-400 group-hover:w-full" />

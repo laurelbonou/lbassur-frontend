@@ -66,8 +66,8 @@ type FormData = {
 
 const CATEGORIES = [
     { id: "iardt", title: "IARDT (Dommages & RC)", icon: Shield, color: "text-blue-500", glow: "border-blue-500/50" },
-    { id: "personnes", title: "PERSONNES (Santé & Vie)", icon: Heart, color: "text-emerald-500", glow: "border-emerald-500/50" },
-    { id: "vie", title: "VIE (Épargne & Retraite)", icon: Coins, color: "text-violet-500", glow: "border-violet-500/50" },
+    { id: "personnes", title: "PERSONNES (Santé & Vie)", icon: Heart, color: "text-sky-500", glow: "border-sky-500/50" },
+    { id: "vie", title: "VIE (Épargne & Retraite)", icon: Coins, color: "text-slate-500", glow: "border-slate-500/50" },
 ];
 
 const SUB_TYPES: Record<string, string[]> = {
@@ -173,7 +173,7 @@ export default function SimulationPage() {
         guarantees: r.guarantees.join(" + "),
         tag: r.tag,
         rating: r.rating ? Number(r.rating) : null,
-        color: r.insurerSlug === "africaine-assurances" ? "blue" : "emerald",
+        color: r.insurerSlug === "africaine-assurances" ? "blue" : "sky",
     }));
 
     const resetForm = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { IARDT_TYPES, PERSONNES_TYPES, VIE_TYPES } from "@/lib/data";
 import { InsuranceCategory, InsuranceOffer } from "@/types/insurance";
 import {
@@ -204,6 +204,70 @@ function OfferCard({ offer, index }: { offer: InsuranceOffer; index: number }) {
     );
 }
 
+// ─── Custom Dropdown ──────────────────────────────────────────────────────────
+
+function CustomSelect({ 
+    options, 
+    value, 
+    onChange, 
+    accentClass = "text-blue-500" 
+}: { 
+    options: { value: string; label: string }[]; 
+    value: string; 
+    onChange: (val: string) => void;
+    accentClass?: string;
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const selectedLabel = options.find(o => o.value === value)?.label || value;
+
+    return (
+        <div ref={ref} className="relative w-full">
+            <div 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex justify-between items-center cursor-pointer py-1"
+            >
+                <span className="text-[11px] font-black uppercase tracking-widest text-white truncate mr-2">{selectedLabel}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-gray-500 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 w-full mt-4 bg-[#0a0a0a] border border-white/10 shadow-2xl z-50 overflow-hidden"
+                    >
+                        {options.map((opt) => (
+                            <div 
+                                key={opt.value}
+                                onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                                className={`px-4 py-4 text-[9px] font-black uppercase tracking-widest cursor-pointer transition-colors ${value === opt.value ? `bg-white/[0.04] ${accentClass}` : "text-gray-400 hover:bg-white/[0.04] hover:text-white"}`}
+                            >
+                                {opt.label}
+                            </div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function ComparisonTool() {
@@ -319,15 +383,18 @@ export default function ComparisonTool() {
                     </div>
 
                     {/* ── Search + Filter Bar ─────────────────────────────────────── */}
-                    <div className="glass border-white/10 p-3 shadow-3xl flex flex-col lg:row gap-3 items-stretch lg:items-center">
+                    <div className="glass border-white/10 p-3 shadow-3xl flex flex-col lg:flex-row gap-3 items-stretch relative z-50">
                         <div className="flex flex-col lg:flex-row flex-1 gap-3">
                             {/* Search */}
-                            <div className="flex-1 flex items-center px-6 py-4 bg-white/[0.02] border border-white/5">
-                                <Search className="text-gray-700 mr-4" size={20} />
+                            <div className="flex-1 flex flex-col justify-center px-6 py-4 bg-white/[0.02] border border-white/5">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <Search size={12} className={colors.accent} />
+                                    <span className="text-[9px] font-black uppercase text-gray-600 tracking-widest">Recherche</span>
+                                </div>
                                 <input
                                     type="text"
-                                    placeholder="Rechercher un assureur ou un type de risque..."
-                                    className="w-full text-xs font-bold uppercase tracking-widest outline-none bg-transparent text-white placeholder:text-gray-800"
+                                    placeholder="Nom de l'assureur..."
+                                    className="w-full text-[11px] font-black uppercase tracking-widest bg-transparent outline-none text-white placeholder:text-gray-800"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -339,15 +406,12 @@ export default function ComparisonTool() {
                                     <Filter size={12} className={colors.accent} />
                                     <span className="text-[9px] font-black uppercase text-gray-600 tracking-widest">Couverture</span>
                                 </div>
-                                <select
+                                <CustomSelect
                                     value={selectedType}
-                                    onChange={(e) => setSelectedType(e.target.value)}
-                                    className="w-full text-[11px] font-black uppercase tracking-widest bg-transparent outline-none cursor-pointer text-white appearance-none"
-                                >
-                                    {TYPE_LISTS[activeCategory].map(t => (
-                                        <option key={t} value={t} className="bg-zinc-950">{t}</option>
-                                    ))}
-                                </select>
+                                    onChange={(val) => setSelectedType(val)}
+                                    options={TYPE_LISTS[activeCategory].map(t => ({ value: t, label: t }))}
+                                    accentClass={colors.accent}
+                                />
                             </div>
 
                             {/* Budget Slider */}
@@ -374,19 +438,20 @@ export default function ComparisonTool() {
                                     <ArrowUpDown size={12} className={colors.accent} />
                                     <span className="text-[9px] font-black uppercase text-gray-600 tracking-widest">Classement</span>
                                 </div>
-                                <select
+                                <CustomSelect
                                     value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value as SortKey)}
-                                    className="w-full text-[11px] font-black uppercase tracking-widest bg-transparent outline-none cursor-pointer text-white appearance-none"
-                                >
-                                    <option value="premium" className="bg-zinc-950">Prix Croissant</option>
-                                    <option value="rating" className="bg-zinc-950">Indice Confiance</option>
-                                    <option value="coverage" className="bg-zinc-950">Protection Max</option>
-                                </select>
+                                    onChange={(val) => setSortBy(val as SortKey)}
+                                    options={[
+                                        { value: "premium", label: "Prix Croissant" },
+                                        { value: "rating", label: "Indice Confiance" },
+                                        { value: "coverage", label: "Protection Max" },
+                                    ]}
+                                    accentClass={colors.accent}
+                                />
                             </div>
                         </div>
 
-                        <button className={`bg-white text-black hover:bg-gray-200 px-12 py-5 font-black uppercase text-[11px] tracking-[0.3em] transition-all duration-700 lg:h-full shadow-2xl shadow-white/5`}>
+                        <button className="bg-white text-black hover:bg-gray-200 px-12 py-5 lg:py-0 font-black uppercase text-[11px] tracking-[0.3em] transition-all duration-700 shadow-2xl shadow-white/5 flex items-center justify-center">
                             Analyser
                         </button>
                     </div>
