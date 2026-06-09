@@ -15,36 +15,66 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LBASSUR | Votre Courtier de Confiance au Bénin",
-  description: "LBASSUR est votre partenaire de confiance pour la recherche et la négociation des meilleures solutions d’assurance. Particuliers, professionnels et entreprises.",
-  keywords: ["assurance", "courtier", "LBASSUR", "Cotonou", "Bénin", "audit assurance", "indemnisation"],
+  metadataBase: new URL("https://www.lbassur.bj"),
+  title: {
+    default: "LBASSUR | Meilleur Courtier d'Assurance au Bénin",
+    template: "%s | LBASSUR",
+  },
+  description: "Trouvez et comparez les meilleures offres d'assurance au Bénin avec LBASSUR. Courtier de confiance pour vos assurances auto, santé, vie et habitation.",
+  keywords: [
+    "assurance", 
+    "courtiers", 
+    "LBASSUR", 
+    "Bénin", 
+    "Cotonou", 
+    "courtier en assurance bénin", 
+    "comparateur assurance bénin",
+    "meilleure assurance benin", 
+    "assurance auto", 
+    "assurance santé",
+    "assurance voyage"
+  ],
   authors: [{ name: "LBASSUR" }],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "LBASSUR - Votre Courtier de Confiance au Bénin",
-    description: "Solutions d'assurance sur mesure pour particuliers et entreprises au Bénin.",
-    url: "https://lbassur.com",
+    title: "LBASSUR - Premier Courtier d'Assurance au Bénin",
+    description: "Trouvez la meilleure assurance au Bénin avec LBASSUR. Solutions sur mesure pour auto, habitation, santé et entreprises.",
+    url: "https://www.lbassur.bj",
     siteName: "LBASSUR",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "LBASSUR - Votre Courtier de Confiance",
+        alt: "LBASSUR - Courtier en Assurance",
       },
     ],
-    locale: "fr_FR",
+    locale: "fr_BJ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "LBASSUR - Votre Courtier de Confiance au Bénin",
-    description: "Solutions d'assurance sur mesure pour particuliers et entreprises au Bénin.",
+    title: "LBASSUR - Courtier de Confiance au Bénin",
+    description: "Comparez et trouvez la meilleure assurance au Bénin avec LBASSUR.",
     images: ["/og-image.jpg"],
   },
   icons: {
     icon: "/icon.jpg",
     shortcut: "/icon.jpg",
     apple: "/icon.jpg",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
