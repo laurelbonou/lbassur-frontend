@@ -41,18 +41,24 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
-            <Link href="#expertises" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
-              Expertise
+            <Link href="/" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Accueil
             </Link>
-            <Link href="/services#particuliers" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
-              Particuliers
+            <Link href="/#apropos" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              À Propos
             </Link>
-            <Link href="/services#entreprises" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
-              Entreprises
+            <Link href="/#offres" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Nos Offres
             </Link>
-            <a href="https://lb-assurmaladie-staticwebsite.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
-              Itoju Santé
-            </a>
+            <Link href="/#services" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Services
+            </Link>
+            <Link href="/#actualites" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Actualités
+            </Link>
+            <Link href="/#contact" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Contact
+            </Link>
             
             <div className="w-px h-4 bg-white/20 mx-2" />
             
@@ -79,35 +85,47 @@ export default function Navbar() {
         <div className="fixed inset-0 z-40 bg-black pt-24 px-6">
           <div className="flex flex-col gap-6">
             <Link 
-              href="#expertises" 
+              href="/" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
-              Expertise
+              Accueil
             </Link>
             <Link 
-              href="/services#particuliers" 
+              href="/#apropos" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
-              Particuliers
+              À Propos
             </Link>
             <Link 
-              href="/services#entreprises" 
+              href="/#offres" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
-              Entreprises
+              Nos Offres
             </Link>
-            <a 
-              href="https://lb-assurmaladie-staticwebsite.vercel.app/" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              href="/#services" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
-              Itoju Santé
-            </a>
+              Services
+            </Link>
+            <Link 
+              href="/#actualites" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-white border-b border-white/10 pb-4"
+            >
+              Actualités
+            </Link>
+            <Link 
+              href="/#contact" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-white border-b border-white/10 pb-4"
+            >
+              Contact
+            </Link>
             <Link 
               href="/simulation"
               onClick={() => setIsMobileMenuOpen(false)}

@@ -8,25 +8,25 @@ const aboutData = [
     {
         title: "À Propos",
         icon: Users,
-        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800",
+        image: "/images/a-propos.png",
         description: "Fort de notre expérience au Bénin, notre cabinet s'engage à vous fournir des conseils transparents et des solutions sur mesure. Nous bâtissons des relations de confiance à long terme, basées sur la proximité et l'écoute."
     },
     {
         title: "Notre Vision",
         icon: Compass,
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
+        image: "/images/notre-vision.png",
         description: "Devenir le courtier de référence au Bénin et en Afrique de l'Ouest, reconnu pour son innovation, son expertise pointue et des solutions d'assurance adaptées aux réalités locales."
     },
     {
         title: "Nos Missions",
         icon: Target,
-        image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800",
+        image: "/images/notre-mission.png",
         description: "Défendre vos intérêts avec indépendance, vous accompagner dans la gestion globale de vos risques et vous garantir les meilleures couvertures au prix le plus juste."
     },
     {
         title: "Nos Valeurs",
         icon: Award,
-        image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=800",
+        image: "/images/nos-valeurs.png",
         description: "Transparence, intégrité, réactivité et excellence. Nous plaçons systématiquement l'humain au centre de toutes nos décisions et de notre accompagnement au quotidien, pour vous offrir un service inégalé."
     }
 ];
@@ -80,7 +80,7 @@ export default function AboutSection() {
     };
 
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section id="apropos" className="py-24 bg-white relative overflow-hidden">
             {/* Background subtle dots grid */}
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
             
@@ -88,8 +88,8 @@ export default function AboutSection() {
             <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-black/10 to-transparent"></div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-                    <div>
+                <div className="mb-12 relative flex items-center justify-center">
+                    <div className="text-center w-full max-w-3xl mx-auto">
                         <p className="text-[11px] text-gray-600 uppercase tracking-widest font-semibold mb-2">Qui Sommes-Nous</p>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-zinc-900 tracking-tight">
                             L'Humain au cœur du Courtage
@@ -97,7 +97,7 @@ export default function AboutSection() {
                     </div>
                     
                     {/* Navigation Buttons (visible on md+) */}
-                    <div className="hidden md:flex items-center gap-3 mt-6 md:mt-0">
+                    <div className="hidden md:flex items-center gap-3 absolute right-0">
                         <button
                             onClick={() => scroll("left")}
                             disabled={!canScrollLeft}
