@@ -43,8 +43,8 @@ export default function ActualitesSection() {
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, opacity: 0 }}
-                        whileInView={{ opacity: 1, opacity: 1 }}
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
