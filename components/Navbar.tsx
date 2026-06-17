@@ -65,7 +65,7 @@ export default function Navbar() {
                             className="relative text-[11px] xl:text-[13px] uppercase tracking-[0.15em] xl:tracking-[0.2em] font-bold text-gray-400 hover:text-white transition-colors duration-300 group whitespace-nowrap"
                         >
                             {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-blue-500 transition-all duration-400 group-hover:w-full" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all duration-400 group-hover:w-full" />
                         </Link>
                     ))}
                 </div>
@@ -74,13 +74,13 @@ export default function Navbar() {
                 <div className="hidden lg:flex items-center gap-6 z-10">
                     <Link
                         href="/simulation"
-                        className="text-[14px] uppercase tracking-[0.2em] font-bold text-blue-400 hover:text-blue-300 transition-colors duration-300"
+                        className="text-[13px] uppercase tracking-[0.15em] font-semibold text-gray-400 hover:text-white transition-colors duration-300"
                     >
                         Simulation
                     </Link>
                     <Link
-                        href="/#booking"
-                        className="text-[14px] uppercase tracking-[0.2em] font-bold text-white border border-white/20 px-5 py-2 hover:bg-white hover:text-black transition-all duration-500 bg-white/[0.03] backdrop-blur-sm"
+                        href="/#contact-section"
+                        className="text-[13px] font-semibold text-white border border-white/30 px-5 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-sm"
                     >
                         Rendez-vous
                     </Link>
@@ -144,7 +144,7 @@ export default function Navbar() {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`text-2xl uppercase tracking-[0.3em] font-bold transition-colors duration-300 font-oswald ${
                                             link.name === "Rendez-vous"
-                                                ? "text-blue-400 hover:text-blue-300"
+                                                ? "text-white hover:text-gray-300"
                                                 : "text-gray-500 hover:text-white"
                                         }`}
                                     >

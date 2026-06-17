@@ -30,13 +30,13 @@ export default function Hero() {
             id="home"
             className="relative h-screen flex flex-col justify-end overflow-hidden bg-black"
         >
-            {/* Background Images — Cross-fade */}
+            {/* Background Images — Cross-fade, bright & clear */}
             <AnimatePresence mode="sync">
                 {heroSlides.map((slide, index) =>
                     index === currentSlide ? (
                         <motion.div
                             key={slide.image}
-                            initial={{ opacity: 0, scale: 1.05 }}
+                            initial={{ opacity: 0, scale: 1.03 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1] }}
@@ -45,67 +45,64 @@ export default function Hero() {
                             <img
                                 src={slide.image}
                                 alt={slide.alt}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="absolute inset-0 w-full h-full object-cover brightness-110"
                             />
                         </motion.div>
                     ) : null
                 )}
             </AnimatePresence>
 
-            {/* Overlays for text readability */}
-            <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
-            <div className="absolute inset-0 z-[1] bg-black/20" />
+            {/* Minimal overlay — keep image very clear */}
+            <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+            <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/50 via-transparent to-transparent" />
 
-            {/* Content — Starlink style: bottom-left aligned */}
-            <div className="relative z-10 px-8 md:px-16 lg:px-24 pb-24 md:pb-32 max-w-4xl">
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.3 }}
-                    className="text-[11px] md:text-[13px] uppercase tracking-[0.5em] text-gray-400 font-bold mb-6"
-                >
-                    Courtier en Assurance · Bénin
-                </motion.p>
-
+            {/* Content — Starlink style: bottom-left */}
+            <div className="relative z-10 px-8 md:px-16 lg:px-24 pb-24 md:pb-32 max-w-3xl">
                 <motion.h1
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1.2, delay: 0.5 }}
-                    className="text-5xl sm:text-7xl md:text-8xl lg:text-[6.5rem] font-bold text-white leading-[0.9] tracking-tight mb-8"
-                    style={{ fontFamily: "var(--font-oswald), sans-serif" }}
+                    transition={{ duration: 1.2, delay: 0.3 }}
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-4"
+                    style={{ fontFamily: "var(--font-inter), sans-serif" }}
                 >
-                    S'assurer Juste,<br />
-                    <span className="text-gray-400">Vivre Serein</span>
+                    S'assurer Juste
                 </motion.h1>
 
                 <motion.p
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.8 }}
-                    className="text-base md:text-lg text-gray-300 max-w-lg leading-relaxed font-light mb-12"
+                    transition={{ duration: 1, delay: 0.6 }}
+                    className="text-sm md:text-base text-gray-300 mb-2 tracking-wide uppercase"
                 >
-                    Protection sur mesure pour particuliers, professionnels et entreprises.
-                    Votre avenir mérite le meilleur courtier.
+                    Et non Juste S'assurer
+                </motion.p>
+
+                <motion.p
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.8 }}
+                    className="text-sm md:text-base text-gray-400 max-w-md leading-relaxed font-light mb-10"
+                >
+                    Particuliers · Professionnels · Entreprises
                 </motion.p>
 
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 1 }}
-                    className="flex flex-col sm:flex-row gap-4"
+                    className="flex flex-wrap gap-3"
                 >
                     <a
                         href="#contact-section"
-                        className="group px-10 py-4 bg-white text-black text-[13px] uppercase tracking-[0.15em] font-bold hover:bg-gray-200 active:scale-95 transition-all duration-300 text-center"
+                        className="px-6 py-2.5 bg-white text-black text-[13px] font-semibold rounded-full hover:bg-gray-200 active:scale-95 transition-all duration-300"
                     >
                         Nous Contacter
                     </a>
                     <Link
                         href="/services"
-                        className="px-10 py-4 border border-white/30 text-white text-[13px] uppercase tracking-[0.15em] font-bold hover:bg-white/10 active:scale-95 transition-all duration-300 text-center"
+                        className="px-6 py-2.5 border border-white/40 text-white text-[13px] font-semibold rounded-full hover:bg-white/10 active:scale-95 transition-all duration-300 backdrop-blur-sm"
                     >
-                        Nos Services
+                        Découvrir Nos Services
                     </Link>
                 </motion.div>
             </div>
@@ -116,25 +113,15 @@ export default function Hero() {
                     <button
                         key={i}
                         onClick={() => setCurrentSlide(i)}
-                        className={`transition-all duration-500 ${
+                        className={`rounded-full transition-all duration-500 ${
                             i === currentSlide
-                                ? "w-8 h-[2px] bg-white"
-                                : "w-4 h-[2px] bg-white/30 hover:bg-white/60"
+                                ? "w-8 h-[3px] bg-white"
+                                : "w-4 h-[3px] bg-white/30 hover:bg-white/60"
                         }`}
                         aria-label={`Slide ${i + 1}`}
                     />
                 ))}
             </div>
-
-            {/* Scroll indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.5, duration: 1 }}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-3"
-            >
-                <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent" />
-            </motion.div>
         </section>
     );
 }
