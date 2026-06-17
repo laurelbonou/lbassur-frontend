@@ -56,14 +56,13 @@ export default function Hero() {
             <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
             <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/50 via-transparent to-transparent" />
 
-            {/* Content — Starlink style: bottom-left */}
+            {/* Content — Starlink style */}
             <div className="relative z-10 px-8 md:px-16 lg:px-24 pb-24 md:pb-32 max-w-3xl">
                 <motion.h1
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1.2, delay: 0.3 }}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-4"
-                    style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-3"
                 >
                     S'assurer Juste
                 </motion.h1>
@@ -72,7 +71,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.6 }}
-                    className="text-sm md:text-base text-gray-300 mb-2 tracking-wide uppercase"
+                    className="text-sm md:text-base text-gray-300 mb-1 tracking-wide uppercase font-medium"
                 >
                     Et non Juste S'assurer
                 </motion.p>
@@ -81,7 +80,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.8 }}
-                    className="text-sm md:text-base text-gray-400 max-w-md leading-relaxed font-light mb-10"
+                    className="text-sm text-gray-400 max-w-md leading-relaxed mb-8 tracking-wide"
                 >
                     Particuliers · Professionnels · Entreprises
                 </motion.p>
@@ -94,13 +93,13 @@ export default function Hero() {
                 >
                     <a
                         href="#contact-section"
-                        className="px-6 py-2.5 bg-white text-black text-[13px] font-semibold rounded-full hover:bg-gray-200 active:scale-95 transition-all duration-300"
+                        className="px-6 py-2.5 bg-white text-black text-[13px] font-semibold rounded-md hover:bg-gray-200 active:scale-[0.97] transition-all duration-200"
                     >
                         Nous Contacter
                     </a>
                     <Link
                         href="/services"
-                        className="px-6 py-2.5 border border-white/40 text-white text-[13px] font-semibold rounded-full hover:bg-white/10 active:scale-95 transition-all duration-300 backdrop-blur-sm"
+                        className="px-6 py-2.5 text-white text-[13px] font-semibold hover:underline underline-offset-4 transition-all duration-200"
                     >
                         Découvrir Nos Services
                     </Link>
@@ -113,7 +112,7 @@ export default function Hero() {
                     <button
                         key={i}
                         onClick={() => setCurrentSlide(i)}
-                        className={`rounded-full transition-all duration-500 ${
+                        className={`rounded-sm transition-all duration-500 ${
                             i === currentSlide
                                 ? "w-8 h-[3px] bg-white"
                                 : "w-4 h-[3px] bg-white/30 hover:bg-white/60"
