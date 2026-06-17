@@ -80,18 +80,18 @@ export default function AboutSection() {
     };
 
     return (
-        <section className="py-24 bg-black relative overflow-hidden">
+        <section className="py-24 bg-white relative overflow-hidden">
             {/* Background subtle dots grid */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
             
             {/* Decorative subtle top light glow */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-black/10 to-transparent"></div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
                     <div>
-                        <p className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold mb-2">Qui Sommes-Nous</p>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                        <p className="text-[11px] text-gray-600 uppercase tracking-widest font-semibold mb-2">Qui Sommes-Nous</p>
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-zinc-900 tracking-tight">
                             L'Humain au cœur du Courtage
                         </h2>
                     </div>
@@ -103,8 +103,8 @@ export default function AboutSection() {
                             disabled={!canScrollLeft}
                             className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
                                 canScrollLeft 
-                                    ? "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black hover:border-white cursor-pointer" 
-                                    : "border-white/5 text-white/20 cursor-not-allowed"
+                                    ? "border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black cursor-pointer" 
+                                    : "border-black/5 text-black/20 cursor-not-allowed"
                             }`}
                             aria-label="Défiler vers la gauche"
                         >
@@ -115,8 +115,8 @@ export default function AboutSection() {
                             disabled={!canScrollRight}
                             className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
                                 canScrollRight 
-                                    ? "border-white/20 bg-white/5 text-white hover:bg-white hover:text-black hover:border-white cursor-pointer" 
-                                    : "border-white/5 text-white/20 cursor-not-allowed"
+                                    ? "border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black cursor-pointer" 
+                                    : "border-black/5 text-black/20 cursor-not-allowed"
                             }`}
                             aria-label="Défiler vers la droite"
                         >
@@ -173,9 +173,9 @@ export default function AboutSection() {
                 </div>
 
                 {/* Progress Scroll Indicator */}
-                <div className="w-full max-w-[160px] mx-auto h-[2px] bg-white/10 rounded-full mt-4 overflow-hidden relative">
+                <div className="w-full max-w-[160px] mx-auto h-[2px] bg-black/10 rounded-full mt-4 overflow-hidden relative">
                     <div 
-                        className="absolute top-0 bottom-0 left-0 bg-white/60 rounded-full transition-all duration-150"
+                        className="absolute top-0 bottom-0 left-0 bg-black/60 rounded-full transition-all duration-150"
                         style={{ width: `${scrollProgress}%` }}
                     />
                 </div>
