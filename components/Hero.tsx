@@ -9,10 +9,12 @@ const heroSlides = [
     {
         image: "/images/01.png",
         alt: "Père et fille regardant les étoiles",
+        title: "S'assurer Juste, et non Juste S'assurer.",
     },
     {
         image: "/images/02.png",
         alt: "Fillette marchant vers l'horizon",
+        title: "Votre sérénité, notre priorité.",
     },
 ];
 
