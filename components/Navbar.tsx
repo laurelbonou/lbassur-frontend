@@ -2,164 +2,117 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-
-const centerLinks = [
-    { name: "A Propos", href: "/a-propos" },
-    { name: "Services", href: "/services" },
-    { name: "Actualités", href: "/actualites" },
-    { name: "Carrières", href: "/carrieres" },
-];
-
-const allMobileLinks = [
-    { name: "Accueil",    href: "/" },
-    { name: "A Propos",   href: "/a-propos" },
-    { name: "Services",   href: "/services" },
-    { name: "Actualités", href: "/actualites" },
-    { name: "Carrières",  href: "/carrieres" },
-    { name: "Simulation", href: "/simulation" },
-    { name: "Rendez-vous",href: "/#booking" },
-];
+import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-    const [isScrolled,       setIsScrolled]       = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const onScroll = () => setIsScrolled(window.scrollY > 30);
-        window.addEventListener("scroll", onScroll);
-        return () => window.removeEventListener("scroll", onScroll);
-    }, []);
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    return (
-        <nav
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 ${
-                isScrolled
-                    ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]"
-                    : "bg-transparent"
-            }`}
-        >
-            <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between relative">
+  return (
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6 }}
+        className={`fixed w-full z-50 transition-all duration-300 ${
+          isScrolled 
+            ? "bg-white/90 backdrop-blur-md border-b border-black/5 py-4" 
+            : "bg-white border-b border-black/5 py-6"
+        }`}
+      >
+        <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold tracking-tight text-black flex items-center gap-2">
+            LBASSUR.
+          </Link>
 
-                {/* ── Logo ── */}
-                <Link href="/" className="flex items-center gap-3 z-10 group">
-                    <div className="w-8 h-8 overflow-hidden rounded-full border border-white/10 group-hover:border-white/30 transition-colors duration-500 flex-shrink-0">
-                        <img
-                            src="/images/logo.jpg"
-                            alt="LBASSUR"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                    <span className="font-oswald font-bold uppercase tracking-[0.2em] text-sm text-white hidden sm:block">
-                        LBASSUR
-                    </span>
-                </Link>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-8">
+            <Link href="#expertises" className="text-[13px] font-semibold text-gray-600 hover:text-black transition-colors duration-200">
+              Expertise
+            </Link>
+            <Link href="/services#particuliers" className="text-[13px] font-semibold text-gray-600 hover:text-black transition-colors duration-200">
+              Particuliers
+            </Link>
+            <Link href="/services#entreprises" className="text-[13px] font-semibold text-gray-600 hover:text-black transition-colors duration-200">
+              Entreprises
+            </Link>
+            <a href="https://lb-assurmaladie-staticwebsite.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-[13px] font-semibold text-gray-600 hover:text-black transition-colors duration-200">
+              Itoju Santé
+            </a>
+            
+            <div className="w-px h-4 bg-black/10 mx-2" />
+            
+            <Link 
+              href="/simulation"
+              className="bg-black text-white px-6 py-2.5 text-[13px] font-semibold rounded-md hover:bg-gray-800 transition-all duration-200 active:scale-95"
+            >
+              Comparateur
+            </Link>
+          </div>
 
-                {/* ── Center nav links (Tesla style) ── */}
-                <div className="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 px-4">
-                    {centerLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className="relative text-[11px] xl:text-[13px] uppercase tracking-[0.15em] xl:tracking-[0.2em] font-bold text-gray-400 hover:text-white transition-colors duration-300 group whitespace-nowrap"
-                        >
-                            {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all duration-400 group-hover:w-full" />
-                        </Link>
-                    ))}
-                </div>
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="lg:hidden text-black p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </motion.nav>
 
-                {/* ── Right — Simulation + CTA ── */}
-                <div className="hidden lg:flex items-center gap-6 z-10">
-                    <Link
-                        href="/simulation"
-                        className="text-[13px] uppercase tracking-[0.15em] font-semibold text-gray-400 hover:text-white transition-colors duration-300"
-                    >
-                        Simulation
-                    </Link>
-                    <Link
-                        href="/#contact-section"
-                        className="text-[13px] font-semibold text-white border border-white/30 px-5 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-sm"
-                    >
-                        Rendez-vous
-                    </Link>
-                </div>
-
-                {/* ── Mobile burger ── */}
-                <button
-                    className="lg:hidden text-white z-50 p-1 flex flex-col gap-[5px] group"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    aria-label="Menu"
-                >
-                    <AnimatePresence mode="wait" initial={false}>
-                        {isMobileMenuOpen ? (
-                            <motion.div
-                                key="close"
-                                initial={{ opacity: 0, rotate: -45 }}
-                                animate={{ opacity: 1, rotate: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <X size={20} />
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="open"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="flex flex-col gap-[5px]"
-                            >
-                                <span className="block w-5 h-[1.5px] bg-white group-hover:opacity-60 transition-opacity" />
-                                <span className="block w-3.5 h-[1.5px] bg-white group-hover:opacity-60 transition-opacity" />
-                                <span className="block w-5 h-[1.5px] bg-white group-hover:opacity-60 transition-opacity" />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </button>
-            </div>
-
-            {/* ── Mobile fullscreen overlay ── */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                        className="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center lg:hidden"
-                    >
-                        <div className="flex flex-col items-center gap-10">
-                            {allMobileLinks.map((link, i) => (
-                                <motion.div
-                                    key={link.name}
-                                    initial={{ opacity: 0, y: 16 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.08 + i * 0.06 }}
-                                >
-                                    <Link
-                                        href={link.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className={`text-2xl uppercase tracking-[0.3em] font-bold transition-colors duration-300 font-oswald ${
-                                            link.name === "Rendez-vous"
-                                                ? "text-white hover:text-gray-300"
-                                                : "text-gray-500 hover:text-white"
-                                        }`}
-                                    >
-                                        {link.name}
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
-
-                        <div className="absolute bottom-10 label text-gray-700">
-                            LBASSUR &copy; {new Date().getFullYear()}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </nav>
-    );
+      {/* Mobile Nav Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-white pt-24 px-6">
+          <div className="flex flex-col gap-6">
+            <Link 
+              href="#expertises" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-black border-b border-black/5 pb-4"
+            >
+              Expertise
+            </Link>
+            <Link 
+              href="/services#particuliers" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-black border-b border-black/5 pb-4"
+            >
+              Particuliers
+            </Link>
+            <Link 
+              href="/services#entreprises" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-black border-b border-black/5 pb-4"
+            >
+              Entreprises
+            </Link>
+            <a 
+              href="https://lb-assurmaladie-staticwebsite.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-black border-b border-black/5 pb-4"
+            >
+              Itoju Santé
+            </a>
+            <Link 
+              href="/simulation"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="bg-black text-white text-center py-4 text-lg font-bold rounded-md mt-4"
+            >
+              Comparateur
+            </Link>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

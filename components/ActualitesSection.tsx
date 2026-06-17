@@ -27,7 +27,7 @@ const articles = [
 
 export default function ActualitesSection() {
     return (
-        <section className="py-32 bg-black border-b border-white/5 relative overflow-hidden">
+        <section className="py-32 bg-white border-b border-black/5 relative overflow-hidden">
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
                     <motion.div
@@ -37,18 +37,18 @@ export default function ActualitesSection() {
                         viewport={{ once: true }}
                     >
                         <p className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-4">Actualités</p>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                        <h2 className="text-4xl md:text-5xl font-bold text-black tracking-tight">
                             Dernières Insights
                         </h2>
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
-                        <Link href="/actualites" className="inline-flex items-center gap-2 text-white text-[13px] font-semibold hover:underline underline-offset-4 transition-all duration-200">
+                        <Link href="/actualites" className="inline-flex items-center gap-2 text-black text-[13px] font-semibold hover:underline underline-offset-4 transition-all duration-200">
                             Toutes nos actualités <ArrowRight size={14} />
                         </Link>
                     </motion.div>
@@ -65,13 +65,13 @@ export default function ActualitesSection() {
                             className="group cursor-pointer flex flex-col h-full"
                         >
                             <p className="text-[11px] text-gray-500 font-medium mb-4">{article.date}</p>
-                            <h3 className="text-xl font-bold text-white mb-4 group-hover:text-gray-300 transition-colors duration-300 line-clamp-2">
+                            <h3 className="text-xl font-bold text-black mb-4 group-hover:text-gray-600 transition-colors duration-300 line-clamp-2">
                                 {article.title}
                             </h3>
-                            <p className="text-gray-400 font-light text-sm leading-relaxed mb-8 flex-1 line-clamp-3">
+                            <p className="text-gray-600 font-light text-sm leading-relaxed mb-8 flex-1 line-clamp-3">
                                 {article.desc}
                             </p>
-                            <Link href={article.href} className="inline-flex items-center gap-2 text-white text-[12px] uppercase tracking-wider font-semibold opacity-60 group-hover:opacity-100 transition-all duration-300">
+                            <Link href={article.href} className="inline-flex items-center gap-2 text-black text-[12px] uppercase tracking-wider font-semibold opacity-60 group-hover:opacity-100 transition-all duration-300">
                                 Lire l'article
                             </Link>
                         </motion.div>

@@ -1,11 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import ExpertiseSection from "@/components/ExpertiseSection";
 import AboutSection from "@/components/AboutSection";
-import OffresParticuliersSection from "@/components/OffresParticuliersSection";
-import OffresEntreprisesSection from "@/components/OffresEntreprisesSection";
+import OffresTabSection from "@/components/OffresTabSection";
+import ExpertiseProcessSection from "@/components/ExpertiseProcessSection";
 import ServicesSection from "@/components/ServicesSection";
-import ProcessSection from "@/components/ProcessSection";
 import PartnersSection from "@/components/PartnersSection";
 import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -15,15 +13,13 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="bg-black min-h-screen text-white font-sans selection:bg-white/20 selection:text-white">
+    <main className="bg-white min-h-screen text-black font-sans selection:bg-black/10 selection:text-black">
       <Navbar />
       <Hero />
-      <ExpertiseSection />
       <AboutSection />
-      <OffresParticuliersSection />
-      <OffresEntreprisesSection />
+      <OffresTabSection />
+      <ExpertiseProcessSection />
       <ServicesSection />
-      <ProcessSection />
       <PartnersSection />
       <StatsSection />
       <TestimonialsSection />
