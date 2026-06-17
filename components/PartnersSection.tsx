@@ -3,11 +3,14 @@
 import { motion } from "framer-motion";
 
 const partners = [
-  { name: "Sunu Assurances", logo: "/images/lba/Sanstitre-1_0003_Calque-2.jpg" },
-  { name: "NSIA", logo: "/images/lba/Sanstitre-1_0004_Calque-1.jpg" },
-  { name: "Allianz", logo: "/images/lba/Sanstitre-1_0002_Calque-3.jpg" },
-  { name: "Africaine des Assurances", logo: "/images/lba/Sanstitre-1_0000_Calque-5.jpg" },
-  { name: "Sanlam", logo: "/images/lba/Sanstitre-1_0001_Calque-4.jpg" },
+  { name: "Sunu Assurances", logo: "/images/partners/sunu_assurance.png" },
+  { name: "NSIA", logo: "/images/partners/nsia-assurance.png" },
+  { name: "Sanlam Allianz", logo: "/images/partners/sanlam-allianz.png" },
+  { name: "Africaine des Assurances", logo: "/images/partners/africaine-assurance.png" },
+  { name: "AFG Assurances", logo: "/images/partners/afg-assurances.png" },
+  { name: "CIF Assurances Vie", logo: "/images/partners/cif_assurances_vie.png" },
+  { name: "GAB", logo: "/images/partners/gab.png" },
+  { name: "Nobila Assurance", logo: "/images/partners/nobila-assurance.png" },
 ];
 
 export default function PartnersSection() {
@@ -28,7 +31,7 @@ export default function PartnersSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-black/5 border border-black/5 rounded-md overflow-hidden">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-black/5 border border-black/5 rounded-md overflow-hidden">
           {partners.map((partner, i) => (
             <motion.div
               key={i}
