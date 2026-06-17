@@ -12,9 +12,19 @@ const heroSlides = [
         title: "S'assurer Juste,\net non Juste S'assurer.",
     },
     {
-        image: "/images/02.png",
-        alt: "Fillette marchant vers l'horizon",
-        title: "Votre sérénité, notre priorité.",
+        image: "/images/05.png",
+        alt: "Image 05",
+        title: "Votre sérénité,\nnotre priorité.",
+    },
+    {
+        image: "/images/06.png",
+        alt: "Image 06",
+        title: "L'assurance repensée\npour vous.",
+    },
+    {
+        image: "/images/07.png",
+        alt: "Image 07",
+        title: "Des garanties fiables\npour avancer.",
     },
 ];
 
