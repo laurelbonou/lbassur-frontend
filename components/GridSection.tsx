@@ -50,17 +50,17 @@ export default function GridSection() {
                                 className="bg-black p-10 group hover:bg-white/[0.03] transition-colors duration-500 h-full"
                             >
                                 <div className="mb-8">
-                                    <div className="w-10 h-10 border border-white/10 flex items-center justify-center mb-8 group-hover:border-blue-500/40 transition-colors duration-500">
-                                        <item.icon className="text-gray-500 group-hover:text-blue-400 transition-colors duration-500" size={18} />
+                                    <div className="w-10 h-10 border border-white/10 flex items-center justify-center mb-8 group-hover:border-white/30 transition-colors duration-500 rounded-md">
+                                        <item.icon className="text-gray-500 group-hover:text-white transition-colors duration-500" size={18} />
                                     </div>
-                                    <h3 className="text-lg md:text-xl font-bold uppercase tracking-[0.15em] mb-4 font-oswald text-white">
+                                    <h3 className="text-lg font-bold mb-4 text-white">
                                         {item.title}
                                     </h3>
-                                    <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light">
+                                    <p className="text-gray-400 leading-relaxed text-sm font-light">
                                         {item.description}
                                     </p>
                                 </div>
-                                <div className="h-[1px] w-0 bg-blue-500/50 group-hover:w-8 transition-all duration-700" />
+                                <div className="h-[1px] w-0 bg-white/30 group-hover:w-8 transition-all duration-700" />
                             </motion.div>
                         </Link>
                     ))}

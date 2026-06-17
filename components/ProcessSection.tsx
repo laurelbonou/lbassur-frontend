@@ -29,10 +29,6 @@ const steps = [
 export default function ProcessSection() {
     return (
         <section className="py-32 bg-black border-b border-white/5 relative overflow-hidden">
-            {/* Ambient glows */}
-            <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[160px] pointer-events-none" />
-            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none" />
-
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 {/* Header */}
                 <motion.div
@@ -41,8 +37,8 @@ export default function ProcessSection() {
                     viewport={{ once: true }}
                     className="mb-20"
                 >
-                    <span className="label text-blue-500/60 mb-4 block">Notre Méthode</span>
-                    <h2 className="text-4xl md:text-6xl font-bold uppercase font-oswald text-white tracking-tight leading-none">
+                    <p className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-4">Notre Méthode</p>
+                    <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-none">
                         Comment ça marche
                     </h2>
                 </motion.div>
@@ -60,15 +56,15 @@ export default function ProcessSection() {
                         >
                             {/* Step number */}
                             <div className="flex items-center justify-between mb-10">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-700">
+                                <span className="text-[10px] font-semibold text-gray-600 tracking-widest">
                                     {String(index + 1).padStart(2, '0')}
                                 </span>
-                                <div className="w-9 h-9 border border-white/8 flex items-center justify-center group-hover:border-blue-500/30 transition-colors duration-500">
-                                    <step.icon size={16} className="text-gray-600 group-hover:text-blue-400 transition-colors duration-500" />
+                                <div className="w-9 h-9 border border-white/10 flex items-center justify-center group-hover:border-white/30 transition-colors duration-500">
+                                    <step.icon size={16} className="text-gray-500 group-hover:text-white transition-colors duration-500" />
                                 </div>
                             </div>
 
-                            <h3 className="text-base font-bold uppercase font-oswald text-white mb-4 tracking-[0.1em]">
+                            <h3 className="text-base font-bold text-white mb-4">
                                 {step.title}
                             </h3>
                             <p className="text-gray-500 text-sm leading-relaxed font-light">
@@ -76,7 +72,7 @@ export default function ProcessSection() {
                             </p>
 
                             {/* Bottom accent line */}
-                            <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-blue-500/40 group-hover:w-full transition-all duration-700" />
+                            <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-white/30 group-hover:w-full transition-all duration-700" />
                         </motion.div>
                     ))}
                 </div>
