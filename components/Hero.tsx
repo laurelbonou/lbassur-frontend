@@ -9,7 +9,7 @@ const heroSlides = [
     {
         image: "/images/01.png",
         alt: "Père et fille regardant les étoiles",
-        title: "S'assurer Juste, et non Juste S'assurer.",
+        title: "S'assurer Juste,\net non Juste S'assurer.",
     },
     {
         image: "/images/02.png",
@@ -45,7 +45,8 @@ export default function Hero() {
                             transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1] }}
                             className="absolute inset-0 z-0"
                         >
-                            <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-[1]" />
+                            <div className="absolute inset-0 bg-black/30 z-[1]" />
                             <img
                                 src={slide.image}
                                 alt={slide.alt}
@@ -63,7 +64,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-5xl md:text-7xl lg:text-8xl font-bold text-black tracking-tight mb-8"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-8 whitespace-pre-line"
                 >
                     {heroSlides[currentSlide].title}
                 </motion.h1>
@@ -72,7 +73,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.8 }}
-                    className="text-sm text-gray-700 max-w-md leading-relaxed mb-8 tracking-wide font-medium"
+                    className="text-sm md:text-base text-gray-300 max-w-md leading-relaxed mb-8 tracking-wide font-medium"
                 >
                     Particuliers · Professionnels · Entreprises
                 </motion.p>
@@ -92,7 +93,7 @@ export default function Hero() {
                     </Link>
                     <Link
                         href="#services"
-                        className="bg-white/50 text-black border border-black/10 px-8 py-4 text-[13px] font-bold rounded-md hover:bg-white hover:border-black/20 transition-all duration-300 active:scale-95 text-center"
+                        className="bg-white/10 text-white border border-white/20 px-8 py-4 text-[13px] font-bold rounded-md hover:bg-white/20 hover:border-white/40 transition-all duration-300 active:scale-95 text-center"
                     >
                         Découvrir nos offres
                     </Link>
@@ -107,8 +108,8 @@ export default function Hero() {
                         onClick={() => setCurrentSlide(i)}
                         className={`rounded-sm transition-all duration-500 ${
                             i === currentSlide
-                                ? "w-8 h-[3px] bg-black"
-                                : "w-4 h-[3px] bg-black/30 hover:bg-black/60"
+                                ? "w-8 h-[3px] bg-white"
+                                : "w-4 h-[3px] bg-white/30 hover:bg-white/60"
                         }`}
                         aria-label={`Slide ${i + 1}`}
                     />
