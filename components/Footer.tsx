@@ -62,7 +62,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="text-sm text-gray-400 font-light">Quartier Zongo<br />Cotonou, Bénin</li>
               <li className="text-sm text-white font-medium">+229 21 31 15 15</li>
-              <li className="text-sm text-white font-medium">contact@lbassur.com</li>
+              <li className="text-sm text-white font-medium">contact@lbassur.bj</li>
             </ul>
           </div>
         </div>

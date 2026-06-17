@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const heroSlides = [
     {
@@ -42,6 +43,7 @@ export default function Hero() {
                             transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1] }}
                             className="absolute inset-0 z-0"
                         >
+                            <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]" />
                             <img
                                 src={slide.image}
                                 alt={slide.alt}
@@ -52,35 +54,23 @@ export default function Hero() {
                 )}
             </AnimatePresence>
 
-            {/* Minimal overlay — keep image very clear */}
-            <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
-            <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/50 via-transparent to-transparent" />
-
             {/* Content — Starlink style */}
             <div className="relative z-10 px-8 md:px-16 lg:px-24 pb-24 md:pb-32 max-w-3xl">
                 <motion.h1
-                    initial={{ opacity: 0, y: 24 }}
+                    key={currentSlide + "-title"}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1.2, delay: 0.3 }}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-3"
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="text-5xl md:text-7xl lg:text-8xl font-bold text-black tracking-tight mb-8"
                 >
-                    S'assurer Juste
+                    {heroSlides[currentSlide].title}
                 </motion.h1>
 
                 <motion.p
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.6 }}
-                    className="text-sm md:text-base text-gray-300 mb-1 tracking-wide uppercase font-medium"
-                >
-                    Et non Juste S'assurer
-                </motion.p>
-
-                <motion.p
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.8 }}
-                    className="text-sm text-gray-400 max-w-md leading-relaxed mb-8 tracking-wide"
+                    className="text-sm text-gray-700 max-w-md leading-relaxed mb-8 tracking-wide font-medium"
                 >
                     Particuliers · Professionnels · Entreprises
                 </motion.p>
@@ -89,19 +79,20 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 1 }}
-                    className="flex flex-wrap gap-3"
+                    className="flex flex-col sm:flex-row gap-4"
                 >
-                    <a
-                        href="#contact-section"
-                        className="px-6 py-2.5 bg-white text-black text-[13px] font-semibold rounded-md hover:bg-gray-200 active:scale-[0.97] transition-all duration-200"
-                    >
-                        Nous Contacter
-                    </a>
                     <Link
-                        href="/services"
-                        className="px-6 py-2.5 text-white text-[13px] font-semibold hover:underline underline-offset-4 transition-all duration-200"
+                        href="/simulation"
+                        className="bg-black text-white px-8 py-4 text-[13px] font-bold rounded-md hover:bg-gray-800 transition-all duration-300 active:scale-95 text-center flex items-center justify-center gap-2"
                     >
-                        Découvrir Nos Services
+                        Lancer une simulation
+                        <ArrowRight size={16} />
+                    </Link>
+                    <Link
+                        href="#services"
+                        className="bg-white/50 text-black border border-black/10 px-8 py-4 text-[13px] font-bold rounded-md hover:bg-white hover:border-black/20 transition-all duration-300 active:scale-95 text-center"
+                    >
+                        Découvrir nos offres
                     </Link>
                 </motion.div>
             </div>
@@ -114,8 +105,8 @@ export default function Hero() {
                         onClick={() => setCurrentSlide(i)}
                         className={`rounded-sm transition-all duration-500 ${
                             i === currentSlide
-                                ? "w-8 h-[3px] bg-white"
-                                : "w-4 h-[3px] bg-white/30 hover:bg-white/60"
+                                ? "w-8 h-[3px] bg-black"
+                                : "w-4 h-[3px] bg-black/30 hover:bg-black/60"
                         }`}
                         aria-label={`Slide ${i + 1}`}
                     />

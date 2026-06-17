@@ -36,6 +36,7 @@ export default function Navbar() {
                 alt="LBASSUR Logo" 
                 className="h-10 w-auto rounded-sm"
             />
+            <span className="text-xl font-bold tracking-tight text-white">LBASSUR</span>
           </Link>
 
           {/* Desktop Nav */}
