@@ -7,23 +7,23 @@ import { ArrowRight } from "lucide-react";
 
 const heroSlides = [
     {
-        image: "/images/01.png",
-        alt: "Père et fille regardant les étoiles",
+        image: "/images/petite fille avec son père en couleur.png",
+        alt: "Petite fille avec son père",
         title: "S'assurer Juste,\net non Juste S'assurer.",
     },
     {
-        image: "/images/05.png",
-        alt: "Image 05",
+        image: "/images/petite fille avec son cerf volant.png",
+        alt: "Petite fille avec son cerf volant",
         title: "Votre sérénité,\nnotre priorité.",
     },
     {
-        image: "/images/06.png",
-        alt: "Image 06",
+        image: "/images/petite fille allant a l'école avec son sac.png",
+        alt: "Petite fille allant à l'école",
         title: "L'assurance repensée\npour vous.",
     },
     {
-        image: "/images/07.png",
-        alt: "Image 07",
+        image: "/images/fille diplomée avec ses parents.png",
+        alt: "Fille diplômée avec ses parents",
         title: "Des garanties fiables\npour avancer.",
     },
 ];
@@ -41,7 +41,7 @@ export default function Hero() {
     return (
         <section
             id="home"
-            className="relative h-screen flex flex-col justify-end overflow-hidden bg-black"
+            className="group relative h-screen flex flex-col justify-end overflow-hidden bg-black"
         >
             {/* Background Images — Cross-fade, bright & clear */}
             <AnimatePresence mode="sync">
@@ -56,11 +56,11 @@ export default function Hero() {
                             className="absolute inset-0 z-0"
                         >
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-[1]" />
-                            <div className="absolute inset-0 bg-black/30 z-[1]" />
+                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors duration-700 z-[1]" />
                             <img
                                 src={slide.image}
                                 alt={slide.alt}
-                                className="absolute inset-0 w-full h-full object-cover brightness-110"
+                                className="absolute inset-0 w-full h-full object-cover brightness-110 grayscale group-hover:grayscale-0 transition-all duration-700"
                             />
                         </motion.div>
                     ) : null
