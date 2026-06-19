@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import OffresTabSection from "@/components/OffresTabSection";
+import ComparatorBanner from "@/components/ComparatorBanner";
 import ExpertiseProcessSection from "@/components/ExpertiseProcessSection";
 import ServicesSection from "@/components/ServicesSection";
 import PartnersSection from "@/components/PartnersSection";
@@ -18,6 +19,7 @@ export default function Home() {
       <Hero />
       <AboutSection />
       <OffresTabSection />
+      <ComparatorBanner />
       <ExpertiseProcessSection />
       <ServicesSection />
       <PartnersSection />
