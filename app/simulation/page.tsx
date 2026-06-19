@@ -65,9 +65,9 @@ type FormData = {
 };
 
 const CATEGORIES = [
-    { id: "iardt", title: "IARDT (Dommages & RC)", icon: Shield, color: "text-blue-500", glow: "border-blue-500/50" },
-    { id: "personnes", title: "PERSONNES (Santé & Vie)", icon: Heart, color: "text-sky-500", glow: "border-sky-500/50" },
-    { id: "vie", title: "VIE (Épargne & Retraite)", icon: Coins, color: "text-slate-500", glow: "border-slate-500/50" },
+    { id: "iardt", title: "IARDT (Dommages & RC)", icon: Shield },
+    { id: "personnes", title: "PERSONNES (Santé & Vie)", icon: Heart },
+    { id: "vie", title: "VIE (Épargne & Retraite)", icon: Coins },
 ];
 
 const SUB_TYPES: Record<string, string[]> = {
@@ -116,38 +116,66 @@ export default function SimulationPage() {
     const steps = getFlowSteps();
     const currentStep = steps[currentStepIndex];
 
-    const fetchResults = async (data: FormData) => {
+    const computeResults = (data: FormData) => {
         setLoading(true);
-        try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-            const response = await fetch(`${apiUrl}/simulations/auto`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    usage: data.autoUsage,
-                    power: data.autoPower,
-                    energy: data.autoEnergy,
-                    duration: data.autoDuration,
-                }),
-            });
-            if (response.ok) {
-                const res = await response.json();
-                setResults(res.results);
+        setTimeout(() => {
+            const { autoUsage, autoPower, autoEnergy, autoDuration } = data;
+            const newResults = [];
+
+            // Africaine
+            const africainePrice = AFRICAINE_TARIFFS[autoUsage]?.[autoPower]?.[autoEnergy]?.[autoDuration];
+            if (africainePrice) {
+                newResults.push({
+                    name: "L'Africaine des Assurances",
+                    price: africainePrice,
+                    guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident",
+                    tag: "Recommandé",
+                    rating: 4.8,
+                    logo: null
+                });
             }
-        } catch (error) {
-            console.error("Simulation error:", error);
-        } finally {
+
+            // Nobila
+            const nobilaTable = autoUsage === "Promenade & Affaires" ? NOBILA_PA_TARIFFS : NOBILA_TPC_TARIFFS;
+            const nobilaPrice = nobilaTable[autoPower]?.[autoDuration];
+            if (nobilaPrice) {
+                newResults.push({
+                    name: "NOBILA Assurances",
+                    price: nobilaPrice,
+                    guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident + Carte CEDEAO",
+                    tag: "Couverture Étendue",
+                    rating: 4.5,
+                    logo: null
+                });
+            }
+
+            // CIMA
+            if (autoUsage === "Promenade & Affaires") {
+                const cimaPrice = CIMA_PA_TARIFFS[autoPower]?.[autoDuration];
+                if (cimaPrice) {
+                    newResults.push({
+                        name: "Tarif Légal CIMA",
+                        price: cimaPrice,
+                        guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident + Carte Brune",
+                        tag: "Plancher Minimum",
+                        rating: 4.0,
+                        logo: null
+                    });
+                }
+            }
+
+            newResults.sort((a, b) => a.price - b.price);
+            setResults(newResults);
             setLoading(false);
-        }
+        }, 1500);
     };
 
     const nextStep = () => {
         const nextIdx = currentStepIndex + 1;
         setCurrentStepIndex(nextIdx);
         
-        // If the next step is the result step, fetch results
         if (steps[nextIdx]?.id === "result" && formData.type === "Assurance Auto") {
-            fetchResults(formData);
+            computeResults(formData);
         }
     };
 
@@ -160,21 +188,10 @@ export default function SimulationPage() {
         const nextIdx = currentStepIndex + 1;
         setCurrentStepIndex(nextIdx);
 
-        // If the next step is the result step, fetch results
         if (steps[nextIdx]?.id === "result" && formData.type === "Assurance Auto") {
-            fetchResults(newData);
+            computeResults(newData);
         }
     };
-
-    const insurerResults = results.map(r => ({
-        name: r.insurer,
-        logo: r.logoUrl,
-        price: Number(r.price),
-        guarantees: r.guarantees.join(" + "),
-        tag: r.tag,
-        rating: r.rating ? Number(r.rating) : null,
-        color: r.insurerSlug === "africaine-assurances" ? "blue" : "sky",
-    }));
 
     const resetForm = () => {
         setCurrentStepIndex(0);
@@ -183,10 +200,7 @@ export default function SimulationPage() {
     };
 
     return (
-        <main className="bg-black text-white min-h-screen relative overflow-hidden">
-            <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/[0.03] rounded-full blur-[120px] -z-0"></div>
-
+        <main className="bg-white text-black min-h-screen relative overflow-hidden">
             <Navbar />
 
             <div className="pt-40 pb-32 container mx-auto px-6 relative z-10 max-w-7xl">
@@ -195,12 +209,12 @@ export default function SimulationPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-block glass px-4 py-1 rounded-full mb-6 border-blue-500/20"
+                            className="inline-block px-4 py-1 rounded-full mb-6 border border-black/10 bg-gray-50"
                         >
-                            <span className="text-blue-400 font-bold uppercase tracking-[0.4em] text-[9px]">Calcul Temps Réel</span>
+                            <span className="text-black font-bold uppercase tracking-[0.4em] text-[9px]">Calcul Temps Réel</span>
                         </motion.div>
-                        <h1 className="text-5xl md:text-7xl font-bold font-oswald uppercase mb-6 text-white tracking-tighter">
-                            Simulation <span className="text-gradient">Intelligente</span>
+                        <h1 className="text-5xl md:text-7xl font-bold uppercase mb-6 text-black tracking-tight">
+                            Simulation <span className="text-gray-400">Intelligente</span>
                         </h1>
                         <p className="text-gray-500 font-light text-lg max-w-xl mx-auto">
                             Précisez vos besoins pour obtenir une analyse instantanée et comparer les primes de plusieurs compagnies.
@@ -212,9 +226,9 @@ export default function SimulationPage() {
                         {steps.map((s, idx) => (
                             <div key={s.id} className="flex-1 flex flex-col gap-3">
                                 <div
-                                    className={`h-0.5 flex-1 transition-all duration-1000 rounded-full ${idx <= currentStepIndex ? "bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]" : "bg-white/5"}`}
+                                    className={`h-1 flex-1 transition-all duration-1000 ${idx <= currentStepIndex ? "bg-black" : "bg-gray-200"}`}
                                 />
-                                <span className={`text-[8px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-blue-400" : "text-gray-700"}`}>
+                                <span className={`text-[8px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-black" : "text-gray-400"}`}>
                                     {s.title}
                                 </span>
                             </div>
@@ -226,22 +240,21 @@ export default function SimulationPage() {
                             {/* ÉTAPE 1: Catégorie */}
                             {currentStep.id === "category" && (
                                 <motion.div key="category" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }} className="space-y-6">
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Choisir un Domaine</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Choisir un Domaine</h2>
                                     <div className="grid grid-cols-1 gap-5">
                                         {CATEGORIES.map(cat => (
                                             <button
                                                 key={cat.id}
                                                 onClick={() => updateForm("category", cat.id)}
-                                                className="glass p-10 border-white/5 hover:bg-white/[0.05] hover:border-white/20 transition-all duration-700 flex items-center justify-between group overflow-hidden"
+                                                className="bg-gray-50 p-10 border border-black/5 hover:border-black/20 hover:shadow-lg transition-all duration-500 flex items-center justify-between group"
                                             >
-                                                <div className="flex items-center gap-8 relative z-10">
-                                                    <div className={`w-16 h-16 bg-black/40 rounded-full border border-white/5 flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:${cat.glow}`}>
-                                                        <cat.icon className={cat.color} size={28} />
+                                                <div className="flex items-center gap-8">
+                                                    <div className={`w-16 h-16 bg-white rounded-full border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:bg-black group-hover:text-white`}>
+                                                        <cat.icon size={28} className="text-black group-hover:text-white transition-colors" />
                                                     </div>
-                                                    <span className="font-bold uppercase tracking-[0.3em] text-[12px] text-white transition-all duration-700 group-hover:translate-x-2">{cat.title}</span>
+                                                    <span className="font-bold uppercase tracking-[0.3em] text-[12px] text-black transition-all duration-500 group-hover:translate-x-2">{cat.title}</span>
                                                 </div>
-                                                <ChevronRight className="text-gray-700 group-hover:text-blue-400 transition-all duration-700 group-hover:translate-x-2" size={20} />
-                                                <div className={`absolute top-0 right-0 w-32 h-32 ${cat.color} opacity-0 blur-[100px] group-hover:opacity-10 transition-opacity duration-1000`}></div>
+                                                <ChevronRight className="text-gray-400 group-hover:text-black transition-all duration-500 group-hover:translate-x-2" size={20} />
                                             </button>
                                         ))}
                                     </div>
@@ -251,13 +264,13 @@ export default function SimulationPage() {
                             {/* ÉTAPE 2: Type */}
                             {currentStep.id === "type" && (
                                 <motion.div key="type" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Nature du Contrat</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Nature du Contrat</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         {SUB_TYPES[formData.category]?.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => updateForm("type", type)}
-                                                className="glass py-8 px-6 border-white/5 hover:border-blue-500/30 hover:bg-blue-500/[0.03] transition-all duration-700 text-center font-bold uppercase text-[10px] tracking-[0.3em] text-white"
+                                                className="bg-gray-50 py-8 px-6 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 text-center font-bold uppercase text-[10px] tracking-[0.3em] text-black"
                                             >
                                                 {type}
                                             </button>
@@ -270,20 +283,20 @@ export default function SimulationPage() {
                             {/* ÉTAPES AUTO */}
                             {currentStep.id === "autoUsage" && (
                                 <motion.div key="autoUsage" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Usage du Véhicule</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Usage du Véhicule</h2>
                                     <div className="grid grid-cols-1 gap-5">
                                         {[
                                             { val: "Promenade & Affaires", desc: "Privé & Professionnel standard", icon: Briefcase },
                                             { val: "Transport Propre Compte", desc: "Transport de vos propres biens", icon: Car },
                                         ].map(item => (
-                                            <button key={item.val} onClick={() => updateForm("autoUsage", item.val)} className="glass p-8 border-white/5 hover:border-blue-500/30 hover:bg-blue-500/[0.03] transition-all duration-700 text-left group">
+                                            <button key={item.val} onClick={() => updateForm("autoUsage", item.val)} className="bg-gray-50 p-8 border border-black/5 hover:border-black hover:shadow-lg transition-all duration-500 text-left group">
                                                 <div className="flex items-center gap-6 mb-3">
-                                                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-blue-500/10 transition-colors duration-700">
-                                                        <item.icon size={18} className="text-blue-500" />
+                                                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:bg-black transition-colors duration-500 border border-black/5">
+                                                        <item.icon size={18} className="text-black group-hover:text-white transition-colors" />
                                                     </div>
-                                                    <span className="font-bold uppercase tracking-[0.2em] text-[11px] text-white">{item.val}</span>
+                                                    <span className="font-bold uppercase tracking-[0.2em] text-[11px] text-black">{item.val}</span>
                                                 </div>
-                                                <p className="text-gray-600 text-[10px] pl-16 font-light">{item.desc}</p>
+                                                <p className="text-gray-500 text-[10px] pl-16 font-light">{item.desc}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -293,13 +306,13 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoPower" && (
                                 <motion.div key="autoPower" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Puissance Fiscale</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Puissance Fiscale</h2>
                                     <div className="grid grid-cols-2 gap-5">
                                         {["7-10 CV", "11-14 CV"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoPower", val)} className="glass p-12 border-white/5 hover:border-blue-500/30 transition-all duration-700 text-center flex flex-col items-center justify-center">
-                                                <span className="font-black uppercase text-3xl tracking-widest text-white mb-4">{val}</span>
-                                                <div className="h-[1px] w-8 bg-blue-500/30 mb-4"></div>
-                                                <span className="text-[9px] font-bold text-gray-700 uppercase tracking-widest leading-none">{val === "7-10 CV" ? "Berline / Compacte" : "SUV / Premium"}</span>
+                                            <button key={val} onClick={() => updateForm("autoPower", val)} className="bg-gray-50 p-12 border border-black/5 hover:border-black hover:bg-black hover:text-white group transition-all duration-500 text-center flex flex-col items-center justify-center">
+                                                <span className="font-black uppercase text-3xl tracking-widest text-black group-hover:text-white mb-4 transition-colors">{val}</span>
+                                                <div className="h-[1px] w-8 bg-black/10 group-hover:bg-white/20 mb-4 transition-colors"></div>
+                                                <span className="text-[9px] font-bold text-gray-500 group-hover:text-gray-300 uppercase tracking-widest leading-none transition-colors">{val === "7-10 CV" ? "Berline / Compacte" : "SUV / Premium"}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -309,14 +322,14 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoEnergy" && (
                                 <motion.div key="autoEnergy" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Motorisation</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Motorisation</h2>
                                     <div className="grid grid-cols-2 gap-5">
                                         {["Essence", "Diesel"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoEnergy", val)} className="glass p-12 border-white/5 hover:border-blue-500/30 transition-all duration-700 text-center flex flex-col items-center gap-6 group">
-                                                <div className={`w-16 h-16 bg-white/5 rounded-full flex items-center justify-center transition-all duration-700 group-hover:scale-110 ${val === "Essence" ? "group-hover:bg-yellow-500/10" : "group-hover:bg-gray-400/10"}`}>
-                                                    <Zap size={24} className={val === "Essence" ? "text-yellow-500" : "text-gray-400"} />
+                                            <button key={val} onClick={() => updateForm("autoEnergy", val)} className="bg-gray-50 p-12 border border-black/5 hover:border-black group transition-all duration-500 text-center flex flex-col items-center gap-6">
+                                                <div className={`w-16 h-16 bg-white border border-black/5 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-black`}>
+                                                    <Zap size={24} className="text-black group-hover:text-white transition-colors" />
                                                 </div>
-                                                <span className="font-black uppercase text-xl tracking-[0.3em] text-white">{val}</span>
+                                                <span className="font-black uppercase text-xl tracking-[0.3em] text-black">{val}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -326,12 +339,12 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoDuration" && (
                                 <motion.div key="autoDuration" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Durée de Couverture</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Durée de Couverture</h2>
                                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                                         {["1 MOIS", "2 MOIS", "3 MOIS", "6 MOIS", "1 AN"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoDuration", val)} className="glass py-8 border-white/5 hover:border-white/20 transition-all duration-700 text-center flex flex-col items-center gap-4 group">
-                                                <Clock size={16} className="text-blue-500 transition-transform duration-700 group-hover:scale-110" />
-                                                <span className="font-bold uppercase text-[10px] tracking-widest text-white">{val}</span>
+                                            <button key={val} onClick={() => updateForm("autoDuration", val)} className="bg-gray-50 py-8 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 text-center flex flex-col items-center gap-4 group">
+                                                <Clock size={16} className="text-black group-hover:text-white transition-all duration-500 group-hover:scale-110" />
+                                                <span className="font-bold uppercase text-[10px] tracking-widest">{val}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -342,10 +355,10 @@ export default function SimulationPage() {
                             {/* ÉTAPE PRIORITY */}
                             {currentStep.id === "priority" && (
                                 <motion.div key="priority" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold font-oswald mb-10 uppercase text-center text-white/70 tracking-widest">Objectif Prioritaire</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Objectif Prioritaire</h2>
                                     <div className="grid grid-cols-1 gap-4">
                                         {["Prix minimum", "Couverture maximale", "Rapport Qualité/Prix"].map(p => (
-                                            <button key={p} onClick={() => updateForm("priority", p)} className="glass py-8 border-white/5 hover:border-blue-500/30 transition-all duration-700 uppercase text-[11px] font-black tracking-[0.3em] text-white">
+                                            <button key={p} onClick={() => updateForm("priority", p)} className="bg-gray-50 py-8 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 uppercase text-[11px] font-black tracking-[0.3em] text-black">
                                                 {p}
                                             </button>
                                         ))}
@@ -359,8 +372,8 @@ export default function SimulationPage() {
                                 <motion.div key="result" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="text-center">
                                     {loading ? (
                                         <div className="py-20 flex flex-col items-center gap-8">
-                                            <div className="w-16 h-16 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-                                            <p className="text-blue-400 font-bold uppercase tracking-[0.4em] text-[10px] animate-pulse">Analyse des tarifs en cours...</p>
+                                            <div className="w-16 h-16 border-2 border-black/10 border-t-black rounded-full animate-spin"></div>
+                                            <p className="text-black font-bold uppercase tracking-[0.4em] text-[10px] animate-pulse">Analyse des tarifs en cours...</p>
                                         </div>
                                     ) : (
                                         <>
@@ -368,90 +381,84 @@ export default function SimulationPage() {
                                                 initial={{ scale: 0 }}
                                                 animate={{ scale: 1 }}
                                                 transition={{ type: "spring", damping: 10, delay: 0.2 }}
-                                                className="w-24 h-24 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-10 text-blue-400 shadow-[0_0_50px_rgba(59,130,246,0.2)]"
+                                                className="w-24 h-24 bg-gray-50 border border-black/5 rounded-full flex items-center justify-center mx-auto mb-10 text-black shadow-lg"
                                             >
                                                 <Check size={48} />
                                             </motion.div>
 
                                             {formData.type === "Assurance Auto" ? (
                                                 <>
-                                                    <h2 className="text-4xl font-bold font-oswald uppercase mb-4 text-white tracking-tight">Analyse Terminée</h2>
+                                                    <h2 className="text-4xl font-bold uppercase mb-4 text-black tracking-tight">Analyse Terminée</h2>
                                                     <p className="text-gray-500 mb-12 font-light text-lg">
                                                         Comparatif RC Obligatoire — {formData.autoUsage} · {formData.autoPower} · {formData.autoEnergy} · {formData.autoDuration}
                                                     </p>
 
                                                     {/* Grille comparative multi-assureurs */}
                                                     <div className="grid grid-cols-1 gap-4 mb-12 text-left">
-                                                        {insurerResults.length > 0 ? (
-                                                            insurerResults.map((ins, i) => {
-                                                                const isLowest = ins.price === Math.min(...insurerResults.map(r => r.price as number));
+                                                        {results.length > 0 ? (
+                                                            results.map((ins, i) => {
+                                                                const isLowest = ins.price === Math.min(...results.map(r => r.price as number));
                                                                 return (
                                                                     <motion.div
                                                                         key={`${ins.name}-${i}`}
                                                                         initial={{ opacity: 0, y: 20 }}
                                                                         animate={{ opacity: 1, y: 0 }}
                                                                         transition={{ delay: 0.1 * i + 0.3 }}
-                                                                        className={`glass p-6 border relative overflow-hidden group ${isLowest ? "border-blue-500/40 bg-blue-500/[0.04]" : "border-white/5"}`}
+                                                                        className={`bg-white p-6 border relative overflow-hidden group ${isLowest ? "border-black shadow-xl" : "border-black/10 hover:border-black/30 transition-colors"}`}
                                                                     >
                                                                         {isLowest && (
-                                                                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
+                                                                            <div className="absolute top-0 left-0 w-full h-[4px] bg-black" />
                                                                         )}
                                                                         <div className="flex items-center justify-between gap-4">
                                                                             <div className="flex items-center gap-4">
-                                                                                {ins.logo ? (
-                                                                                    <div className="w-12 h-12 bg-white/5 rounded-sm overflow-hidden flex items-center justify-center flex-shrink-0 p-1">
-                                                                                        <img src={ins.logo} alt={ins.name} className="w-full h-full object-contain" />
-                                                                                    </div>
-                                                                                ) : (
-                                                                                    <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center flex-shrink-0">
-                                                                                        <Shield size={20} className="text-gray-600" />
-                                                                                    </div>
-                                                                                )}
+                                                                                <div className="w-12 h-12 bg-gray-50 border border-black/5 rounded-sm flex items-center justify-center flex-shrink-0">
+                                                                                    <Shield size={20} className="text-black" />
+                                                                                </div>
                                                                                 <div>
                                                                                     <div className="flex items-center gap-2 mb-1">
-                                                                                        <span className="font-bold uppercase text-[10px] tracking-widest text-white">{ins.name}</span>
+                                                                                        <span className="font-bold uppercase text-[10px] tracking-widest text-black">{ins.name}</span>
                                                                                         {ins.tag && (
-                                                                                            <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" : "bg-white/5 text-gray-500 border border-white/10"}`}>
+                                                                                            <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-black text-white" : "bg-gray-100 text-gray-600 border border-black/5"}`}>
                                                                                                 {ins.tag}
                                                                                             </span>
                                                                                         )}
                                                                                     </div>
-                                                                                    <p className="text-[9px] text-gray-600 font-light">{ins.guarantees}</p>
+                                                                                    <p className="text-[9px] text-gray-500 font-light">{ins.guarantees}</p>
                                                                                     {ins.rating && (
                                                                                         <div className="flex items-center gap-1 mt-1">
                                                                                             {Array.from({ length: 5 }).map((_, j) => (
-                                                                                                <Star key={j} size={8} className={j < Math.round(ins.rating!) ? "text-blue-400 fill-blue-400" : "text-gray-700"} />
+                                                                                                <Star key={j} size={8} className={j < Math.round(ins.rating!) ? "text-black fill-black" : "text-gray-200"} />
                                                                                             ))}
                                                                                         </div>
                                                                                     )}
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right flex-shrink-0">
-                                                                                <div className={`text-2xl font-black tabular-nums ${isLowest ? "text-white" : "text-gray-400"}`}>
+                                                                                <div className={`text-2xl font-black tabular-nums ${isLowest ? "text-black" : "text-gray-500"}`}>
                                                                                     {ins.price!.toLocaleString()}
                                                                                 </div>
-                                                                                <span className="text-[9px] font-bold text-blue-500 uppercase tracking-widest">F.CFA</span>
+                                                                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">F.CFA</span>
                                                                             </div>
                                                                         </div>
                                                                     </motion.div>
                                                                 );
                                                             })
                                                         ) : (
-                                                            <div className="glass p-12 text-center border-white/5">
+                                                            <div className="bg-gray-50 p-12 text-center border border-black/5">
                                                                 <p className="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Aucun tarif trouvé pour cette configuration</p>
                                                             </div>
                                                         )}
                                                     </div>
 
-                                                    <p className="text-[9px] text-gray-700 uppercase tracking-widest mb-12 font-light">
+                                                    <p className="text-[9px] text-gray-400 uppercase tracking-widest mb-12 font-light">
                                                         * Primes de référence Zone Rouge, Bénin. Tarifs définitifs selon souscription.
                                                     </p>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <h2 className="text-4xl font-bold font-oswald uppercase mb-6 text-white tracking-tight">Ciblage Effectué</h2>
+                                                    <h2 className="text-4xl font-bold uppercase mb-6 text-black tracking-tight">Ciblage Effectué</h2>
                                                     <p className="text-gray-500 mb-12 font-light text-lg max-w-lg mx-auto leading-relaxed">
-                                                        Nous avons identifié les protocoles optimaux pour votre protection <span className="text-white font-bold uppercase tracking-widest ml-1">{formData.type}</span>.
+                                                        Nous avons identifié les protocoles optimaux pour votre protection <span className="text-black font-bold uppercase tracking-widest ml-1">{formData.type}</span>.
                                                     </p>
                                                 </>
                                             )}
@@ -459,13 +466,13 @@ export default function SimulationPage() {
                                             <div className="flex flex-col sm:flex-row gap-5 max-w-2xl mx-auto">
                                                 <button
                                                     onClick={resetForm}
-                                                    className="flex-1 border border-white/5 bg-white/[0.02] text-gray-500 py-6 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/5 hover:text-white transition-all duration-700"
+                                                    className="flex-1 border border-black/10 bg-white text-gray-500 py-6 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-50 hover:text-black transition-all duration-500"
                                                 >
                                                     Nouvelle Session
                                                 </button>
                                                 <a
                                                     href={`/compare?type=${encodeURIComponent(formData.type)}`}
-                                                    className="flex-[1.5] bg-blue-600 text-white py-6 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-500 transition-all duration-700 shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:scale-105 active:scale-95 text-center"
+                                                    className="flex-[1.5] bg-black text-white py-6 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-gray-900 transition-all duration-500 hover:scale-105 active:scale-95 text-center shadow-xl"
                                                 >
                                                     Voir les Offres
                                                 </a>
@@ -484,7 +491,7 @@ export default function SimulationPage() {
 }
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
-    <button onClick={onClick} className="mt-16 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-700 hover:text-white transition-colors duration-700 flex items-center justify-center w-full gap-3 group">
-        <span className="transition-transform duration-700 group-hover:-translate-x-1">←</span> Configuration Précédente
+    <button onClick={onClick} className="mt-16 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 hover:text-black transition-colors duration-500 flex items-center justify-center w-full gap-3 group">
+        <span className="transition-transform duration-500 group-hover:-translate-x-1">←</span> Configuration Précédente
     </button>
 );
