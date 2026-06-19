@@ -78,7 +78,7 @@ const offresEntreprises = [
     },
     {
         id: "responsabilites-specifiques",
-        title: "Responsabilités & Spécifique",
+        title: "Responsabilités & Risques Spéciaux",
         icon: BriefcaseBusiness,
         image: "/images/entreprises_responsabilites.png",
         items: [
