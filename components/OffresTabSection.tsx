@@ -57,7 +57,7 @@ const offresEntreprises = [
         id: "sante-collaborateurs",
         title: "Santé & Collaborateurs",
         icon: Users2,
-        image: "/images/05.png",
+        image: "/images/entreprises_sante.png",
         items: [
             "Santé groupe & Autofinancement",
             "Collectifs santé et prévoyance",
@@ -68,7 +68,7 @@ const offresEntreprises = [
         id: "dommages-flottes",
         title: "Dommages & Flottes",
         icon: Building2,
-        image: "/images/06.png",
+        image: "/images/entreprises_dommages.png",
         items: [
             "Multirisque entreprise / professionnelle",
             "Flottes automobile",
@@ -80,7 +80,7 @@ const offresEntreprises = [
         id: "responsabilites-specifiques",
         title: "Responsabilités & Spécifique",
         icon: BriefcaseBusiness,
-        image: "/images/07.png",
+        image: "/images/entreprises_responsabilites.png",
         items: [
             "Responsabilité civile (Entreprise, Décennale, RCMS/D&O)",
             "Cyber sécurité",
@@ -92,7 +92,7 @@ const offresEntreprises = [
         id: "transports-cautions",
         title: "Transports & Cautions",
         icon: Anchor,
-        image: "/images/01.png",
+        image: "/images/entreprises_transports.png",
         items: [
             "Assurance transports (Marchandises, Aviation, Corps de navire)",
             "Crédit caution (Marchés, Commerciales, Garanties bancaires)"
