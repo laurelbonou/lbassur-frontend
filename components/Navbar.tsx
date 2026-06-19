@@ -50,8 +50,8 @@ export default function Navbar() {
             <Link href="/#offres" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Nos Offres
             </Link>
-            <Link href="/#services" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
-              Services
+            <Link href="/#methode" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Notre Méthode
             </Link>
             <Link href="/#actualites" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Actualités
@@ -106,11 +106,11 @@ export default function Navbar() {
               Nos Offres
             </Link>
             <Link 
-              href="/#services" 
+              href="/#methode" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
-              Services
+              Notre Méthode
             </Link>
             <Link 
               href="/#actualites" 

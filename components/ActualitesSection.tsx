@@ -27,7 +27,7 @@ const articles = [
 
 export default function ActualitesSection() {
     return (
-        <section className="py-32 bg-gray-50 border-b border-black/5 relative overflow-hidden">
+        <section className="py-32 bg-gray-50 border-b border-black/5 relative overflow-hidden" id="actualites">
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
                     <motion.div

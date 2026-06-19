@@ -38,7 +38,7 @@ const expertises = [
 
 export default function ExpertiseProcessSection() {
     return (
-        <section className="relative py-32 bg-gray-50 border-b border-black/5 overflow-hidden">
+        <section className="relative py-32 bg-gray-50 border-b border-black/5 overflow-hidden" id="methode">
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 <div className="text-center max-w-3xl mx-auto mb-20">
                     <motion.p 

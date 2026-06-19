@@ -70,7 +70,7 @@ export default function Footer() {
                 </ul>
             </div>
             
-            <div className="flex-1 w-full h-40 md:h-auto lg:h-40 xl:h-auto min-h-[160px] rounded-xl overflow-hidden border border-white/10 relative group">
+            <div className="flex-1 w-full min-h-[300px] rounded-xl overflow-hidden border border-white/10 relative group">
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31728.89134988086!2d2.4616229!3d6.3719005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x102355c709772ba3%3A0x1d2c6c0e5a6dc60!2sAgblangandan%2C%20Benin!5e0!3m2!1sfr!2sfr!4v1680000000000!5m2!1sfr!2sfr" 
                     width="100%" 
