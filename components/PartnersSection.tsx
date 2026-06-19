@@ -71,7 +71,7 @@ export default function PartnersSection() {
               <img
                 src={partner.logo}
                 alt={partner.name}
-                className="max-h-full max-w-full object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
           ))}
