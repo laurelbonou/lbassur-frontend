@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import { IARDT_TYPES, PERSONNES_TYPES, VIE_TYPES } from "@/lib/data";
+import { IARDT_TYPES, PERSONNES_TYPES, VIE_TYPES, INSURERS } from "@/lib/data";
 import { InsuranceCategory, InsuranceOffer } from "@/types/insurance";
 import {
     Search, Filter, ArrowUpDown, ShieldCheck, ChevronRight, Coins,
@@ -69,8 +69,6 @@ const TYPE_LISTS: Record<InsuranceCategory, string[]> = {
 
 // ─── Standalone Engine ────────────────────────────────────────────────────────
 
-const INSURERS = ["NSIA", "SUNU", "Allianz", "Axa", "Sanlam", "Atlantique"];
-
 function generateMockOffers(category: InsuranceCategory, type: string, budget: number): InsuranceOffer[] {
     const offers: InsuranceOffer[] = [];
     const count = Math.floor(Math.random() * 5) + 3; // 3 to 7 offers
@@ -79,7 +77,9 @@ function generateMockOffers(category: InsuranceCategory, type: string, budget: n
     const possibleTypes = type === "Tous" ? TYPE_LISTS[category] : [type];
     
     for (let i = 0; i < count; i++) {
-        const insurer = INSURERS[Math.floor(Math.random() * INSURERS.length)];
+        const insurerObj = INSURERS[Math.floor(Math.random() * INSURERS.length)];
+        const insurer = insurerObj.name;
+        const insurerSlug = insurerObj.slug;
         const insType = possibleTypes[Math.floor(Math.random() * possibleTypes.length)];
         
         // Base premium varies
@@ -100,7 +100,7 @@ function generateMockOffers(category: InsuranceCategory, type: string, budget: n
             insuranceType: insType,
             insuranceSubType: ["Formule Essentielle", "Formule Confort", "Formule Premium"][Math.floor(Math.random() * 3)],
             insurer,
-            insurerSlug: insurer.toLowerCase(),
+            insurerSlug: insurerSlug,
             premium: Math.round(basePremium / 1000) * 1000,
             coverageAmount: Math.round(coverageAmount / 100000) * 100000,
             franchise: Math.random() > 0.5 ? Math.round((basePremium * 0.1) / 5000) * 5000 : 0,
