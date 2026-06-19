@@ -81,7 +81,7 @@ export default function Footer() {
           {/* RIGHT SIDE: Map */}
           <div className="w-full h-[350px] lg:h-auto min-h-[350px] relative group border border-white/10">
               <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31728.89134988086!2d2.4616229!3d6.3719005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x102355c709772ba3%3A0x1d2c6c0e5a6dc60!2sAgblangandan%2C%20Benin!5e0!3m2!1sfr!2sfr!4v1680000000000!5m2!1sfr!2sfr" 
+                  src="https://maps.google.com/maps?width=100%25&height=100%25&hl=fr&q=LBASSUR%20Assurance,%20Agblangandan,%20B%C3%A9nin&t=&z=15&ie=UTF8&iwloc=B&output=embed" 
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
