@@ -453,11 +453,16 @@ export default function SimulationPage() {
                                                                                         )}
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="text-right flex-shrink-0">
-                                                                                    <div className={`text-xl lg:text-2xl font-black tabular-nums ${isLowest ? "text-white" : "text-gray-400"}`}>
-                                                                                        {ins.price!.toLocaleString()}
+                                                                                <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
+                                                                                    <div>
+                                                                                        <div className={`text-xl lg:text-2xl font-black tabular-nums ${isLowest ? "text-white" : "text-gray-400"}`}>
+                                                                                            {ins.price!.toLocaleString()}
+                                                                                        </div>
+                                                                                        <span className="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">F.CFA</span>
                                                                                     </div>
-                                                                                    <span className="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase tracking-widest">F.CFA</span>
+                                                                                    <a href="/souscription" className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-colors ${isLowest ? 'bg-white text-black hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                                                                                        Souscrire
+                                                                                    </a>
                                                                                 </div>
                                                                             </div>
                                                                         </motion.div>
