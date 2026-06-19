@@ -8,25 +8,25 @@ const aboutData = [
     {
         title: "À Propos",
         icon: Users,
-        image: "/images/a-propos.png",
+        image: "/images/a propos.png",
         description: "Fort de notre expérience au Bénin, notre cabinet s'engage à vous fournir des conseils transparents et des solutions sur mesure. Nous bâtissons des relations de confiance à long terme, basées sur la proximité et l'écoute."
     },
     {
         title: "Notre Vision",
         icon: Compass,
-        image: "/images/notre-vision.png",
+        image: "/images/notre vision.png",
         description: "Devenir le courtier de référence au Bénin et en Afrique de l'Ouest, reconnu pour son innovation, son expertise pointue et des solutions d'assurance adaptées aux réalités locales."
     },
     {
         title: "Nos Missions",
         icon: Target,
-        image: "/images/notre-mission.png",
+        image: "/images/nos-missions.png",
         description: "Défendre vos intérêts avec indépendance, vous accompagner dans la gestion globale de vos risques et vous garantir les meilleures couvertures au prix le plus juste."
     },
     {
         title: "Nos Valeurs",
         icon: Award,
-        image: "/images/nos-valeurs.png",
+        image: "/images/nos valeurs.png",
         description: "Transparence, intégrité, réactivité et excellence. Nous plaçons systématiquement l'humain au centre de toutes nos décisions et de notre accompagnement au quotidien, pour vous offrir un service inégalé."
     }
 ];
