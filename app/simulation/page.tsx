@@ -200,7 +200,7 @@ export default function SimulationPage() {
     };
 
     return (
-        <main className="bg-white text-black min-h-screen relative overflow-hidden">
+        <main className="bg-black text-white min-h-screen relative overflow-hidden">
             <Navbar />
 
             <div className="pt-40 pb-32 container mx-auto px-6 relative z-10 max-w-7xl">
@@ -209,14 +209,14 @@ export default function SimulationPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-block px-4 py-1 rounded-full mb-6 border border-black/10 bg-gray-50"
+                            className="inline-block px-4 py-1 rounded-full mb-6 border border-white/10 bg-white/5"
                         >
-                            <span className="text-black font-bold uppercase tracking-[0.4em] text-[9px]">Calcul Temps Réel</span>
+                            <span className="text-white font-bold uppercase tracking-[0.4em] text-[9px]">Calcul Temps Réel</span>
                         </motion.div>
-                        <h1 className="text-5xl md:text-7xl font-bold uppercase mb-6 text-black tracking-tight">
-                            Simulation <span className="text-gray-400">Intelligente</span>
+                        <h1 className="text-5xl md:text-7xl font-bold uppercase mb-6 text-white tracking-tight">
+                            Simulation <span className="text-gray-500">Intelligente</span>
                         </h1>
-                        <p className="text-gray-500 font-light text-lg max-w-xl mx-auto">
+                        <p className="text-gray-400 font-light text-lg max-w-xl mx-auto">
                             Précisez vos besoins pour obtenir une analyse instantanée et comparer les primes de plusieurs compagnies.
                         </p>
                     </div>
@@ -226,9 +226,9 @@ export default function SimulationPage() {
                         {steps.map((s, idx) => (
                             <div key={s.id} className="flex-1 flex flex-col gap-3">
                                 <div
-                                    className={`h-1 flex-1 transition-all duration-1000 ${idx <= currentStepIndex ? "bg-black" : "bg-gray-200"}`}
+                                    className={`h-1 flex-1 transition-all duration-1000 ${idx <= currentStepIndex ? "bg-white" : "bg-white/10"}`}
                                 />
-                                <span className={`text-[8px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-black" : "text-gray-400"}`}>
+                                <span className={`text-[8px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-white" : "text-gray-600"}`}>
                                     {s.title}
                                 </span>
                             </div>
@@ -240,21 +240,21 @@ export default function SimulationPage() {
                             {/* ÉTAPE 1: Catégorie */}
                             {currentStep.id === "category" && (
                                 <motion.div key="category" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }} className="space-y-6">
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Choisir un Domaine</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Choisir un Domaine</h2>
                                     <div className="grid grid-cols-1 gap-5">
                                         {CATEGORIES.map(cat => (
                                             <button
                                                 key={cat.id}
                                                 onClick={() => updateForm("category", cat.id)}
-                                                className="bg-gray-50 p-10 border border-black/5 hover:border-black/20 hover:shadow-lg transition-all duration-500 flex items-center justify-between group"
+                                                className="bg-white/5 p-10 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-500 flex items-center justify-between group"
                                             >
                                                 <div className="flex items-center gap-8">
-                                                    <div className={`w-16 h-16 bg-white rounded-full border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:bg-black group-hover:text-white`}>
-                                                        <cat.icon size={28} className="text-black group-hover:text-white transition-colors" />
+                                                    <div className={`w-16 h-16 bg-black rounded-full border border-white/10 flex items-center justify-center transition-all duration-500 group-hover:bg-white group-hover:text-black`}>
+                                                        <cat.icon size={28} className="text-white group-hover:text-black transition-colors" />
                                                     </div>
-                                                    <span className="font-bold uppercase tracking-[0.3em] text-[12px] text-black transition-all duration-500 group-hover:translate-x-2">{cat.title}</span>
+                                                    <span className="font-bold uppercase tracking-[0.3em] text-[12px] text-white transition-all duration-500 group-hover:translate-x-2">{cat.title}</span>
                                                 </div>
-                                                <ChevronRight className="text-gray-400 group-hover:text-black transition-all duration-500 group-hover:translate-x-2" size={20} />
+                                                <ChevronRight className="text-gray-500 group-hover:text-white transition-all duration-500 group-hover:translate-x-2" size={20} />
                                             </button>
                                         ))}
                                     </div>
@@ -264,13 +264,13 @@ export default function SimulationPage() {
                             {/* ÉTAPE 2: Type */}
                             {currentStep.id === "type" && (
                                 <motion.div key="type" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Nature du Contrat</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Nature du Contrat</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         {SUB_TYPES[formData.category]?.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => updateForm("type", type)}
-                                                className="bg-gray-50 py-8 px-6 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 text-center font-bold uppercase text-[10px] tracking-[0.3em] text-black"
+                                                className="bg-white/5 py-8 px-6 border border-white/10 hover:border-white hover:bg-white hover:text-black transition-all duration-500 text-center font-bold uppercase text-[10px] tracking-[0.3em] text-white"
                                             >
                                                 {type}
                                             </button>
@@ -283,20 +283,20 @@ export default function SimulationPage() {
                             {/* ÉTAPES AUTO */}
                             {currentStep.id === "autoUsage" && (
                                 <motion.div key="autoUsage" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Usage du Véhicule</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Usage du Véhicule</h2>
                                     <div className="grid grid-cols-1 gap-5">
                                         {[
                                             { val: "Promenade & Affaires", desc: "Privé & Professionnel standard", icon: Briefcase },
                                             { val: "Transport Propre Compte", desc: "Transport de vos propres biens", icon: Car },
                                         ].map(item => (
-                                            <button key={item.val} onClick={() => updateForm("autoUsage", item.val)} className="bg-gray-50 p-8 border border-black/5 hover:border-black hover:shadow-lg transition-all duration-500 text-left group">
+                                            <button key={item.val} onClick={() => updateForm("autoUsage", item.val)} className="bg-white/5 p-8 border border-white/10 hover:border-white/40 hover:bg-white/10 transition-all duration-500 text-left group">
                                                 <div className="flex items-center gap-6 mb-3">
-                                                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:bg-black transition-colors duration-500 border border-black/5">
-                                                        <item.icon size={18} className="text-black group-hover:text-white transition-colors" />
+                                                    <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center group-hover:bg-white transition-colors duration-500 border border-white/10">
+                                                        <item.icon size={18} className="text-white group-hover:text-black transition-colors" />
                                                     </div>
-                                                    <span className="font-bold uppercase tracking-[0.2em] text-[11px] text-black">{item.val}</span>
+                                                    <span className="font-bold uppercase tracking-[0.2em] text-[11px] text-white">{item.val}</span>
                                                 </div>
-                                                <p className="text-gray-500 text-[10px] pl-16 font-light">{item.desc}</p>
+                                                <p className="text-gray-400 text-[10px] pl-16 font-light">{item.desc}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -306,13 +306,13 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoPower" && (
                                 <motion.div key="autoPower" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Puissance Fiscale</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Puissance Fiscale</h2>
                                     <div className="grid grid-cols-2 gap-5">
                                         {["7-10 CV", "11-14 CV"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoPower", val)} className="bg-gray-50 p-12 border border-black/5 hover:border-black hover:bg-black hover:text-white group transition-all duration-500 text-center flex flex-col items-center justify-center">
-                                                <span className="font-black uppercase text-3xl tracking-widest text-black group-hover:text-white mb-4 transition-colors">{val}</span>
-                                                <div className="h-[1px] w-8 bg-black/10 group-hover:bg-white/20 mb-4 transition-colors"></div>
-                                                <span className="text-[9px] font-bold text-gray-500 group-hover:text-gray-300 uppercase tracking-widest leading-none transition-colors">{val === "7-10 CV" ? "Berline / Compacte" : "SUV / Premium"}</span>
+                                            <button key={val} onClick={() => updateForm("autoPower", val)} className="bg-white/5 p-12 border border-white/10 hover:border-white hover:bg-white hover:text-black group transition-all duration-500 text-center flex flex-col items-center justify-center">
+                                                <span className="font-black uppercase text-3xl tracking-widest text-white group-hover:text-black mb-4 transition-colors">{val}</span>
+                                                <div className="h-[1px] w-8 bg-white/20 group-hover:bg-black/20 mb-4 transition-colors"></div>
+                                                <span className="text-[9px] font-bold text-gray-400 group-hover:text-gray-600 uppercase tracking-widest leading-none transition-colors">{val === "7-10 CV" ? "Berline / Compacte" : "SUV / Premium"}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -322,14 +322,14 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoEnergy" && (
                                 <motion.div key="autoEnergy" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Motorisation</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Motorisation</h2>
                                     <div className="grid grid-cols-2 gap-5">
                                         {["Essence", "Diesel"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoEnergy", val)} className="bg-gray-50 p-12 border border-black/5 hover:border-black group transition-all duration-500 text-center flex flex-col items-center gap-6">
-                                                <div className={`w-16 h-16 bg-white border border-black/5 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-black`}>
-                                                    <Zap size={24} className="text-black group-hover:text-white transition-colors" />
+                                            <button key={val} onClick={() => updateForm("autoEnergy", val)} className="bg-white/5 p-12 border border-white/10 hover:border-white/40 hover:bg-white/10 group transition-all duration-500 text-center flex flex-col items-center gap-6">
+                                                <div className={`w-16 h-16 bg-black border border-white/10 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-white`}>
+                                                    <Zap size={24} className="text-white group-hover:text-black transition-colors" />
                                                 </div>
-                                                <span className="font-black uppercase text-xl tracking-[0.3em] text-black">{val}</span>
+                                                <span className="font-black uppercase text-xl tracking-[0.3em] text-white">{val}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -339,11 +339,11 @@ export default function SimulationPage() {
 
                             {currentStep.id === "autoDuration" && (
                                 <motion.div key="autoDuration" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Durée de Couverture</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Durée de Couverture</h2>
                                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                                         {["1 MOIS", "2 MOIS", "3 MOIS", "6 MOIS", "1 AN"].map(val => (
-                                            <button key={val} onClick={() => updateForm("autoDuration", val)} className="bg-gray-50 py-8 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 text-center flex flex-col items-center gap-4 group">
-                                                <Clock size={16} className="text-black group-hover:text-white transition-all duration-500 group-hover:scale-110" />
+                                            <button key={val} onClick={() => updateForm("autoDuration", val)} className="bg-white/5 py-8 border border-white/10 hover:border-white hover:bg-white hover:text-black transition-all duration-500 text-center flex flex-col items-center gap-4 group">
+                                                <Clock size={16} className="text-white group-hover:text-black transition-all duration-500 group-hover:scale-110" />
                                                 <span className="font-bold uppercase text-[10px] tracking-widest">{val}</span>
                                             </button>
                                         ))}
@@ -355,10 +355,10 @@ export default function SimulationPage() {
                             {/* ÉTAPE PRIORITY */}
                             {currentStep.id === "priority" && (
                                 <motion.div key="priority" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
-                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-400 tracking-widest">Objectif Prioritaire</h2>
+                                    <h2 className="text-2xl font-bold mb-10 uppercase text-center text-gray-500 tracking-widest">Objectif Prioritaire</h2>
                                     <div className="grid grid-cols-1 gap-4">
                                         {["Prix minimum", "Couverture maximale", "Rapport Qualité/Prix"].map(p => (
-                                            <button key={p} onClick={() => updateForm("priority", p)} className="bg-gray-50 py-8 border border-black/5 hover:border-black hover:bg-black hover:text-white transition-all duration-500 uppercase text-[11px] font-black tracking-[0.3em] text-black">
+                                            <button key={p} onClick={() => updateForm("priority", p)} className="bg-white/5 py-8 border border-white/10 hover:border-white hover:bg-white hover:text-black transition-all duration-500 uppercase text-[11px] font-black tracking-[0.3em] text-white">
                                                 {p}
                                             </button>
                                         ))}
@@ -372,8 +372,8 @@ export default function SimulationPage() {
                                 <motion.div key="result" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="text-center">
                                     {loading ? (
                                         <div className="py-20 flex flex-col items-center gap-8">
-                                            <div className="w-16 h-16 border-2 border-black/10 border-t-black rounded-full animate-spin"></div>
-                                            <p className="text-black font-bold uppercase tracking-[0.4em] text-[10px] animate-pulse">Analyse des tarifs en cours...</p>
+                                            <div className="w-16 h-16 border-2 border-white/10 border-t-white rounded-full animate-spin"></div>
+                                            <p className="text-white font-bold uppercase tracking-[0.4em] text-[10px] animate-pulse">Analyse des tarifs en cours...</p>
                                         </div>
                                     ) : (
                                         <>
@@ -381,15 +381,15 @@ export default function SimulationPage() {
                                                 initial={{ scale: 0 }}
                                                 animate={{ scale: 1 }}
                                                 transition={{ type: "spring", damping: 10, delay: 0.2 }}
-                                                className="w-24 h-24 bg-gray-50 border border-black/5 rounded-full flex items-center justify-center mx-auto mb-10 text-black shadow-lg"
+                                                className="w-24 h-24 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-10 text-white shadow-lg"
                                             >
                                                 <Check size={48} />
                                             </motion.div>
 
                                             {formData.type === "Assurance Auto" ? (
                                                 <>
-                                                    <h2 className="text-4xl font-bold uppercase mb-4 text-black tracking-tight">Analyse Terminée</h2>
-                                                    <p className="text-gray-500 mb-12 font-light text-lg">
+                                                    <h2 className="text-4xl font-bold uppercase mb-4 text-white tracking-tight">Analyse Terminée</h2>
+                                                    <p className="text-gray-400 mb-12 font-light text-lg">
                                                         Comparatif RC Obligatoire — {formData.autoUsage} · {formData.autoPower} · {formData.autoEnergy} · {formData.autoDuration}
                                                     </p>
 
@@ -404,61 +404,61 @@ export default function SimulationPage() {
                                                                         initial={{ opacity: 0, y: 20 }}
                                                                         animate={{ opacity: 1, y: 0 }}
                                                                         transition={{ delay: 0.1 * i + 0.3 }}
-                                                                        className={`bg-white p-6 border relative overflow-hidden group ${isLowest ? "border-black shadow-xl" : "border-black/10 hover:border-black/30 transition-colors"}`}
+                                                                        className={`bg-white/5 p-6 border relative overflow-hidden group ${isLowest ? "border-white bg-white/10" : "border-white/10 hover:border-white/30 transition-colors"}`}
                                                                     >
                                                                         {isLowest && (
-                                                                            <div className="absolute top-0 left-0 w-full h-[4px] bg-black" />
+                                                                            <div className="absolute top-0 left-0 w-full h-[4px] bg-white" />
                                                                         )}
                                                                         <div className="flex items-center justify-between gap-4">
                                                                             <div className="flex items-center gap-4">
-                                                                                <div className="w-12 h-12 bg-gray-50 border border-black/5 rounded-sm flex items-center justify-center flex-shrink-0">
-                                                                                    <Shield size={20} className="text-black" />
+                                                                                <div className="w-12 h-12 bg-black border border-white/10 rounded-sm flex items-center justify-center flex-shrink-0">
+                                                                                    <Shield size={20} className="text-white" />
                                                                                 </div>
                                                                                 <div>
                                                                                     <div className="flex items-center gap-2 mb-1">
-                                                                                        <span className="font-bold uppercase text-[10px] tracking-widest text-black">{ins.name}</span>
+                                                                                        <span className="font-bold uppercase text-[10px] tracking-widest text-white">{ins.name}</span>
                                                                                         {ins.tag && (
-                                                                                            <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-black text-white" : "bg-gray-100 text-gray-600 border border-black/5"}`}>
+                                                                                            <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-white text-black" : "bg-white/10 text-gray-300 border border-white/10"}`}>
                                                                                                 {ins.tag}
                                                                                             </span>
                                                                                         )}
                                                                                     </div>
-                                                                                    <p className="text-[9px] text-gray-500 font-light">{ins.guarantees}</p>
+                                                                                    <p className="text-[9px] text-gray-400 font-light">{ins.guarantees}</p>
                                                                                     {ins.rating && (
                                                                                         <div className="flex items-center gap-1 mt-1">
                                                                                             {Array.from({ length: 5 }).map((_, j) => (
-                                                                                                <Star key={j} size={8} className={j < Math.round(ins.rating!) ? "text-black fill-black" : "text-gray-200"} />
+                                                                                                <Star key={j} size={8} className={j < Math.round(ins.rating!) ? "text-white fill-white" : "text-gray-600"} />
                                                                                             ))}
                                                                                         </div>
                                                                                     )}
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right flex-shrink-0">
-                                                                                <div className={`text-2xl font-black tabular-nums ${isLowest ? "text-black" : "text-gray-500"}`}>
+                                                                                <div className={`text-2xl font-black tabular-nums ${isLowest ? "text-white" : "text-gray-400"}`}>
                                                                                     {ins.price!.toLocaleString()}
                                                                                 </div>
-                                                                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">F.CFA</span>
+                                                                                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">F.CFA</span>
                                                                             </div>
                                                                         </div>
                                                                     </motion.div>
                                                                 );
                                                             })
                                                         ) : (
-                                                            <div className="bg-gray-50 p-12 text-center border border-black/5">
-                                                                <p className="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Aucun tarif trouvé pour cette configuration</p>
+                                                            <div className="bg-white/5 p-12 text-center border border-white/10">
+                                                                <p className="text-gray-400 uppercase tracking-widest text-[10px] font-bold">Aucun tarif trouvé pour cette configuration</p>
                                                             </div>
                                                         )}
                                                     </div>
 
-                                                    <p className="text-[9px] text-gray-400 uppercase tracking-widest mb-12 font-light">
+                                                    <p className="text-[9px] text-gray-500 uppercase tracking-widest mb-12 font-light">
                                                         * Primes de référence Zone Rouge, Bénin. Tarifs définitifs selon souscription.
                                                     </p>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <h2 className="text-4xl font-bold uppercase mb-6 text-black tracking-tight">Ciblage Effectué</h2>
-                                                    <p className="text-gray-500 mb-12 font-light text-lg max-w-lg mx-auto leading-relaxed">
-                                                        Nous avons identifié les protocoles optimaux pour votre protection <span className="text-black font-bold uppercase tracking-widest ml-1">{formData.type}</span>.
+                                                    <h2 className="text-4xl font-bold uppercase mb-6 text-white tracking-tight">Ciblage Effectué</h2>
+                                                    <p className="text-gray-400 mb-12 font-light text-lg max-w-lg mx-auto leading-relaxed">
+                                                        Nous avons identifié les protocoles optimaux pour votre protection <span className="text-white font-bold uppercase tracking-widest ml-1">{formData.type}</span>.
                                                     </p>
                                                 </>
                                             )}
@@ -466,13 +466,13 @@ export default function SimulationPage() {
                                             <div className="flex flex-col sm:flex-row gap-5 max-w-2xl mx-auto">
                                                 <button
                                                     onClick={resetForm}
-                                                    className="flex-1 border border-black/10 bg-white text-gray-500 py-6 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-50 hover:text-black transition-all duration-500"
+                                                    className="flex-1 border border-white/10 bg-transparent text-gray-400 py-6 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/5 hover:text-white transition-all duration-500"
                                                 >
                                                     Nouvelle Session
                                                 </button>
                                                 <a
                                                     href={`/compare?type=${encodeURIComponent(formData.type)}`}
-                                                    className="flex-[1.5] bg-black text-white py-6 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-gray-900 transition-all duration-500 hover:scale-105 active:scale-95 text-center shadow-xl"
+                                                    className="flex-[1.5] bg-white text-black py-6 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-gray-200 transition-all duration-500 hover:scale-105 active:scale-95 text-center shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                                                 >
                                                     Voir les Offres
                                                 </a>
@@ -491,7 +491,7 @@ export default function SimulationPage() {
 }
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
-    <button onClick={onClick} className="mt-16 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 hover:text-black transition-colors duration-500 flex items-center justify-center w-full gap-3 group">
+    <button onClick={onClick} className="mt-16 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-500 hover:text-white transition-colors duration-500 flex items-center justify-center w-full gap-3 group">
         <span className="transition-transform duration-500 group-hover:-translate-x-1">←</span> Configuration Précédente
     </button>
 );
