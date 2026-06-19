@@ -24,7 +24,7 @@ export default function TestimonialsSection() {
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-7xl">
-        <div className="mb-20">
+        <div className="mb-20 text-center max-w-2xl mx-auto">
           <motion.p 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
