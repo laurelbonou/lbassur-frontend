@@ -17,14 +17,37 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+    };
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setIsSent(true);
+        e.currentTarget.reset();
+        setTimeout(() => setIsSent(false), 5000);
+      } else {
+        alert("Une erreur s'est produite lors de l'envoi. Veuillez vérifier que la clé API est bien configurée.");
+      }
+    } catch (error) {
+      alert("Erreur de connexion au serveur.");
+    } finally {
       setIsSubmitting(false);
-      setIsSent(true);
-      setTimeout(() => setIsSent(false), 5000);
-    }, 1500);
+    }
   };
 
   return (
@@ -79,6 +102,7 @@ export default function ContactSection() {
                   <input 
                     type="text" 
                     id="name"
+                    name="name"
                     className="peer w-full bg-transparent border-b border-black/20 text-black px-0 py-2 text-sm focus:outline-none focus:border-black transition-colors placeholder-transparent"
                     placeholder="Nom complet"
                     required
@@ -91,6 +115,7 @@ export default function ContactSection() {
                   <input 
                     type="email" 
                     id="email"
+                    name="email"
                     className="peer w-full bg-transparent border-b border-black/20 text-black px-0 py-2 text-sm focus:outline-none focus:border-black transition-colors placeholder-transparent"
                     placeholder="Adresse email"
                     required
@@ -104,6 +129,7 @@ export default function ContactSection() {
               <div className="relative">
                 <select 
                   id="subject"
+                  name="subject"
                   className="peer w-full bg-transparent border-b border-black/20 text-black px-0 py-2 text-sm focus:outline-none focus:border-black transition-colors appearance-none cursor-pointer placeholder-transparent"
                   required
                   defaultValue=""
@@ -122,6 +148,7 @@ export default function ContactSection() {
               <div className="relative">
                 <textarea 
                   id="message"
+                  name="message"
                   rows={4}
                   className="peer w-full bg-transparent border-b border-black/20 text-black px-0 py-2 text-sm focus:outline-none focus:border-black transition-colors resize-none placeholder-transparent"
                   placeholder="Votre message"
