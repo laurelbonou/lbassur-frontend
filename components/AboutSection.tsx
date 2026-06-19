@@ -145,7 +145,7 @@ export default function AboutSection() {
                                 <img 
                                     src={item.image} 
                                     alt={item.title} 
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 z-0 brightness-[0.4] group-hover:brightness-[0.3]"
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 z-0 brightness-[0.4] group-hover:brightness-[0.3] grayscale group-hover:grayscale-0"
                                 />
                                 
                                 {/* Dark Gradient Overlay */}

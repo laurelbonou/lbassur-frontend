@@ -56,11 +56,10 @@ export default function Hero() {
                             className="absolute inset-0 z-0"
                         >
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-[1]" />
-                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors duration-700 z-[1]" />
                             <img
                                 src={slide.image}
                                 alt={slide.alt}
-                                className="absolute inset-0 w-full h-full object-cover brightness-110 grayscale group-hover:grayscale-0 transition-all duration-700"
+                                className="absolute inset-0 w-full h-full object-cover brightness-110 transition-all duration-700"
                             />
                         </motion.div>
                     ) : null
