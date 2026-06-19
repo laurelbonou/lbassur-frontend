@@ -9,7 +9,7 @@ const offresParticuliers = [
         id: "sante-famille",
         title: "Santé & Famille",
         icon: HeartPulse,
-        image: "/images/petite fille avec son père en couleur.png",
+        image: "/images/santé et famille.png",
         items: [
             "Assurances santé (particulier)",
             "Prévoyance familiale",
@@ -20,7 +20,7 @@ const offresParticuliers = [
         id: "auto-voyage",
         title: "Auto & Voyage",
         icon: Car,
-        image: "/images/03.png",
+        image: "/images/auto et voyage.png",
         items: [
             "Assurance automobile",
             "Assurance moto",
@@ -31,7 +31,7 @@ const offresParticuliers = [
         id: "habitation-quotidien",
         title: "Habitation & Quotidien",
         icon: Home,
-        image: "/images/04.png",
+        image: "/images/habitation et quotidien.png",
         items: [
             "Multirisque habitation",
             "Responsabilité civile chef de famille",
@@ -42,7 +42,7 @@ const offresParticuliers = [
         id: "vie-avenir",
         title: "Vie & Avenir",
         icon: GraduationCap,
-        image: "/images/fille diplomée avec ses parents.png",
+        image: "/images/vie et avenir.png",
         items: [
             "Épargne retraite",
             "Assurance études",
@@ -185,10 +185,10 @@ export default function OffresTabSection() {
                                                 <img 
                                                     src={offre.image} 
                                                     alt={offre.title} 
-                                                    className="w-full h-full object-cover grayscale opacity-60 mix-blend-overlay transition-transform duration-[2s] ease-out group-hover:scale-105"
+                                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-90 transition-all duration-[2s] ease-out group-hover:scale-105"
                                                 />
                                                 {/* Elegant Dark Gradient */}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
