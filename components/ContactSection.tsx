@@ -11,7 +11,6 @@ const corporateInfo = [
   { label: "Forme juridique", value: "SARL" },
   { label: "Immatriculation RCCM", value: "RB/PNO/21 B 3312" },
   { label: "Année de création", value: "2021" },
-  { label: "Capital", value: "10 000 000 FCFA" },
 ];
 
 export default function ContactSection() {
