@@ -111,12 +111,72 @@ function SouscriptionContent() {
     setCurrentStep(5);
   };
 
-  const handlePayment = () => {
+  const [reference, setReference] = useState<string | null>(null);
+
+  const handlePayment = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
+    try {
+      // 1. Upload Documents
+      const formDataUpload = new FormData();
+      uploadedFiles.forEach((f) => formDataUpload.append("files", f.file));
+      
+      const uploadRes = await fetch("http://localhost:4000/api/uploads", {
+        method: "POST",
+        body: formDataUpload,
+      });
+      if (!uploadRes.ok) throw new Error("Upload failed");
+      const { files } = await uploadRes.json();
+
+      // Ensure doc types are correctly matched with files (since they might come back in order or we map by originalname)
+      // For safety, we map them by originalname
+      const documents = files.map((f: any) => {
+        const originalDoc = uploadedFiles.find(u => u.file.name === f.originalname);
+        return {
+          type: originalDoc ? originalDoc.docId : "document",
+          filename: f.filename,
+          url: f.url,
+          mimeType: f.mimeType,
+          size: f.size,
+        };
+      });
+
+      // 2. Create Quote Request
+      const quoteRes = await fetch("http://localhost:4000/api/quote-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
+          phone: formData["phone"] || formData["telephone"] || "00000000",
+          email: formData["email"] || formData["courriel"] || undefined,
+          insuranceType: selectedConfig?.id,
+          budget: selectedOffer?.price || 0,
+          payload: { ...formData, price: selectedOffer?.price },
+          documents,
+        }),
+      });
+      if (!quoteRes.ok) throw new Error("Quote Request creation failed");
+      const quote = await quoteRes.json();
+
+      // 3. Simulate Payment
+      const payRes = await fetch("http://localhost:4000/api/payments/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quoteRequestId: quote.id,
+          method: "MTN",
+        }),
+      });
+      if (!payRes.ok) throw new Error("Payment simulation failed");
+      const paymentData = await payRes.json();
+
+      setReference(paymentData.payment.reference);
       setCurrentStep(6);
-    }, 3000);
+    } catch (error) {
+      console.error(error);
+      alert("Une erreur est survenue lors du traitement.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const currentStepId = STEPS[currentStep]?.id;
@@ -416,7 +476,7 @@ function SouscriptionContent() {
                     Numéro de référence
                   </span>
                   <span className="text-lg font-black text-white tabular-nums tracking-widest">
-                    LB-{Date.now().toString(36).toUpperCase().slice(-8)}
+                    {reference || `LB-${Date.now().toString(36).toUpperCase().slice(-8)}`}
                   </span>
                 </div>
 
