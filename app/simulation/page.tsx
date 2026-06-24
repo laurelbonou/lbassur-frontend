@@ -460,7 +460,10 @@ export default function SimulationPage() {
                                                                                         </div>
                                                                                         <span className="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">F.CFA</span>
                                                                                     </div>
-                                                                                    <a href="/souscription" className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-colors ${isLowest ? 'bg-white text-black hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                                                                                    <a 
+                                                                                        href={`/souscription?type=${encodeURIComponent(formData.type)}&insurer=${encodeURIComponent(ins.name)}&price=${ins.price}&guarantees=${encodeURIComponent(ins.guarantees)}`}
+                                                                                        className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-colors ${isLowest ? 'bg-white text-black hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                                                                    >
                                                                                         Souscrire
                                                                                     </a>
                                                                                 </div>

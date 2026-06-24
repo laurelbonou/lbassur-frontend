@@ -226,8 +226,8 @@ function OfferCard({ offer, index }: { offer: InsuranceOffer; index: number }) {
                     <Link href={`/assureur/${offer.insurerSlug}`} className="w-full bg-white text-black py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all duration-700 flex items-center justify-center gap-2">
                         Voir l'offre <ChevronRight size={14} />
                     </Link>
-                    <Link href="/souscription" className="w-full border border-white/10 bg-black flex items-center justify-center text-center text-gray-400 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-white hover:border-white/30 transition-all duration-700">
-                        Souscrire
+                    <Link href={`/souscription?type=${encodeURIComponent(offer.insuranceType)}&insurer=${encodeURIComponent(offer.insurer)}&price=${offer.premium}&guarantees=${encodeURIComponent(offer.guarantees.join(', '))}`} className="w-full border border-white/10 bg-black flex items-center justify-center text-center text-gray-400 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-white hover:border-white/30 transition-all duration-700">
+                        Souscrire en Ligne
                     </Link>
                 </div>
             </div>

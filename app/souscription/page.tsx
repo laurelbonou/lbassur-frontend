@@ -1,245 +1,454 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StepIndicator from "@/components/souscription/StepIndicator";
+import DynamicForm from "@/components/souscription/DynamicForm";
+import DocumentUploader from "@/components/souscription/DocumentUploader";
+import PrintableForm from "@/components/souscription/PrintableForm";
+import SubscriptionSummary from "@/components/souscription/SubscriptionSummary";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, UploadCloud, CreditCard, ChevronRight, ChevronLeft, Download, ShieldCheck, User } from "lucide-react";
+import {
+  Shield, CheckCircle, CreditCard, ChevronLeft, ChevronRight,
+  Download, ShieldCheck, AlertCircle, Printer,
+} from "lucide-react";
 import Link from "next/link";
+import { getFormConfigByInsuranceType, getAvailableForms } from "@/lib/insurance-forms";
+import type { InsuranceFormConfig } from "@/lib/insurance-forms";
+
+// ── Steps ────────────────────────────────────────────────────────────────────
 
 const STEPS = [
-    { id: 1, title: "Informations" },
-    { id: 2, title: "Documents" },
-    { id: 3, title: "Paiement" },
-    { id: 4, title: "Confirmation" }
+  { id: "select",    title: "Type d'Assurance",    shortTitle: "Type" },
+  { id: "form",      title: "Fiche de Cotation",   shortTitle: "Fiche" },
+  { id: "documents", title: "Pièces Justificatives", shortTitle: "Pièces" },
+  { id: "printable", title: "Fiche Imprimable",    shortTitle: "Impression" },
+  { id: "summary",   title: "Récapitulatif",       shortTitle: "Résumé" },
+  { id: "payment",   title: "Paiement",            shortTitle: "Paiement" },
+  { id: "success",   title: "Confirmation",        shortTitle: "Confirmé" },
 ];
 
+// ── Main Page ────────────────────────────────────────────────────────────────
+
 export default function SouscriptionPage() {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [isProcessing, setIsProcessing] = useState(false);
+  return (
+    <Suspense fallback={
+      <main className="bg-black min-h-screen text-white flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      </main>
+    }>
+      <SouscriptionContent />
+    </Suspense>
+  );
+}
 
-    const nextStep = () => {
-        if (currentStep === 3) {
-            setIsProcessing(true);
-            setTimeout(() => {
-                setIsProcessing(false);
-                setCurrentStep(4);
-            }, 3000); // Simulate payment processing
-        } else if (currentStep < 4) {
-            setCurrentStep(prev => prev + 1);
-        }
-    };
+function SouscriptionContent() {
+  const searchParams = useSearchParams();
 
-    const prevStep = () => {
-        if (currentStep > 1) setCurrentStep(prev => prev - 1);
-    };
+  // State
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedConfig, setSelectedConfig] = useState<InsuranceFormConfig | null>(null);
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{ docId: string; file: File; preview?: string }[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<{
+    insurer: string;
+    price: number;
+    guarantees: string;
+    type: string;
+  } | null>(null);
 
-    return (
-        <main className="bg-black min-h-screen text-white relative">
-            <Navbar />
-            
-            <div className="pt-32 pb-24 container mx-auto px-6 max-w-4xl relative z-10">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-4 block">
-                        Finalisation du Contrat
-                    </span>
-                    <h1 className="text-4xl md:text-5xl font-bold font-oswald text-white mb-8 uppercase tracking-tighter">
-                        Souscription <span className="text-gray-600">Sécurisée</span>
-                    </h1>
+  // Initialize from URL params
+  useEffect(() => {
+    const type = searchParams.get("type");
+    const insurer = searchParams.get("insurer");
+    const price = searchParams.get("price");
+    const guarantees = searchParams.get("guarantees");
 
-                    {/* Progress Bar */}
-                    <div className="flex justify-between items-center max-w-2xl mx-auto relative">
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-white/10 -z-10"></div>
-                        <div 
-                            className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] bg-white transition-all duration-700 -z-10"
-                            style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
-                        ></div>
-                        
-                        {STEPS.map((step) => (
-                            <div key={step.id} className="flex flex-col items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 ${
-                                    currentStep > step.id ? "bg-white text-black" : 
-                                    currentStep === step.id ? "bg-black text-white border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]" : 
-                                    "bg-black text-gray-600 border border-white/10"
-                                }`}>
-                                    {currentStep > step.id ? <CheckCircle size={14} /> : step.id}
-                                </div>
-                                <span className={`text-[8px] font-black uppercase tracking-widest hidden md:block ${
-                                    currentStep >= step.id ? "text-white" : "text-gray-600"
-                                }`}>
-                                    {step.title}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+    if (type) {
+      const config = getFormConfigByInsuranceType(type);
+      if (config && config.available) {
+        setSelectedConfig(config);
+        setCurrentStep(1); // Skip type selection
+      }
+    }
+
+    if (insurer && price) {
+      setSelectedOffer({
+        insurer: decodeURIComponent(insurer),
+        price: parseInt(price, 10) || 0,
+        guarantees: guarantees ? decodeURIComponent(guarantees) : "",
+        type: type ? decodeURIComponent(type) : "",
+      });
+    }
+  }, [searchParams]);
+
+  // Navigation
+  const goToStep = (step: number) => setCurrentStep(step);
+
+  const handleSelectType = (config: InsuranceFormConfig) => {
+    setSelectedConfig(config);
+    setCurrentStep(1);
+  };
+
+  const handleFormComplete = (data: Record<string, unknown>) => {
+    setFormData(data);
+    setCurrentStep(2);
+  };
+
+  const handleDocumentsComplete = (files: { docId: string; file: File; preview?: string }[]) => {
+    setUploadedFiles(files);
+    setCurrentStep(3);
+  };
+
+  const handlePrintableComplete = () => {
+    setCurrentStep(4);
+  };
+
+  const handleProceedToPayment = () => {
+    setCurrentStep(5);
+  };
+
+  const handlePayment = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setCurrentStep(6);
+    }, 3000);
+  };
+
+  const currentStepId = STEPS[currentStep]?.id;
+
+  return (
+    <main className="bg-black min-h-screen text-white relative">
+      <Navbar />
+
+      <div className="pt-32 pb-24 container mx-auto px-6 max-w-4xl relative z-10">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-4 block"
+          >
+            Souscription 100% Digitale
+          </motion.span>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold text-white mb-8 uppercase tracking-tighter"
+          >
+            {selectedConfig ? selectedConfig.title : "Souscription"}{" "}
+            <span className="text-gray-600">en Ligne</span>
+          </motion.h1>
+
+          {/* Step Indicator */}
+          {currentStep < STEPS.length - 1 && (
+            <StepIndicator
+              steps={STEPS.slice(0, -1)}
+              currentStep={currentStep}
+            />
+          )}
+        </div>
+
+        {/* Form Container */}
+        <div className="bg-[#050505] border border-white/10 p-6 md:p-10 shadow-2xl relative overflow-hidden min-h-[400px]">
+          <AnimatePresence mode="wait">
+            {/* ── STEP 0: TYPE SELECTION ── */}
+            {currentStepId === "select" && (
+              <motion.div
+                key="select"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
+                  <Shield className="text-gray-400" size={20} />
+                  <h2 className="text-lg font-black uppercase tracking-widest text-white">
+                    Choisissez votre type d&apos;assurance
+                  </h2>
                 </div>
 
-                {/* Form Container */}
-                <div className="bg-[#050505] border border-white/10 p-8 md:p-12 shadow-2xl relative overflow-hidden min-h-[400px]">
-                    <AnimatePresence mode="wait">
-                        {/* ── STEP 1: INFORMATIONS ── */}
-                        {currentStep === 1 && (
-                            <motion.div
-                                key="step1"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="space-y-6"
-                            >
-                                <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
-                                    <User className="text-gray-400" size={20} />
-                                    <h2 className="text-lg font-black uppercase tracking-widest">Informations du Souscripteur</h2>
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Nom</label>
-                                        <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm" placeholder="Ex: DOE" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Prénoms</label>
-                                        <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm" placeholder="Ex: John" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Téléphone</label>
-                                        <input type="tel" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm" placeholder="+229 XX XX XX XX" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Email</label>
-                                        <input type="email" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm" placeholder="contact@exemple.com" />
-                                    </div>
-                                    <div className="space-y-2 md:col-span-2 mt-4">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Immatriculation / Info Bien (Optionnel)</label>
-                                        <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm" placeholder="Ex: AB 1234 RB" />
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* ── STEP 2: DOCUMENTS ── */}
-                        {currentStep === 2 && (
-                            <motion.div
-                                key="step2"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="space-y-6"
-                            >
-                                <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
-                                    <UploadCloud className="text-gray-400" size={20} />
-                                    <h2 className="text-lg font-black uppercase tracking-widest">Pièces Justificatives</h2>
-                                </div>
-
-                                <p className="text-xs text-gray-400 mb-6">Afin de valider votre contrat, merci de fournir une copie de votre pièce d'identité et de la carte grise (si assurance auto).</p>
-
-                                <div className="border-2 border-dashed border-white/20 bg-white/[0.02] p-12 flex flex-col items-center justify-center text-center hover:border-white/40 transition-colors cursor-pointer group">
-                                    <UploadCloud size={32} className="text-gray-600 group-hover:text-white transition-colors mb-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white mb-2">Glissez vos fichiers ici</span>
-                                    <span className="text-xs text-gray-500">ou cliquez pour parcourir (PDF, JPG, PNG)</span>
-                                </div>
-                                
-                                <div className="flex items-center gap-3 bg-white/5 p-4 border border-white/10">
-                                    <CheckCircle size={16} className="text-gray-500" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Passeport_John_Doe.pdf (Simulé)</span>
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* ── STEP 3: PAIEMENT ── */}
-                        {currentStep === 3 && (
-                            <motion.div
-                                key="step3"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                className="space-y-6 relative"
-                            >
-                                {isProcessing && (
-                                    <div className="absolute inset-0 bg-[#050505]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
-                                        <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white animate-pulse">Traitement Sécurisé en cours...</p>
-                                    </div>
-                                )}
-
-                                <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
-                                    <CreditCard className="text-gray-400" size={20} />
-                                    <h2 className="text-lg font-black uppercase tracking-widest">Règlement</h2>
-                                </div>
-
-                                <div className="bg-white/5 border border-white/10 p-6 mb-8 flex justify-between items-center">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Montant à Payer</span>
-                                    <span className="text-2xl font-black text-white tabular-nums">150 000 <small className="text-xs text-gray-500">F.CFA</small></span>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
-                                        <div className="w-12 h-12 bg-[#FFCC00] rounded-full flex items-center justify-center text-black font-black text-xs">MTN</div>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Mobile Money</span>
-                                    </button>
-                                    <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
-                                        <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-black text-xs"><CreditCard size={20} /></div>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Carte Visa / Mastercard</span>
-                                    </button>
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* ── STEP 4: SUCCESS ── */}
-                        {currentStep === 4 && (
-                            <motion.div
-                                key="step4"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="text-center py-12"
-                            >
-                                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
-                                    <ShieldCheck size={48} className="text-black" />
-                                </div>
-                                <h2 className="text-3xl font-bold font-oswald uppercase tracking-tight text-white mb-4">Paiement Confirmé</h2>
-                                <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
-                                    Votre souscription a bien été enregistrée. Un conseiller prendra contact avec vous dans les prochaines 24h pour la remise de la carte physique.
-                                </p>
-
-                                <button className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors">
-                                    <Download size={14} />
-                                    Télécharger l'Attestation Provisoire
-                                </button>
-                                
-                                <div className="mt-8">
-                                    <Link href="/" className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1">
-                                        Retour à l'accueil
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Navigation Buttons (Hidden on Step 4) */}
-                    {currentStep < 4 && (
-                        <div className="mt-12 flex justify-between items-center border-t border-white/10 pt-6">
-                            {currentStep > 1 ? (
-                                <button 
-                                    onClick={prevStep}
-                                    className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
-                                >
-                                    <ChevronLeft size={14} /> Précédent
-                                </button>
-                            ) : <div></div>}
-
-                            <button 
-                                onClick={nextStep}
-                                disabled={isProcessing}
-                                className="flex items-center gap-2 bg-white text-black px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors disabled:opacity-50"
-                            >
-                                {currentStep === 3 ? "Payer & Valider" : "Continuer"} <ChevronRight size={14} />
-                            </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {getAvailableForms().map((config) => (
+                    <button
+                      key={config.id}
+                      onClick={() => handleSelectType(config)}
+                      className="bg-white/5 p-6 border border-white/10 hover:border-white/40 hover:bg-white/10 transition-all duration-500 text-left group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-white block mb-1 group-hover:translate-x-1 transition-transform">
+                            {config.title}
+                          </span>
+                          <span className="text-[8px] text-gray-500">{config.subtitle}</span>
                         </div>
-                    )}
+                        <ChevronRight size={16} className="text-gray-600 group-hover:text-white transition-colors" />
+                      </div>
+                    </button>
+                  ))}
                 </div>
-            </div>
 
-            <Footer />
-        </main>
-    );
+                {/* Phase 2 preview */}
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+                    Bientôt Disponible
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {["RC", "Transport", "Caution", "TRC", "Flotte", "Incendie", "Cyber", "Agricole"].map((t) => (
+                      <span
+                        key={t}
+                        className="px-3 py-1.5 border border-white/5 text-[7px] font-bold uppercase tracking-widest text-gray-600"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── STEP 1: DYNAMIC FORM ── */}
+            {currentStepId === "form" && selectedConfig && (
+              <motion.div
+                key="form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <DynamicForm
+                  config={selectedConfig}
+                  onComplete={handleFormComplete}
+                  onBack={() => goToStep(0)}
+                  initialData={formData}
+                />
+              </motion.div>
+            )}
+
+            {/* ── STEP 2: DOCUMENTS ── */}
+            {currentStepId === "documents" && selectedConfig && (
+              <motion.div
+                key="documents"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <DocumentUploader
+                  requiredDocuments={selectedConfig.requiredDocuments}
+                  onComplete={handleDocumentsComplete}
+                  onBack={() => goToStep(1)}
+                  initialFiles={uploadedFiles}
+                />
+              </motion.div>
+            )}
+
+            {/* ── STEP 3: PRINTABLE FORM ── */}
+            {currentStepId === "printable" && selectedConfig && (
+              <motion.div
+                key="printable"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <PrintableForm
+                  config={selectedConfig}
+                  formData={formData}
+                  onContinue={handlePrintableComplete}
+                  onBack={() => goToStep(2)}
+                />
+              </motion.div>
+            )}
+
+            {/* ── STEP 4: SUMMARY ── */}
+            {currentStepId === "summary" && selectedConfig && (
+              <motion.div
+                key="summary"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <SubscriptionSummary
+                  config={selectedConfig}
+                  formData={formData}
+                  uploadedFilesCount={uploadedFiles.length}
+                  selectedOffer={selectedOffer}
+                  onProceedToPayment={handleProceedToPayment}
+                  onBack={() => goToStep(3)}
+                  onEditStep={(step) => goToStep(step)}
+                />
+              </motion.div>
+            )}
+
+            {/* ── STEP 5: PAYMENT ── */}
+            {currentStepId === "payment" && (
+              <motion.div
+                key="payment"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6 relative"
+              >
+                {isProcessing && (
+                  <div className="absolute inset-0 bg-[#050505]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+                    <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin mb-6" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white animate-pulse">
+                      Traitement Sécurisé en cours...
+                    </p>
+                    <p className="text-[8px] text-gray-500 mt-2 uppercase tracking-wider">
+                      Ne fermez pas cette page
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
+                  <CreditCard className="text-gray-400" size={20} />
+                  <h2 className="text-lg font-black uppercase tracking-widest">Règlement</h2>
+                </div>
+
+                {/* Amount */}
+                <div className="bg-white/5 border border-white/10 p-6 flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    Montant à Payer
+                  </span>
+                  <span className="text-2xl font-black text-white tabular-nums">
+                    {selectedOffer ? selectedOffer.price.toLocaleString("fr-FR") : "—"}{" "}
+                    <small className="text-xs text-gray-500">F.CFA</small>
+                  </span>
+                </div>
+
+                {/* Payment Methods */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-[#FFCC00] rounded-full flex items-center justify-center text-black font-black text-xs">
+                      MTN
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      Mobile Money
+                    </span>
+                    <span className="text-[7px] text-gray-500 uppercase tracking-wider">
+                      MTN · Moov · Celtiis
+                    </span>
+                  </button>
+                  <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-black text-xs">
+                      <CreditCard size={20} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      Carte Bancaire
+                    </span>
+                    <span className="text-[7px] text-gray-500 uppercase tracking-wider">
+                      Visa · Mastercard
+                    </span>
+                  </button>
+                </div>
+
+                {/* Notice */}
+                <div className="flex items-start gap-3 bg-white/[0.02] border border-white/10 p-4">
+                  <AlertCircle size={14} className="text-gray-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-[8px] text-gray-500 leading-relaxed">
+                    Le paiement est sécurisé et chiffré. Vous recevrez une attestation provisoire par email
+                    immédiatement après confirmation du paiement.
+                  </p>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex justify-between items-center border-t border-white/10 pt-6">
+                  <button
+                    onClick={() => goToStep(4)}
+                    className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+                  >
+                    <ChevronLeft size={14} /> Retour
+                  </button>
+                  <button
+                    onClick={handlePayment}
+                    disabled={isProcessing}
+                    className="flex items-center gap-2 bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-colors disabled:opacity-50 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                  >
+                    Payer & Valider <ChevronRight size={14} />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── STEP 6: SUCCESS ── */}
+            {currentStepId === "success" && (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-12"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 10, delay: 0.2 }}
+                  className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                >
+                  <ShieldCheck size={48} className="text-black" />
+                </motion.div>
+
+                <h2 className="text-3xl font-bold uppercase tracking-tight text-white mb-4">
+                  Souscription Confirmée
+                </h2>
+                <p className="text-gray-400 text-sm mb-4 max-w-md mx-auto">
+                  Votre demande de souscription{" "}
+                  <span className="text-white font-bold">{selectedConfig?.title}</span>{" "}
+                  {selectedOffer && (
+                    <>
+                      auprès de{" "}
+                      <span className="text-white font-bold">{selectedOffer.insurer}</span>
+                    </>
+                  )}{" "}
+                  a bien été enregistrée.
+                </p>
+                <p className="text-gray-500 text-xs mb-8 max-w-md mx-auto">
+                  Un conseiller LBASSUR prendra contact avec vous dans les prochaines 24h
+                  pour la finalisation et la remise de vos documents.
+                </p>
+
+                {/* Reference Number */}
+                <div className="bg-white/5 border border-white/10 p-4 max-w-sm mx-auto mb-8">
+                  <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mb-1">
+                    Numéro de référence
+                  </span>
+                  <span className="text-lg font-black text-white tabular-nums tracking-widest">
+                    LB-{Date.now().toString(36).toUpperCase().slice(-8)}
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button className="inline-flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors">
+                    <Download size={14} />
+                    Attestation Provisoire
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="inline-flex items-center justify-center gap-3 border border-white/20 text-white px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                  >
+                    <Printer size={14} />
+                    Imprimer la Fiche
+                  </button>
+                </div>
+
+                <div className="mt-10">
+                  <Link
+                    href="/"
+                    className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1"
+                  >
+                    Retour à l&apos;accueil
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <Footer />
+    </main>
+  );
 }
