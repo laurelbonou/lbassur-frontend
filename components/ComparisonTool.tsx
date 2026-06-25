@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 // ─── Types & Config ───────────────────────────────────────────────────────────
 
@@ -69,55 +70,7 @@ const TYPE_LISTS: Record<InsuranceCategory, string[]> = {
 
 // ─── Standalone Engine ────────────────────────────────────────────────────────
 
-function generateMockOffers(category: InsuranceCategory, type: string, budget: number): InsuranceOffer[] {
-    const offers: InsuranceOffer[] = [];
-    const count = Math.floor(Math.random() * 5) + 3; // 3 to 7 offers
-    
-    // Determine possible types based on type filter
-    const possibleTypes = type === "Tous" ? TYPE_LISTS[category] : [type];
-    
-    for (let i = 0; i < count; i++) {
-        const insurerObj = INSURERS[Math.floor(Math.random() * INSURERS.length)];
-        const insurer = insurerObj.name;
-        const insurerSlug = insurerObj.slug;
-        const insType = possibleTypes[Math.floor(Math.random() * possibleTypes.length)];
-        
-        // Base premium varies
-        let basePremium = 0;
-        if (category === "IARDT") basePremium = 50000 + Math.random() * 300000;
-        if (category === "PERSONNES") basePremium = 20000 + Math.random() * 150000;
-        if (category === "VIE") basePremium = 10000 + Math.random() * 50000;
-        
-        // If it's over budget by a lot, occasionally skip to simulate filtering
-        if (basePremium > budget && Math.random() > 0.3) continue;
-
-        const rating = 3.5 + Math.random() * 1.5;
-        const coverageAmount = basePremium * (10 + Math.random() * 40);
-        
-        offers.push({
-            id: `mock-${Date.now()}-${i}`,
-            category,
-            insuranceType: insType,
-            insuranceSubType: ["Formule Essentielle", "Formule Confort", "Formule Premium"][Math.floor(Math.random() * 3)],
-            insurer,
-            insurerSlug: insurerSlug,
-            premium: Math.round(basePremium / 1000) * 1000,
-            coverageAmount: Math.round(coverageAmount / 100000) * 100000,
-            franchise: Math.random() > 0.5 ? Math.round((basePremium * 0.1) / 5000) * 5000 : 0,
-            guarantees: ["Responsabilité Civile", "Défense et Recours", "Assistance 24/7"].slice(0, 2 + Math.floor(Math.random() * 2)),
-            optionalGuarantees: [],
-            exclusions: [],
-            duration: "1 an",
-            waitingPeriod: ["Aucun", "15 jours", "1 mois"][Math.floor(Math.random() * 3)],
-            terms: "",
-            rating: Number(rating.toFixed(1)),
-            isMandatory: i === 0 && rating > 4.5, // Make the first high rating one "Recommended"
-            tag: i === 0 ? "Recommandé" : (i === 1 ? "Meilleur Prix" : undefined)
-        });
-    }
-    
-    return offers;
-}
+// Removed generateMockOffers
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -309,30 +262,53 @@ export default function ComparisonTool() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Simulate network request with standalone engine
-        setLoading(true);
-        const timer = setTimeout(() => {
-            let mockData = generateMockOffers(activeCategory, selectedType, budget);
-            
-            // Client-side search
-            if (searchQuery) {
-                mockData = mockData.filter(o => 
-                    o.insurer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    o.insuranceType.toLowerCase().includes(searchQuery.toLowerCase())
-                );
+        const fetchOffers = async () => {
+            setLoading(true);
+            try {
+                const params = {
+                    category: activeCategory,
+                    type: selectedType,
+                    maxPremium: budget,
+                    q: searchQuery,
+                    sortBy: sortBy,
+                };
+                
+                const data = await api.getOffers(params);
+                
+                const mappedOffers: InsuranceOffer[] = data.map((o: any) => ({
+                    id: o.id,
+                    category: o.category,
+                    insuranceType: o.insuranceTypeLabel,
+                    insuranceSubType: o.insuranceSubType,
+                    insurer: o.insurer?.name || "Assureur Inconnu",
+                    insurerSlug: o.insurer?.slug || "",
+                    premium: Number(o.premium),
+                    rate: o.rate ? Number(o.rate) : undefined,
+                    coverageAmount: Number(o.coverageAmount),
+                    franchise: Number(o.franchise),
+                    guarantees: o.guarantees || [],
+                    optionalGuarantees: o.optionalGuarantees || [],
+                    exclusions: o.exclusions || [],
+                    duration: o.duration,
+                    waitingPeriod: o.waitingPeriod,
+                    terms: o.terms || "",
+                    rating: Number(o.rating),
+                    isMandatory: o.isMandatory,
+                    tag: o.tag
+                }));
+
+                setOffers(mappedOffers);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des offres", error);
+                setOffers([]);
+            } finally {
+                setLoading(false);
             }
-            
-            // Client-side sort
-            mockData.sort((a, b) => {
-                if (sortBy === "premium") return a.premium - b.premium;
-                if (sortBy === "rating") return b.rating - a.rating;
-                if (sortBy === "coverage") return b.coverageAmount - a.coverageAmount;
-                return 0;
-            });
-            
-            setOffers(mockData);
-            setLoading(false);
-        }, 800); // Artificial delay to show loading state
+        };
+
+        const timer = setTimeout(() => {
+            fetchOffers();
+        }, 300); // Debounce pour la recherche
 
         return () => clearTimeout(timer);
     }, [activeCategory, selectedType, budget, searchQuery, sortBy]);

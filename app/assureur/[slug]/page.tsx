@@ -1,7 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { INSURERS, MOCK_OFFERS } from "@/lib/data";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ExternalLink, Globe, MapPin, Phone } from "lucide-react";
@@ -10,10 +11,28 @@ export default function InsurerDetailsPage() {
     const params = useParams();
     const slug = params.slug as string;
 
-    const insurer = INSURERS.find(i => i.slug === slug);
-    const offers = MOCK_OFFERS.filter(o => o.insurerSlug === slug);
+    const [insurer, setInsurer] = useState<any>(null);
+    const [offers, setOffers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    if (!insurer) return <div>Assureur non trouvé.</div>;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const ins = await api.getInsurerBySlug(slug);
+                setInsurer(ins);
+                const offs = await api.getOffers({ insurerSlug: slug });
+                setOffers(offs);
+            } catch (error) {
+                console.error("Failed to load insurer data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [slug]);
+
+    if (loading) return <main className="bg-black text-white min-h-screen flex items-center justify-center"><div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></main>;
+    if (!insurer) return <main className="bg-black text-white min-h-screen flex items-center justify-center"><div>Assureur non trouvé.</div></main>;
 
     return (
         <main className="bg-black text-white min-h-screen">
@@ -56,8 +75,8 @@ export default function InsurerDetailsPage() {
                                 <div key={offer.id} className="p-8 border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 transition-all rounded-xl">
                                     <div className="flex justify-between items-start mb-6">
                                         <div>
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1 block">{offer.insuranceType}</span>
-                                            <h3 className="text-xl font-bold uppercase text-white">Garantie Performance</h3>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1 block">{offer.insuranceTypeLabel}</span>
+                                            <h3 className="text-xl font-bold uppercase text-white">{offer.insuranceSubType || "Garantie Standard"}</h3>
                                         </div>
                                         <div className="text-right">
                                             <span className="text-xl font-black text-white">{offer.premium.toLocaleString()} FCFA</span>
@@ -78,7 +97,7 @@ export default function InsurerDetailsPage() {
                             <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed font-light">
                                 <p>
                                     {insurer.name} est présent sur le marché béninois depuis plusieurs décennies, offrant des produits adaptés aux réalités locales.
-                                    Reconnue pour la qualité de son service client et sa rapidité d'indemnisation, la compagnie se classe parmi les leaders du secteur {insurer.categories.join(' & ')}.
+                                    Reconnue pour la qualité de son service client et sa rapidité d'indemnisation, la compagnie se classe parmi les leaders du secteur {insurer.categories?.join(' & ') || "de l'assurance"}.
                                 </p>
                             </div>
                         </div>

@@ -5,52 +5,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Car, Heart, ChevronRight, Check, Briefcase, Zap, Clock, Coins, Star } from "lucide-react";
+import { api } from "@/lib/api";
 
-// ─── Tarifs L'Africaine des Assurances (Zone Rouge, RC+DR+IA) ─────────────────
-
-type TarifMap = Record<string, Record<string, Record<string, Record<string, number>>>>;
-
-const AFRICAINE_TARIFFS: TarifMap = {
-    "Promenade & Affaires": {
-        "7-10 CV": {
-            "Essence": { "1 MOIS": 21537, "2 MOIS": 26474, "3 MOIS": 31413, "6 MOIS": 38201, "1 AN": 54632 },
-            "Diesel": { "1 MOIS": 24765, "2 MOIS": 30625, "3 MOIS": 36486, "6 MOIS": 44545, "1 AN": 63858 }
-        },
-        "11-14 CV": {
-            "Essence": { "1 MOIS": 24765, "2 MOIS": 30625, "3 MOIS": 36486, "6 MOIS": 44545, "1 AN": 63858 },
-            "Diesel": { "1 MOIS": 29610, "2 MOIS": 36855, "3 MOIS": 44097, "6 MOIS": 54059, "1 AN": 77697 }
-        }
-    },
-    "Transport Propre Compte": {
-        "7-10 CV": {
-            "Essence": { "1 MOIS": 29556, "2 MOIS": 36784, "3 MOIS": 44013, "6 MOIS": 53953, "1 AN": 78142 },
-            "Diesel": { "1 MOIS": 38171, "2 MOIS": 47861, "3 MOIS": 57552, "6 MOIS": 70876, "1 AN": 102758 }
-        },
-        "11-14 CV": {
-            "Essence": { "1 MOIS": 38171, "2 MOIS": 47861, "3 MOIS": 57552, "6 MOIS": 70876, "1 AN": 102758 },
-            "Diesel": { "1 MOIS": 46390, "2 MOIS": 58429, "3 MOIS": 70467, "6 MOIS": 87021, "1 AN": 126241 }
-        }
-    }
-};
-
-// ─── Tarifs NOBILA Assurances TALD 2025 (Zone Rouge, S1/C1, RC+DR+IA+CEDEAO) ─
-
-const NOBILA_PA_TARIFFS: Record<string, Record<string, number>> = {
-    "7-10 CV": { "1 MOIS": 19966, "2 MOIS": 24927, "3 MOIS": 29886, "6 MOIS": 36707, "1 AN": 64609 },
-    "11-14 CV": { "1 MOIS": 21449, "2 MOIS": 26834, "3 MOIS": 32217, "6 MOIS": 39621, "1 AN": 69907 },
-};
-
-const NOBILA_TPC_TARIFFS: Record<string, Record<string, number>> = {
-    "7-10 CV": { "1 MOIS": 33126, "2 MOIS": 41272, "3 MOIS": 49303, "6 MOIS": 60155, "1 AN": 102274 },
-    "11-14 CV": { "1 MOIS": 42625, "2 MOIS": 53484, "3 MOIS": 64229, "6 MOIS": 78813, "1 AN": 136198 },
-};
-
-// ─── Tarif CIMA (plancher légal, Zone Rouge, RC+DR+IA+CB) ────────────────────
-
-const CIMA_PA_TARIFFS: Record<string, Record<string, number>> = {
-    "7-10 CV": { "1 MOIS": 20740, "3 MOIS": 30797, "6 MOIS": 37708, "1 AN": 54633 },
-    "11-14 CV": { "1 MOIS": 23975, "3 MOIS": 35872, "6 MOIS": 44051, "1 AN": 63859 },
-};
+// Removed mock tariffs
 
 // ─── Types & Données ──────────────────────────────────────────────────────────
 
@@ -118,56 +75,36 @@ export default function SimulationPage() {
 
     const computeResults = (data: FormData) => {
         setLoading(true);
-        setTimeout(() => {
-            const { autoUsage, autoPower, autoEnergy, autoDuration } = data;
-            const newResults = [];
-
-            // Africaine
-            const africainePrice = AFRICAINE_TARIFFS[autoUsage]?.[autoPower]?.[autoEnergy]?.[autoDuration];
-            if (africainePrice) {
-                newResults.push({
-                    name: "L'Africaine des Assurances",
-                    price: africainePrice,
-                    guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident",
-                    tag: "Recommandé",
-                    rating: 4.8,
-                    logo: null
-                });
+        const fetchSimulations = async () => {
+            try {
+                const payload = {
+                    usage: data.autoUsage,
+                    power: data.autoPower,
+                    energy: data.autoEnergy,
+                    duration: data.autoDuration
+                };
+                
+                const response = await api.simulateAuto(payload);
+                
+                const mappedResults = response.results.map((r: any) => ({
+                    name: r.insurer,
+                    price: Number(r.price),
+                    guarantees: r.guarantees.join(' + '),
+                    tag: r.tag,
+                    rating: r.rating,
+                    logo: r.logoUrl
+                }));
+                
+                setResults(mappedResults);
+            } catch (error) {
+                console.error("Erreur de simulation", error);
+                setResults([]);
+            } finally {
+                setLoading(false);
             }
+        };
 
-            // Nobila
-            const nobilaTable = autoUsage === "Promenade & Affaires" ? NOBILA_PA_TARIFFS : NOBILA_TPC_TARIFFS;
-            const nobilaPrice = nobilaTable[autoPower]?.[autoDuration];
-            if (nobilaPrice) {
-                newResults.push({
-                    name: "NOBILA Assurances",
-                    price: nobilaPrice,
-                    guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident + Carte CEDEAO",
-                    tag: "Couverture Étendue",
-                    rating: 4.5,
-                    logo: null
-                });
-            }
-
-            // CIMA
-            if (autoUsage === "Promenade & Affaires") {
-                const cimaPrice = CIMA_PA_TARIFFS[autoPower]?.[autoDuration];
-                if (cimaPrice) {
-                    newResults.push({
-                        name: "Tarif Légal CIMA",
-                        price: cimaPrice,
-                        guarantees: "RC Obligatoire + Défense & Recours + Individuelle Accident + Carte Brune",
-                        tag: "Plancher Minimum",
-                        rating: 4.0,
-                        logo: null
-                    });
-                }
-            }
-
-            newResults.sort((a, b) => a.price - b.price);
-            setResults(newResults);
-            setLoading(false);
-        }, 1500);
+        fetchSimulations();
     };
 
     const nextStep = () => {

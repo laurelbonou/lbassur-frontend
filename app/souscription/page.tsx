@@ -15,6 +15,7 @@ import {
   Download, ShieldCheck, AlertCircle, Printer,
 } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 import { getFormConfigByInsuranceType, getAvailableForms } from "@/lib/insurance-forms";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";
 
@@ -120,12 +121,8 @@ function SouscriptionContent() {
       const formDataUpload = new FormData();
       uploadedFiles.forEach((f) => formDataUpload.append("files", f.file));
       
-      const uploadRes = await fetch("http://localhost:4000/api/uploads", {
-        method: "POST",
-        body: formDataUpload,
-      });
-      if (!uploadRes.ok) throw new Error("Upload failed");
-      const { files } = await uploadRes.json();
+      const uploadData = await api.uploadDocuments(formDataUpload);
+      const { files } = uploadData;
 
       // Ensure doc types are correctly matched with files (since they might come back in order or we map by originalname)
       // For safety, we map them by originalname
@@ -141,10 +138,7 @@ function SouscriptionContent() {
       });
 
       // 2. Create Quote Request
-      const quoteRes = await fetch("http://localhost:4000/api/quote-requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const quote = await api.createQuoteRequest({
           fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
           phone: formData["phone"] || formData["telephone"] || "00000000",
           email: formData["email"] || formData["courriel"] || undefined,
@@ -152,22 +146,10 @@ function SouscriptionContent() {
           budget: selectedOffer?.price || 0,
           payload: { ...formData, price: selectedOffer?.price },
           documents,
-        }),
       });
-      if (!quoteRes.ok) throw new Error("Quote Request creation failed");
-      const quote = await quoteRes.json();
 
       // 3. Simulate Payment
-      const payRes = await fetch("http://localhost:4000/api/payments/simulate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quoteRequestId: quote.id,
-          method: "MTN",
-        }),
-      });
-      if (!payRes.ok) throw new Error("Payment simulation failed");
-      const paymentData = await payRes.json();
+      const paymentData = await api.simulatePayment(quote.id, "MTN");
 
       setReference(paymentData.payment.reference);
       setCurrentStep(6);
