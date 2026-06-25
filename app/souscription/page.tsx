@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import StepIndicator from "@/components/souscription/StepIndicator";
 import DynamicForm from "@/components/souscription/DynamicForm";
 import DocumentUploader from "@/components/souscription/DocumentUploader";
-import PrintableForm from "@/components/souscription/PrintableForm";
+
 import SubscriptionSummary from "@/components/souscription/SubscriptionSummary";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -25,7 +25,6 @@ const STEPS = [
   { id: "select",    title: "Type d'Assurance",    shortTitle: "Type" },
   { id: "form",      title: "Fiche de Cotation",   shortTitle: "Fiche" },
   { id: "documents", title: "Pièces Justificatives", shortTitle: "Pièces" },
-  { id: "printable", title: "Fiche Imprimable",    shortTitle: "Impression" },
   { id: "summary",   title: "Récapitulatif",       shortTitle: "Résumé" },
   { id: "payment",   title: "Paiement",            shortTitle: "Paiement" },
   { id: "success",   title: "Confirmation",        shortTitle: "Confirmé" },
@@ -101,18 +100,15 @@ function SouscriptionContent() {
 
   const handleDocumentsComplete = (files: { docId: string; file: File; preview?: string }[]) => {
     setUploadedFiles(files);
-    setCurrentStep(3);
-  };
-
-  const handlePrintableComplete = () => {
-    setCurrentStep(4);
+    setCurrentStep(3); // Go to summary
   };
 
   const handleProceedToPayment = () => {
-    setCurrentStep(5);
+    setCurrentStep(4); // Go to payment
   };
 
   const [reference, setReference] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -152,7 +148,10 @@ function SouscriptionContent() {
       const paymentData = await api.simulatePayment(quote.id, "MTN");
 
       setReference(paymentData.payment.reference);
-      setCurrentStep(6);
+      if (paymentData.receiptUrl) {
+        setReceiptUrl(`${process.env.NEXT_PUBLIC_API_URL}${paymentData.receiptUrl}`);
+      }
+      setCurrentStep(5); // Go to success
     } catch (error) {
       console.error(error);
       alert("Une erreur est survenue lors du traitement.");
@@ -288,24 +287,7 @@ function SouscriptionContent() {
               </motion.div>
             )}
 
-            {/* ── STEP 3: PRINTABLE FORM ── */}
-            {currentStepId === "printable" && selectedConfig && (
-              <motion.div
-                key="printable"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <PrintableForm
-                  config={selectedConfig}
-                  formData={formData}
-                  onContinue={handlePrintableComplete}
-                  onBack={() => goToStep(2)}
-                />
-              </motion.div>
-            )}
-
-            {/* ── STEP 4: SUMMARY ── */}
+            {/* ── STEP 3: SUMMARY ── */}
             {currentStepId === "summary" && selectedConfig && (
               <motion.div
                 key="summary"
@@ -319,13 +301,13 @@ function SouscriptionContent() {
                   uploadedFilesCount={uploadedFiles.length}
                   selectedOffer={selectedOffer}
                   onProceedToPayment={handleProceedToPayment}
-                  onBack={() => goToStep(3)}
+                  onBack={() => goToStep(2)}
                   onEditStep={(step) => goToStep(step)}
                 />
               </motion.div>
             )}
 
-            {/* ── STEP 5: PAYMENT ── */}
+            {/* ── STEP 4: PAYMENT ── */}
             {currentStepId === "payment" && (
               <motion.div
                 key="payment"
@@ -400,7 +382,7 @@ function SouscriptionContent() {
                 {/* Navigation */}
                 <div className="flex justify-between items-center border-t border-white/10 pt-6">
                   <button
-                    onClick={() => goToStep(4)}
+                    onClick={() => goToStep(3)}
                     className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
                   >
                     <ChevronLeft size={14} /> Retour
@@ -416,7 +398,7 @@ function SouscriptionContent() {
               </motion.div>
             )}
 
-            {/* ── STEP 6: SUCCESS ── */}
+            {/* ── STEP 5: SUCCESS ── */}
             {currentStepId === "success" && (
               <motion.div
                 key="success"
@@ -448,8 +430,7 @@ function SouscriptionContent() {
                   a bien été enregistrée.
                 </p>
                 <p className="text-gray-500 text-xs mb-8 max-w-md mx-auto">
-                  Un conseiller LBASSUR prendra contact avec vous dans les prochaines 24h
-                  pour la finalisation et la remise de vos documents.
+                  Vous recevrez un retour sous 30 minutes. Un email et un message WhatsApp contenant votre quittance vous ont été envoyés.
                 </p>
 
                 {/* Reference Number */}
@@ -463,16 +444,28 @@ function SouscriptionContent() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="inline-flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors">
-                    <Download size={14} />
-                    Attestation Provisoire
-                  </button>
+                  {receiptUrl ? (
+                    <a
+                      href={receiptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
+                    >
+                      <Download size={14} />
+                      Télécharger la Quittance
+                    </a>
+                  ) : (
+                    <button className="inline-flex items-center justify-center gap-3 bg-white/5 text-gray-500 px-8 py-4 text-[10px] font-black uppercase tracking-widest cursor-not-allowed">
+                      <Download size={14} />
+                      Quittance non disponible
+                    </button>
+                  )}
                   <button
                     onClick={() => window.print()}
                     className="inline-flex items-center justify-center gap-3 border border-white/20 text-white px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
                   >
                     <Printer size={14} />
-                    Imprimer la Fiche
+                    Imprimer la Page
                   </button>
                 </div>
 
