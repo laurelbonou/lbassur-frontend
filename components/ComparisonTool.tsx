@@ -262,6 +262,11 @@ export default function ComparisonTool() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (activeCategory === "PERSONNES" && selectedType === "Assurance Santé") {
+            setOffers([]);
+            return;
+        }
+
         const fetchOffers = async () => {
             setLoading(true);
             try {
@@ -436,7 +441,32 @@ export default function ComparisonTool() {
 
                 {/* Results List */}
                 <AnimatePresence mode="wait">
-                    {loading ? (
+                    {activeCategory === "PERSONNES" && selectedType === "Assurance Santé" ? (
+                        <motion.div
+                            key="health-redirect"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="bg-[#050505] p-16 md:p-24 text-center border border-white/5 relative overflow-hidden"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+                            <Heart size={48} className="text-white mx-auto mb-8" />
+                            <h3 className="text-3xl md:text-4xl font-bold uppercase font-oswald text-white mb-6 tracking-widest">
+                                Découvrez Itoju
+                            </h3>
+                            <p className="text-gray-400 text-sm md:text-base font-light max-w-xl mx-auto mb-10 leading-relaxed">
+                                Les offres d'assurance santé sont exclusivement gérées sur notre plateforme dédiée : <strong className="text-white font-bold">Itoju</strong>. 
+                                Profitez d'une expérience 100% repensée pour simplifier votre accès aux soins au Bénin.
+                            </p>
+                            <a 
+                                href="https://itoju.lbassur.bj" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-3 bg-white text-black px-10 py-5 text-[11px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 hover:scale-105 transition-all shadow-[0_0_40px_rgba(255,255,255,0.15)] relative z-10"
+                            >
+                                Accéder à Itoju <ChevronRight size={16} />
+                            </a>
+                        </motion.div>
+                    ) : loading ? (
                         <motion.div
                             key="loading"
                             initial={{ opacity: 0 }}

@@ -311,7 +311,7 @@ const SANTE_FORM: InsuranceFormConfig = {
   title: "Assurance Santé",
   subtitle: "Fiche de recensement des bénéficiaires",
   icon: "Heart",
-  available: true,
+  available: false,
   sections: [
     {
       id: "identification",

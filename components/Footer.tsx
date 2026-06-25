@@ -22,7 +22,7 @@ export default function Footer() {
                   <li><Link href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Particuliers</Link></li>
                   <li><Link href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Entreprises</Link></li>
                   <li><Link href="/simulation" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Comparateur <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
-                  <li><a href="https://lb-assurmaladie-staticwebsite.vercel.app/" target="_blank" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Itoju Santé <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></a></li>
+                  <li><a href="https://itoju.lbassur.bj" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Itoju Santé <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></a></li>
                 </ul>
               </div>
 

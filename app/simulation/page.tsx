@@ -62,11 +62,15 @@ export default function SimulationPage() {
                 { id: "autoEnergy", title: "Énergie" },
                 { id: "autoDuration", title: "Durée" }
             );
+        } else if (formData.type === "Assurance Santé") {
+            flow.push({ id: "redirect", title: "Redirection" });
         } else if (formData.type) {
             flow.push({ id: "priority", title: "Priorité" });
         }
 
-        flow.push({ id: "result", title: "Analyse" });
+        if (formData.type !== "Assurance Santé") {
+            flow.push({ id: "result", title: "Analyse" });
+        }
         return flow;
     };
 
@@ -329,6 +333,28 @@ export default function SimulationPage() {
                                                 </button>
                                             ))}
                                         </div>
+                                        <BackButton onClick={prevStep} />
+                                    </motion.div>
+                                )}
+
+                                {/* REDIRECT ITOJU */}
+                                {currentStep.id === "redirect" && (
+                                    <motion.div key="redirect" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }} className="text-center">
+                                        <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-8 text-white shadow-lg">
+                                            <Heart size={40} />
+                                        </div>
+                                        <h2 className="text-3xl lg:text-4xl font-bold uppercase mb-6 text-white tracking-tight">Découvrez Itoju</h2>
+                                        <p className="text-gray-400 mb-10 font-light text-sm lg:text-base max-w-md mx-auto leading-relaxed">
+                                            La simulation et la souscription pour l'assurance santé s'effectuent exclusivement sur notre plateforme dédiée <strong className="text-white">Itoju</strong>.
+                                        </p>
+                                        <a 
+                                            href="https://itoju.lbassur.bj" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center justify-center gap-3 bg-white text-black px-10 py-5 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] w-full lg:w-auto mb-4"
+                                        >
+                                            Accéder à Itoju <ChevronRight size={16} />
+                                        </a>
                                         <BackButton onClick={prevStep} />
                                     </motion.div>
                                 )}
