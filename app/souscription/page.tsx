@@ -103,10 +103,12 @@ function SouscriptionContent() {
     setCurrentStep(3); // Go to summary
   };
 
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = (signature: string | null) => {
+    setSignatureData(signature);
     setCurrentStep(4); // Go to payment
   };
 
+  const [signatureData, setSignatureData] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
@@ -142,6 +144,7 @@ function SouscriptionContent() {
           budget: selectedOffer?.price || 0,
           payload: { ...formData, price: selectedOffer?.price },
           documents,
+          signatureData: signatureData || undefined,
       });
 
       // 3. Simulate Payment

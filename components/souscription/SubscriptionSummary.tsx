@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Shield, Check, FileText, CreditCard, Edit3, ChevronRight } from "lucide-react";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";
+import SignaturePad from "./SignaturePad";
 
 interface SubscriptionSummaryProps {
   config: InsuranceFormConfig;
@@ -14,7 +15,7 @@ interface SubscriptionSummaryProps {
     guarantees: string;
     type: string;
   } | null;
-  onProceedToPayment: () => void;
+  onProceedToPayment: (signature: string | null) => void;
   onBack: () => void;
   onEditStep: (step: number) => void;
 }
@@ -72,6 +73,18 @@ export default function SubscriptionSummary({
       }))
   );
 
+  // Signature State
+  const [signature, setSignature] = useState<string | null>(null);
+  const [signatureError, setSignatureError] = useState(false);
+
+  const handleProceed = () => {
+    if (!signature) {
+      setSignatureError(true);
+      return;
+    }
+    onProceedToPayment(signature);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -82,7 +95,7 @@ export default function SubscriptionSummary({
             Récapitulatif
           </h2>
           <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider">
-            Vérifiez vos informations avant de procéder au paiement
+            Vérifiez vos informations et signez avant de procéder au paiement
           </p>
         </div>
       </div>
@@ -167,6 +180,30 @@ export default function SubscriptionSummary({
         </SummaryCard>
       </div>
 
+      {/* Signature Section */}
+      <div className="bg-white/[0.02] border border-white/10 p-5 mt-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white block">
+              Signature Électronique
+            </span>
+            <span className="text-[8px] text-gray-500">Obligatoire pour valider le contrat d'assurance</span>
+          </div>
+        </div>
+        
+        <div className={`transition-all duration-300 ${signatureError ? "ring-2 ring-red-500 rounded-xl" : ""}`}>
+          <SignaturePad 
+            onSignatureChange={(sig) => {
+              setSignature(sig);
+              if (sig) setSignatureError(false);
+            }} 
+          />
+        </div>
+        {signatureError && (
+          <p className="text-red-500 text-xs mt-2 font-medium">Veuillez signer ci-dessus avant de procéder au paiement.</p>
+        )}
+      </div>
+
       {/* Legal Notice */}
       <div className="bg-white/[0.02] border border-white/10 p-5">
         <p className="text-[8px] text-gray-500 leading-relaxed uppercase tracking-wider">
@@ -215,7 +252,7 @@ export default function SubscriptionSummary({
           ← Retour
         </button>
         <button
-          onClick={onProceedToPayment}
+          onClick={handleProceed}
           className="flex items-center gap-2 bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
         >
           Procéder au Paiement <ChevronRight size={14} />
