@@ -279,8 +279,9 @@ export default function ComparisonTool() {
                 };
                 
                 const data = await api.getOffers(params);
+                const offersList = Array.isArray(data) ? data : (data.data || []);
                 
-                const mappedOffers: InsuranceOffer[] = data.map((o: any) => ({
+                const mappedOffers: InsuranceOffer[] = offersList.map((o: any) => ({
                     id: o.id,
                     category: o.category,
                     insuranceType: o.insuranceTypeLabel,
