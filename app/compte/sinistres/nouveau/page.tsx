@@ -26,7 +26,7 @@ export default function NouveauSinistre() {
 
     const fetchQuotes = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://lbassur-backend.onrender.com/api/v1";
         const res = await fetch(`${apiUrl}/clients/me/quotes`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -52,7 +52,7 @@ export default function NouveauSinistre() {
     if (!token) return;
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://lbassur-backend.onrender.com/api/v1";
       const res = await fetch(`${apiUrl}/clients/me/claims`, {
         method: "POST",
         headers: {

@@ -31,7 +31,7 @@ export default function ClientDashboard() {
 
   const fetchData = async (token: string) => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://lbassur-backend.onrender.com/api/v1";
       
       const [quotesRes, reqsRes] = await Promise.all([
         fetch(`${apiUrl}/clients/me/quotes`, {

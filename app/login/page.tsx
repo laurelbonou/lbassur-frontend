@@ -24,7 +24,7 @@ export default function ClientLogin() {
 
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://lbassur-backend.onrender.com/api/v1";
       
       const payload: any = { phone, password };
       if (!isLogin) payload.fullName = fullName;
