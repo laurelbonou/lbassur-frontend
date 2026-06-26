@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Check, FileText, CreditCard, Edit3, ChevronRight } from "lucide-react";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";

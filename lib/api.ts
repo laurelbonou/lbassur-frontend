@@ -41,6 +41,26 @@ export const api = {
     return res.json();
   },
 
+  createDraft: async (payload: any) => {
+    const res = await fetch(`${API_BASE_URL}/quote-requests/draft`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("Failed to create draft");
+    return res.json();
+  },
+
+  updateQuoteRequest: async (id: string, payload: any) => {
+    const res = await fetch(`${API_BASE_URL}/quote-requests/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("Failed to update quote request");
+    return res.json();
+  },
+
   uploadDocuments: async (formData: FormData) => {
     const res = await fetch(`${API_BASE_URL}/uploads`, {
       method: "POST",
@@ -50,13 +70,13 @@ export const api = {
     return res.json();
   },
 
-  simulatePayment: async (quoteRequestId: string, method: string) => {
-    const res = await fetch(`${API_BASE_URL}/payments/simulate`, {
+  initializePayment: async (quoteRequestId: string, method: string) => {
+    const res = await fetch(`${API_BASE_URL}/payments/initialize`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ quoteRequestId, method }),
     });
-    if (!res.ok) throw new Error("Failed to simulate payment");
+    if (!res.ok) throw new Error("Failed to initialize payment");
     return res.json();
   },
 

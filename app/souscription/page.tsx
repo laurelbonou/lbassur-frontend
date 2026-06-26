@@ -111,6 +111,28 @@ function SouscriptionContent() {
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [draftId, setDraftId] = useState<string | null>(null);
+
+  const handleSectionComplete = async (sectionIndex: number, data: Record<string, unknown>) => {
+    if (sectionIndex === 0 && !draftId) {
+      try {
+        const draft = await api.createDraft({
+          fullName: data["fullName"] || data["nom"] || data["prenom"] || "Client En Ligne",
+          phone: data["phone"] || data["telephone"] || "00000000",
+          email: data["email"] || data["courriel"] || undefined,
+        });
+        setDraftId(draft.id);
+      } catch (err) {
+        console.error("Failed to save draft", err);
+      }
+    } else if (draftId) {
+      try {
+        await api.updateQuoteRequest(draftId, { payload: data });
+      } catch (err) {
+        console.error("Failed to update draft", err);
+      }
+    }
+  };
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -119,24 +141,23 @@ function SouscriptionContent() {
       const formDataUpload = new FormData();
       uploadedFiles.forEach((f) => formDataUpload.append("files", f.file));
       
-      const uploadData = await api.uploadDocuments(formDataUpload);
-      const { files } = uploadData;
+      let documents: any[] = [];
+      if (uploadedFiles.length > 0) {
+        const uploadData = await api.uploadDocuments(formDataUpload);
+        documents = uploadData.files.map((f: any) => {
+          const originalDoc = uploadedFiles.find(u => u.file.name === f.originalname);
+          return {
+            type: originalDoc ? originalDoc.docId : "document",
+            filename: f.filename,
+            url: f.url,
+            mimeType: f.mimeType,
+            size: f.size,
+          };
+        });
+      }
 
-      // Ensure doc types are correctly matched with files (since they might come back in order or we map by originalname)
-      // For safety, we map them by originalname
-      const documents = files.map((f: any) => {
-        const originalDoc = uploadedFiles.find(u => u.file.name === f.originalname);
-        return {
-          type: originalDoc ? originalDoc.docId : "document",
-          filename: f.filename,
-          url: f.url,
-          mimeType: f.mimeType,
-          size: f.size,
-        };
-      });
-
-      // 2. Create Quote Request
-      const quote = await api.createQuoteRequest({
+      // 2. Create or Update Quote Request
+      const quotePayload = {
           fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
           phone: formData["phone"] || formData["telephone"] || "00000000",
           email: formData["email"] || formData["courriel"] || undefined,
@@ -145,16 +166,28 @@ function SouscriptionContent() {
           payload: { ...formData, price: selectedOffer?.price },
           documents,
           signatureData: signatureData || undefined,
-      });
+          selectedOfferId: selectedOffer ? "offer-placeholder" : undefined, // Will be handled properly later
+      };
 
-      // 3. Simulate Payment
-      const paymentData = await api.simulatePayment(quote.id, "MTN");
-
-      setReference(paymentData.payment.reference);
-      if (paymentData.receiptUrl) {
-        setReceiptUrl(`${process.env.NEXT_PUBLIC_API_URL}${paymentData.receiptUrl}`);
+      let quote;
+      if (draftId) {
+        quote = await api.updateQuoteRequest(draftId, quotePayload);
+      } else {
+        quote = await api.createQuoteRequest(quotePayload);
       }
-      setCurrentStep(5); // Go to success
+
+      // 3. Initialize FeexPay Payment
+      const paymentData = await api.initializePayment(quote.id, "FEEXPAY");
+
+      setReference(paymentData.reference);
+      
+      if (paymentData.paymentUrl) {
+        // Redirect to FeexPay
+        window.location.href = paymentData.paymentUrl;
+      } else {
+        // Fallback for some reason
+        setCurrentStep(5); // Go to success
+      }
     } catch (error) {
       console.error(error);
       alert("Une erreur est survenue lors du traitement.");
@@ -268,6 +301,7 @@ function SouscriptionContent() {
                   config={selectedConfig}
                   onComplete={handleFormComplete}
                   onBack={() => goToStep(0)}
+                  onSectionComplete={handleSectionComplete}
                   initialData={formData}
                 />
               </motion.div>

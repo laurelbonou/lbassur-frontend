@@ -9,10 +9,11 @@ interface DynamicFormProps {
   config: InsuranceFormConfig;
   onComplete: (data: Record<string, unknown>) => void;
   onBack: () => void;
+  onSectionComplete?: (sectionIndex: number, data: Record<string, unknown>) => void;
   initialData?: Record<string, unknown>;
 }
 
-export default function DynamicForm({ config, onComplete, onBack, initialData }: DynamicFormProps) {
+export default function DynamicForm({ config, onComplete, onBack, onSectionComplete, initialData }: DynamicFormProps) {
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const [formData, setFormData] = useState<Record<string, unknown>>(initialData || {});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -61,6 +62,11 @@ export default function DynamicForm({ config, onComplete, onBack, initialData }:
 
   const handleNext = () => {
     if (!validateSection()) return;
+
+    if (onSectionComplete) {
+      onSectionComplete(currentSectionIdx, formData);
+    }
+
     if (isLastSection) {
       onComplete(formData);
     } else {
