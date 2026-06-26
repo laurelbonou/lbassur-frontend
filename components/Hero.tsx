@@ -101,7 +101,7 @@ export default function Hero() {
                         <ArrowRight size={16} />
                     </Link>
                     <Link
-                        href="#services"
+                        href="/compare"
                         className="bg-white/10 text-white border border-white/20 px-8 py-4 text-[13px] font-bold rounded-md hover:bg-white/20 hover:border-white/40 transition-all duration-300 active:scale-95 text-center"
                     >
                         Découvrir nos offres
