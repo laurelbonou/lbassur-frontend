@@ -1,5 +1,6 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.length > 0 
+  ? process.env.NEXT_PUBLIC_API_URL 
+  : "https://lbassur-backend.onrender.com/api/v1";
 export const api = {
   getOffers: async (params?: Record<string, string | number | undefined>) => {
     const url = new URL(`${API_BASE_URL}/offers`);
