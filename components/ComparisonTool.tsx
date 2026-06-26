@@ -32,12 +32,6 @@ const CATEGORIES: CategoryDef[] = [
         description: "Protège vos biens (véhicules, logement, entreprise) et votre responsabilité civile.",
     },
     {
-        id: "PERSONNES",
-        label: "Santé & Vie",
-        labelShort: "Santé",
-        description: "Couvre votre intégrité physique, vos frais de santé et vos projets de vie.",
-    },
-    {
         id: "VIE",
         label: "Épargne & Retraite",
         labelShort: "Épargne",

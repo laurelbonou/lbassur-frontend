@@ -7,30 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Activity, Heart, Briefcase, FileText, Anchor, Truck, Home, Car, TrendingDown, Users, AlertTriangle } from "lucide-react";
 
 const categories = [
-    { id: "sante", label: "Santé", icon: Activity },
     { id: "dommages", label: "Dommages", icon: Shield },
     { id: "vie", label: "Vie", icon: Heart },
     { id: "credit", label: "Crédit Caution", icon: Briefcase },
 ];
 
 const servicesData = {
-    sante: [
-        {
-            title: "Assurance Santé Particulier",
-            description: "Couvre les frais médicaux, hospitaliers et soins de santé pour les individus : étudiants, salariés, commerçants, artisans...",
-            icon: Users,
-        },
-        {
-            title: "Assurance Santé Groupe",
-            description: "Souscrite par les entreprises pour couvrir les frais liés à la santé de leurs employés : consultations, hospitalisations...",
-            icon: Users,
-        },
-        {
-            title: "Santé : Autofinancement",
-            description: "Permet aux entreprises de gérer un budget prévisionnel santé ajusté aux dépenses réelles de leur personnel.",
-            icon: TrendingDown,
-        }
-    ],
     dommages: [
         { title: "Automobile", description: "Couverture des véhicules terrestres à moteur, remorques et semi-remorques.", icon: Car },
         { title: "Multirisque Habitation / Pro", description: "Bâtiments et contenu contre incendie, vol, bris de glace, dégâts des eaux...", icon: Home },
@@ -59,7 +41,7 @@ const servicesData = {
 };
 
 export default function ServicesPage() {
-    const [activeTab, setActiveTab] = useState("sante");
+    const [activeTab, setActiveTab] = useState("dommages");
 
     return (
         <main className="bg-white min-h-screen text-black overflow-hidden font-sans">

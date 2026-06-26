@@ -6,17 +6,6 @@ import { ArrowRight, HeartPulse, Car, Home, Building2, Users2, BriefcaseBusiness
 
 const offresParticuliers = [
     {
-        id: "sante-famille",
-        title: "Santé & Famille",
-        icon: HeartPulse,
-        image: "/images/santé et famille.png",
-        items: [
-            "Assurances santé (particulier)",
-            "Prévoyance familiale",
-            "Évacuation sanitaire"
-        ]
-    },
-    {
         id: "auto-voyage",
         title: "Auto & Voyage",
         icon: Car,
@@ -53,17 +42,6 @@ const offresParticuliers = [
 ];
 
 const offresEntreprises = [
-    {
-        id: "sante-collaborateurs",
-        title: "Santé & Collaborateurs",
-        icon: Users2,
-        image: "/images/entreprises_sante.png",
-        items: [
-            "Santé groupe & Autofinancement",
-            "Collectifs santé et prévoyance",
-            "Indemnité de fin de carrière"
-        ]
-    },
     {
         id: "dommages-flottes",
         title: "Dommages & Flottes",
