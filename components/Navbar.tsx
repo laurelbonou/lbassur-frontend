@@ -63,6 +63,12 @@ export default function Navbar() {
             <div className="w-px h-4 bg-white/20 mx-2" />
             
             <Link 
+              href="/compare"
+              className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200"
+            >
+              Toutes les offres
+            </Link>
+            <Link 
               href="/simulation"
               className="bg-white text-black px-6 py-2.5 text-[13px] font-bold rounded-md hover:bg-gray-200 transition-all duration-200 active:scale-95"
             >
@@ -125,6 +131,13 @@ export default function Navbar() {
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
               Contact
+            </Link>
+            <Link 
+              href="/compare"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-white border-b border-white/10 pb-4"
+            >
+              Toutes les offres
             </Link>
             <Link 
               href="/simulation"
