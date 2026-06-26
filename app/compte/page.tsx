@@ -12,7 +12,8 @@ export default function ClientDashboard() {
   const [user, setUser] = useState<any>(null);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [claims, setClaims] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"quotes" | "claims">("quotes");
+  const [changeRequests, setChangeRequests] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"quotes" | "profile">("quotes");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,11 +33,11 @@ export default function ClientDashboard() {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
       
-      const [quotesRes, claimsRes] = await Promise.all([
+      const [quotesRes, reqsRes] = await Promise.all([
         fetch(`${apiUrl}/clients/me/quotes`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${apiUrl}/clients/me/claims`, {
+        fetch(`${apiUrl}/clients/me/change-requests`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -45,9 +46,9 @@ export default function ClientDashboard() {
         const data = await quotesRes.json();
         setQuotes(data);
       }
-      if (claimsRes.ok) {
-        const data = await claimsRes.json();
-        setClaims(data);
+      if (reqsRes.ok) {
+        const data = await reqsRes.json();
+        setChangeRequests(data);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -114,14 +115,14 @@ export default function ClientDashboard() {
             <FileText size={16} /> Mes Dossiers ({quotes.length})
           </button>
           <button
-            onClick={() => setActiveTab("claims")}
+            onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-6 py-3 transition-colors ${
-              activeTab === "claims" 
+              activeTab === "profile" 
                 ? "bg-white text-black" 
                 : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
             }`}
           >
-            <ShieldAlert size={16} /> Mes Sinistres ({claims.length})
+            <ShieldAlert size={16} /> Mon Profil
           </button>
         </div>
 
@@ -198,62 +199,69 @@ export default function ClientDashboard() {
             </motion.div>
           )}
 
-          {activeTab === "claims" && (
+          {activeTab === "profile" && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="space-y-6"
             >
-              <div className="flex justify-end mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold uppercase tracking-widest text-white">Vos Informations</h2>
                 <button 
-                  onClick={() => router.push("/compte/sinistres/nouveau")}
+                  onClick={() => router.push("/compte/profil")}
                   className="flex items-center gap-2 bg-white text-black px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
                 >
-                  <Plus size={14} /> Déclarer un sinistre
+                  <Plus size={14} /> Demander une modification
                 </button>
               </div>
 
-              {claims.length === 0 ? (
+              {/* User info display */}
+              <div className="bg-[#050505] border border-white/10 p-6 flex flex-col gap-4">
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1">Nom Complet</span>
+                  <span className="text-sm font-bold text-white">{user.fullName || "Non renseigné"}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1">Téléphone</span>
+                  <span className="text-sm font-bold text-white">{user.phone}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-1">Email</span>
+                  <span className="text-sm font-bold text-white">{user.email || "Non renseigné"}</span>
+                </div>
+              </div>
+
+              <h2 className="text-xl font-bold uppercase tracking-widest text-white mt-12 mb-6">Historique des demandes</h2>
+              {changeRequests.length === 0 ? (
                 <div className="py-12 text-center bg-white/5 border border-white/10">
                   <ShieldAlert className="mx-auto text-gray-600 mb-4" size={32} />
                   <p className="text-[10px] uppercase tracking-widest text-gray-500">
-                    Vous n'avez déclaré aucun sinistre.
+                    Vous n'avez soumis aucune demande de modification.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {claims.map((claim) => (
-                    <div key={claim.id} className="bg-[#050505] border border-white/10 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:bg-white/[0.02] transition-colors">
+                  {changeRequests.map((req) => (
+                    <div key={req.id} className="bg-[#050505] border border-white/10 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:bg-white/[0.02] transition-colors">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-                            Sinistre du {new Date(claim.incidentDate).toLocaleDateString("fr-FR")}
+                            Demande du {new Date(req.createdAt).toLocaleDateString("fr-FR")}
                           </h3>
                           <span className={`px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border ${
-                            claim.status === "RESOLVED" ? "bg-green-500/10 text-green-400 border-green-500/20" :
+                            req.status === "APPROVED" ? "bg-green-500/10 text-green-400 border-green-500/20" :
+                            req.status === "REJECTED" ? "bg-red-500/10 text-red-400 border-red-500/20" :
                             "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
                           }`}>
-                            {claim.status}
+                            {req.status}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-400 max-w-2xl line-clamp-2">
-                          {claim.description}
+                        <p className="text-xs text-gray-400 max-w-2xl">
+                          Changements demandés : {Object.keys(req.requestedData).join(', ')}
                         </p>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-right">
-                        <div className="hidden md:block">
-                          <span className="text-[8px] text-gray-600 uppercase tracking-widest block mb-1">
-                            Déclaré le
-                          </span>
-                          <span className="text-xs text-white flex items-center gap-1">
-                            <Clock size={12} className="text-gray-500" />
-                            {new Date(claim.createdAt).toLocaleDateString("fr-FR")}
-                          </span>
-                        </div>
-                        <button className="p-3 border border-white/10 hover:border-white/40 text-gray-400 hover:text-white transition-colors">
-                          <ChevronRight size={16} />
-                        </button>
+                        {req.adminNote && (
+                          <p className="text-xs text-red-400 mt-2">Motif : {req.adminNote}</p>
+                        )}
                       </div>
                     </div>
                   ))}
