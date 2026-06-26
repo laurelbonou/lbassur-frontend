@@ -10,12 +10,11 @@ import DocumentUploader from "@/components/souscription/DocumentUploader";
 
 import SubscriptionSummary from "@/components/souscription/SubscriptionSummary";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Shield, CheckCircle, CreditCard, ChevronLeft, ChevronRight,
-  Download, ShieldCheck, AlertCircle, Printer,
-} from "lucide-react";
+import { Shield, CheckCircle, CreditCard, ChevronLeft, ChevronRight, Download, ShieldCheck, AlertCircle, Printer } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { FeexPayProvider, FeexPayButton } from "@feexpay/react-sdk";
+import "@feexpay/react-sdk/style.css";
 import { getFormConfigByInsuranceType, getAvailableForms } from "@/lib/insurance-forms";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";
 
@@ -103,15 +102,62 @@ function SouscriptionContent() {
     setCurrentStep(3); // Go to summary
   };
 
-  const handleProceedToPayment = (signature: string | null) => {
+  const handleProceedToPayment = async (signature: string | null) => {
     setSignatureData(signature);
-    setCurrentStep(4); // Go to payment
+    setIsProcessing(true);
+    try {
+      const formDataUpload = new FormData();
+      uploadedFiles.forEach((f) => formDataUpload.append("files", f.file));
+      
+      let documents: any[] = [];
+      if (uploadedFiles.length > 0) {
+        const uploadData = await api.uploadDocuments(formDataUpload);
+        documents = uploadData.files.map((f: any) => {
+          const originalDoc = uploadedFiles.find(u => u.file.name === f.originalname);
+          return {
+            type: originalDoc ? originalDoc.docId : "document",
+            filename: f.filename,
+            url: f.url,
+            mimeType: f.mimeType,
+            size: f.size,
+          };
+        });
+      }
+
+      const quotePayload = {
+          fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
+          phone: formData["phone"] || formData["telephone"] || "00000000",
+          email: formData["email"] || formData["courriel"] || undefined,
+          insuranceType: selectedConfig?.id,
+          budget: selectedOffer?.price || 0,
+          payload: { ...formData, price: selectedOffer?.price },
+          documents,
+          signatureData: signature || undefined,
+          selectedOfferId: selectedOffer ? "offer-placeholder" : undefined,
+      };
+
+      let quote;
+      if (draftId) {
+        quote = await api.updateQuoteRequest(draftId, quotePayload);
+      } else {
+        quote = await api.createQuoteRequest(quotePayload);
+      }
+
+      setQuoteId(quote.id);
+      setCurrentStep(4); // Go to payment
+    } catch (error) {
+      console.error(error);
+      alert("Une erreur est survenue lors du traitement.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [quoteId, setQuoteId] = useState<string | null>(null);
 
   const handleSectionComplete = async (sectionIndex: number, data: Record<string, unknown>) => {
     if (sectionIndex === 0 && !draftId) {
@@ -134,71 +180,16 @@ function SouscriptionContent() {
     }
   };
 
-  const handlePayment = async () => {
-    setIsProcessing(true);
-    try {
-      // 1. Upload Documents
-      const formDataUpload = new FormData();
-      uploadedFiles.forEach((f) => formDataUpload.append("files", f.file));
-      
-      let documents: any[] = [];
-      if (uploadedFiles.length > 0) {
-        const uploadData = await api.uploadDocuments(formDataUpload);
-        documents = uploadData.files.map((f: any) => {
-          const originalDoc = uploadedFiles.find(u => u.file.name === f.originalname);
-          return {
-            type: originalDoc ? originalDoc.docId : "document",
-            filename: f.filename,
-            url: f.url,
-            mimeType: f.mimeType,
-            size: f.size,
-          };
-        });
-      }
-
-      // 2. Create or Update Quote Request
-      const quotePayload = {
-          fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
-          phone: formData["phone"] || formData["telephone"] || "00000000",
-          email: formData["email"] || formData["courriel"] || undefined,
-          insuranceType: selectedConfig?.id,
-          budget: selectedOffer?.price || 0,
-          payload: { ...formData, price: selectedOffer?.price },
-          documents,
-          signatureData: signatureData || undefined,
-          selectedOfferId: selectedOffer ? "offer-placeholder" : undefined, // Will be handled properly later
-      };
-
-      let quote;
-      if (draftId) {
-        quote = await api.updateQuoteRequest(draftId, quotePayload);
-      } else {
-        quote = await api.createQuoteRequest(quotePayload);
-      }
-
-      // 3. Initialize FeexPay Payment
-      const paymentData = await api.initializePayment(quote.id, "FEEXPAY");
-
-      setReference(paymentData.reference);
-      
-      if (paymentData.paymentUrl) {
-        // Redirect to FeexPay
-        window.location.href = paymentData.paymentUrl;
-      } else {
-        // Fallback for some reason
-        setCurrentStep(5); // Go to success
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Une erreur est survenue lors du traitement.");
-    } finally {
-      setIsProcessing(false);
-    }
+  const onPaymentSuccess = (response: any) => {
+    console.log("FeexPay Response:", response);
+    setReference(response?.reference || `LB-${Date.now().toString(36).toUpperCase().slice(-8)}`);
+    setCurrentStep(5); // Go to success
   };
 
   const currentStepId = STEPS[currentStep]?.id;
 
   return (
+    <FeexPayProvider>
     <main className="bg-black min-h-screen text-white relative">
       <Navbar />
 
@@ -382,36 +373,29 @@ function SouscriptionContent() {
                 </div>
 
                 {/* Payment Methods */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
-                    <div className="w-12 h-12 bg-[#FFCC00] rounded-full flex items-center justify-center text-black font-black text-xs">
-                      MTN
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
-                      Mobile Money
-                    </span>
-                    <span className="text-[7px] text-gray-500 uppercase tracking-wider">
-                      MTN · Moov · Celtiis
-                    </span>
-                  </button>
-                  <button className="border border-white/20 hover:border-white bg-white/[0.02] p-6 flex flex-col items-center gap-4 transition-all duration-300 group">
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-black text-xs">
-                      <CreditCard size={20} />
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
-                      Carte Bancaire
-                    </span>
-                    <span className="text-[7px] text-gray-500 uppercase tracking-wider">
-                      Visa · Mastercard
-                    </span>
-                  </button>
+                <div className="flex justify-center py-4">
+                  {quoteId ? (
+                    <FeexPayButton 
+                      amount={selectedOffer?.price || 0} 
+                      description={`Souscription ${selectedConfig?.title}`} 
+                      id={process.env.NEXT_PUBLIC_FEEXPAY_SHOP_ID!} 
+                      token={process.env.NEXT_PUBLIC_FEEXPAY_TOKEN!} 
+                      callback={onPaymentSuccess}
+                      callback_url={`${process.env.NEXT_PUBLIC_API_URL || "https://lbassur.bj/api"}/payments/webhook`}
+                      mode="LIVE"
+                      currency="XOF"
+                      customId={quoteId}
+                    />
+                  ) : (
+                    <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  )}
                 </div>
 
                 {/* Notice */}
                 <div className="flex items-start gap-3 bg-white/[0.02] border border-white/10 p-4">
                   <AlertCircle size={14} className="text-gray-500 flex-shrink-0 mt-0.5" />
                   <p className="text-[8px] text-gray-500 leading-relaxed">
-                    Le paiement est sécurisé et chiffré. Vous recevrez une attestation provisoire par email
+                    Le paiement est sécurisé et chiffré par FeexPay. Vous recevrez une attestation provisoire par email
                     immédiatement après confirmation du paiement.
                   </p>
                 </div>
@@ -423,13 +407,6 @@ function SouscriptionContent() {
                     className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
                   >
                     <ChevronLeft size={14} /> Retour
-                  </button>
-                  <button
-                    onClick={handlePayment}
-                    disabled={isProcessing}
-                    className="flex items-center gap-2 bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-colors disabled:opacity-50 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-                  >
-                    Payer & Valider <ChevronRight size={14} />
                   </button>
                 </div>
               </motion.div>
@@ -522,5 +499,6 @@ function SouscriptionContent() {
 
       <Footer />
     </main>
+    </FeexPayProvider>
   );
 }
