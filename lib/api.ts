@@ -19,7 +19,19 @@ export const api = {
   getOffer: async (id: string) => {
     const res = await fetch(`${API_BASE_URL}/offers/${encodeURIComponent(id)}`);
     if (!res.ok) throw new Error("Failed to fetch offer");
-    return res.json();
+    const data = await res.json();
+    
+    // Workaround: if the deployed backend incorrectly returns an array of TariffRules
+    // instead of the base offer object, we fetch it from the offers list.
+    if (Array.isArray(data)) {
+      const allRes = await api.getOffers();
+      const list = Array.isArray(allRes) ? allRes : (allRes.data || []);
+      const baseOffer = list.find((o: any) => o.id === id);
+      if (baseOffer) return baseOffer;
+      throw new Error("Offer not found");
+    }
+    
+    return data;
   },
 
   getInsurerBySlug: async (slug: string) => {

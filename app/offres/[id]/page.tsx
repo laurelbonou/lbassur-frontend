@@ -79,7 +79,6 @@ export default function OfferDetailsPage() {
         const response = await api.getOffers({
           category: currentOffer.category,
           type: currentOffer.insuranceTypeLabel,
-          limit: 4,
         });
         const list: Offer[] = Array.isArray(response) ? response : response.data || [];
         setSimilarOffers(list.filter((item) => item.id !== currentOffer.id).slice(0, 3));
