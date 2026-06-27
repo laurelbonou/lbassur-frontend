@@ -14,6 +14,7 @@ export interface InsuranceOffer {
     insuranceSubType?: string; // e.g. "Véhicules et Mobilité" | "Biens et Activité"
     insurer: string;
     insurerSlug: string;
+    insurerLogoUrl?: string;
     premium: number; // Annuelle ou Mensuelle selon le cas
     rate?: number; // Pour l'assurance Vie par exemple
     coverageAmount: number;

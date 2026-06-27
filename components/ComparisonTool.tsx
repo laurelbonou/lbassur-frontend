@@ -82,8 +82,12 @@ function OfferCard({ offer, index }: { offer: InsuranceOffer; index: number }) {
         >
             {/* Left Insurer Panel */}
             <div className="p-6 lg:w-64 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-white/5 relative z-10 bg-white/[0.01]">
-                <div className={`w-16 h-16 bg-black border border-white/10 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:border-white/30 transition-all duration-700`}>
-                    <IconComp size={24} className="text-white" />
+                <div className={`w-16 h-16 bg-white border border-white/10 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:border-white/30 transition-all duration-700 overflow-hidden`}>
+                    {offer.insurerLogoUrl ? (
+                        <img src={offer.insurerLogoUrl} alt={`Logo ${offer.insurer}`} className="w-full h-full object-contain p-2" />
+                    ) : (
+                        <IconComp size={24} className="text-black" />
+                    )}
                 </div>
                 <div className="text-center mt-4">
                     <span className="text-xs font-black uppercase tracking-widest text-white block mb-1">
@@ -170,10 +174,10 @@ function OfferCard({ offer, index }: { offer: InsuranceOffer; index: number }) {
                 </div>
                 
                 <div className="w-full space-y-2">
-                    <Link href={`/assureur/${offer.insurerSlug}`} className="w-full bg-white text-black py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all duration-700 flex items-center justify-center gap-2">
+                    <Link href={`/offres/${offer.id}`} className="w-full bg-white text-black py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all duration-700 flex items-center justify-center gap-2">
                         Voir l'offre <ChevronRight size={14} />
                     </Link>
-                    <Link href={`/souscription?type=${encodeURIComponent(offer.insuranceType)}&insurer=${encodeURIComponent(offer.insurer)}&price=${offer.premium}&guarantees=${encodeURIComponent(offer.guarantees.join(', '))}`} className="w-full border border-white/10 bg-black flex items-center justify-center text-center text-gray-400 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-white hover:border-white/30 transition-all duration-700">
+                    <Link href={`/souscription?offerId=${encodeURIComponent(offer.id)}&type=${encodeURIComponent(offer.insuranceType)}&insurer=${encodeURIComponent(offer.insurer)}&price=${offer.premium}&guarantees=${encodeURIComponent(offer.guarantees.join(', '))}`} className="w-full border border-white/10 bg-black flex items-center justify-center text-center text-gray-400 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-white hover:border-white/30 transition-all duration-700">
                         Souscrire en Ligne
                     </Link>
                 </div>
@@ -282,6 +286,7 @@ export default function ComparisonTool() {
                     insuranceSubType: o.insuranceSubType,
                     insurer: o.insurer?.name || "Assureur Inconnu",
                     insurerSlug: o.insurer?.slug || "",
+                    insurerLogoUrl: o.insurer?.logoUrl || undefined,
                     premium: Number(o.premium),
                     rate: o.rate ? Number(o.rate) : undefined,
                     coverageAmount: Number(o.coverageAmount),

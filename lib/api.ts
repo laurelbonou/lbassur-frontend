@@ -16,6 +16,12 @@ export const api = {
     return res.json();
   },
 
+  getOffer: async (id: string) => {
+    const res = await fetch(`${API_BASE_URL}/offers/${encodeURIComponent(id)}`);
+    if (!res.ok) throw new Error("Failed to fetch offer");
+    return res.json();
+  },
+
   getInsurerBySlug: async (slug: string) => {
     const res = await fetch(`${API_BASE_URL}/insurers/${slug}`);
     if (!res.ok) throw new Error("Failed to fetch insurer");

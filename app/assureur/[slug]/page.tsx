@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ExternalLink, Globe, MapPin, Phone } from "lucide-react";
+import { Globe, MapPin, Phone } from "lucide-react";
 
 export default function InsurerDetailsPage() {
     const params = useParams();
@@ -21,7 +21,7 @@ export default function InsurerDetailsPage() {
                 const ins = await api.getInsurerBySlug(slug);
                 setInsurer(ins);
                 const offs = await api.getOffers({ insurerSlug: slug });
-                setOffers(offs);
+                setOffers(Array.isArray(offs) ? offs : (offs.data || ins.offers || []));
             } catch (error) {
                 console.error("Failed to load insurer data", error);
             } finally {
@@ -43,24 +43,28 @@ export default function InsurerDetailsPage() {
                     {/* Sidebar Info */}
                     <div className="lg:w-1/3">
                         <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-xl sticky top-32">
-                            <div className="w-24 h-24 bg-black border border-zinc-800 rounded-full flex items-center justify-center mb-6 mx-auto lg:mx-0">
-                                <span className="text-xs font-bold text-gray-500">LOGO</span>
+                            <div className="w-24 h-24 bg-white border border-zinc-800 rounded-full flex items-center justify-center mb-6 mx-auto lg:mx-0 overflow-hidden">
+                                {insurer.logoUrl ? (
+                                    <img src={insurer.logoUrl} alt={`Logo ${insurer.name}`} className="w-full h-full object-contain p-3" />
+                                ) : (
+                                    <span className="text-xs font-bold text-gray-500">LOGO</span>
+                                )}
                             </div>
                             <h1 className="text-3xl font-bold font-oswald uppercase mb-4 text-white">{insurer.name}</h1>
                             <p className="text-gray-400 mb-8 leading-relaxed italic">"{insurer.description}"</p>
 
                             <div className="space-y-4 pt-8 border-t border-zinc-800 text-sm">
-                                <div className="flex items-center gap-3">
+                                {insurer.website && <div className="flex items-center gap-3">
                                     <Globe size={18} className="text-gray-500" />
-                                    <a href={insurer.website} className="text-blue-500 hover:text-blue-400 hover:underline">{insurer.website.replace("https://", "")}</a>
-                                </div>
+                                    <a href={insurer.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-400 hover:underline">{insurer.website.replace(/^https?:\/\//, "")}</a>
+                                </div>}
                                 <div className="flex items-center gap-3">
                                     <MapPin size={18} className="text-gray-500" />
-                                    <span className="text-gray-300">Siège Social, Cotonou, Bénin</span>
+                                    <span className="text-gray-300">{insurer.address || "Adresse non renseignée"}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <Phone size={18} className="text-gray-500" />
-                                    <span className="text-gray-300">+229 XX XX XX XX</span>
+                                    {insurer.phone ? <a href={`tel:${insurer.phone}`} className="text-gray-300 hover:text-white">{insurer.phone}</a> : <span className="text-gray-500">Téléphone non renseigné</span>}
                                 </div>
                             </div>
                         </div>

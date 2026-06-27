@@ -53,6 +53,7 @@ function SouscriptionContent() {
   const [uploadedFiles, setUploadedFiles] = useState<{ docId: string; file: File; preview?: string }[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState<{
+    id: string;
     insurer: string;
     price: number;
     guarantees: string;
@@ -61,6 +62,7 @@ function SouscriptionContent() {
 
   // Initialize from URL params
   useEffect(() => {
+    const offerId = searchParams.get("offerId");
     const type = searchParams.get("type");
     const insurer = searchParams.get("insurer");
     const price = searchParams.get("price");
@@ -74,8 +76,9 @@ function SouscriptionContent() {
       }
     }
 
-    if (insurer && price) {
+    if (offerId && insurer && price) {
       setSelectedOffer({
+        id: offerId,
         insurer: decodeURIComponent(insurer),
         price: parseInt(price, 10) || 0,
         guarantees: guarantees ? decodeURIComponent(guarantees) : "",
@@ -133,7 +136,7 @@ function SouscriptionContent() {
           payload: { ...formData, price: selectedOffer?.price },
           documents,
           signatureData: signature || undefined,
-          selectedOfferId: selectedOffer ? "offer-placeholder" : undefined,
+          selectedOfferId: selectedOffer?.id,
       };
 
       let quote;
