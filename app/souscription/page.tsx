@@ -198,11 +198,11 @@ function SouscriptionContent() {
 
       <div className="pt-32 pb-24 container mx-auto px-6 max-w-4xl relative z-10">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-4 block"
+            className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8 block"
           >
             Souscription 100% Digitale
           </motion.span>
@@ -210,7 +210,7 @@ function SouscriptionContent() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-8 uppercase tracking-tighter"
+            className="text-4xl md:text-5xl font-bold text-white mb-16 uppercase tracking-tighter"
           >
             {selectedConfig ? selectedConfig.title : "Souscription"}{" "}
             <span className="text-gray-600">en Ligne</span>
