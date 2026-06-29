@@ -16,7 +16,7 @@ interface StepIndicatorProps {
 
 export default function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
   return (
-    <div className="flex justify-between items-center max-w-3xl mx-auto relative mb-12">
+    <div className="flex justify-between items-center max-w-3xl mx-auto relative mb-12 mt-8">
       {/* Background line */}
       <div className="absolute left-0 top-[16px] w-full h-[1px] bg-white/10 -z-10" />
       {/* Progress line */}

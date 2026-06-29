@@ -210,7 +210,7 @@ function SouscriptionContent() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-16 uppercase tracking-tighter"
+            className="text-4xl md:text-5xl font-bold text-white mb-24 uppercase tracking-tighter"
           >
             {selectedConfig ? selectedConfig.title : "Souscription"}{" "}
             <span className="text-gray-600">en Ligne</span>
