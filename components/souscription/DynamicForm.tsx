@@ -118,7 +118,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
           {/* Section Header */}
           <div className="border-b border-white/10 pb-4 mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white text-black rounded-sm flex items-center justify-center text-[10px] font-black">
+              <div className="w-8 h-8 bg-white !text-black rounded-sm flex items-center justify-center text-[11px] font-black">
                 {section.letter}
               </div>
               <h3 className="text-lg font-black uppercase tracking-widest text-white">
@@ -163,7 +163,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
 
         <button
           onClick={handleNext}
-          className="flex items-center gap-2 bg-white text-black px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
+          className="flex items-center gap-2 bg-white !text-black px-8 py-3 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
         >
           {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={14} />
         </button>
@@ -259,9 +259,9 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               key={opt.value}
               type="button"
               onClick={() => onChange(opt.value)}
-              className={`px-4 py-2.5 border text-[9px] font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`px-5 py-3 border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
                 value === opt.value
-                  ? "bg-white text-black border-white"
+                  ? "bg-white !text-black border-white"
                   : "bg-white/5 text-gray-300 border-white/10 hover:border-white/40 hover:bg-white/10"
               }`}
             >
