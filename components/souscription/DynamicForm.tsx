@@ -1,5 +1,4 @@
 "use client";
-// Force new deployment to ensure changes are picked up
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -97,7 +96,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
               }`}
             />
             <span
-              className={`text-[7px] uppercase tracking-widest font-black text-center transition-colors duration-500 ${
+              className={`text-[9px] md:text-[10px] uppercase tracking-widest font-black text-center transition-colors duration-500 ${
                 idx <= currentSectionIdx ? "text-white" : "text-gray-600 hidden md:block"
               }`}
             >
@@ -119,15 +118,15 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
           {/* Section Header */}
           <div className="border-b border-white/10 pb-4 mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white !text-black rounded-sm flex items-center justify-center text-[11px] font-black">
+              <div className="w-9 h-9 bg-white !text-black rounded-sm flex items-center justify-center text-[12px] font-black">
                 {section.letter}
               </div>
-              <h3 className="text-lg font-black uppercase tracking-widest text-white">
+              <h3 className="text-xl font-black uppercase tracking-widest text-white">
                 {section.title}
               </h3>
             </div>
             {section.description && (
-              <p className="text-xs text-gray-400 mt-3 pl-11">{section.description}</p>
+              <p className="text-xs text-gray-400 mt-3 pl-12">{section.description}</p>
             )}
           </div>
 
@@ -157,16 +156,16 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
       <div className="flex justify-between items-center border-t border-white/10 pt-6 mt-10">
         <button
           onClick={handlePrev}
-          className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
         >
-          <ChevronLeft size={14} /> {isFirstSection ? "Retour" : "Section Précédente"}
+          <ChevronLeft size={16} /> {isFirstSection ? "Retour" : "Section Précédente"}
         </button>
 
         <button
           onClick={handleNext}
-          className="flex items-center gap-3 bg-white !text-black px-12 py-6 text-[15px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
+          className="flex items-center gap-3 bg-white !text-black px-10 py-5 text-[13px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
         >
-          {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={20} />
+          {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={18} />
         </button>
       </div>
     </div>
@@ -185,11 +184,11 @@ interface FieldRendererProps {
 
 function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: FieldRendererProps) {
   const baseInputClass =
-    "w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors text-sm placeholder:text-gray-600";
+    "w-full bg-transparent border-b border-white/20 pb-3 pt-1 text-white outline-none focus:border-white transition-colors text-sm placeholder:text-gray-600";
 
   return (
-    <div className="space-y-2">
-      <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-1">
+    <div className="space-y-3">
+      <label className="text-[11px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-1">
         {field.label}
         {field.required && <span className="text-red-400">*</span>}
       </label>
@@ -216,7 +215,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
             max={field.validation?.max}
           />
           {field.suffix && (
-            <span className="absolute right-0 bottom-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
+            <span className="absolute right-0 bottom-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
               {field.suffix}
             </span>
           )}
@@ -230,7 +229,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
           rows={3}
-          className={`${baseInputClass} border border-white/10 rounded-sm p-3 resize-none`}
+          className={`${baseInputClass} border border-white/10 rounded-sm p-4 resize-none`}
         />
       )}
 
@@ -239,7 +238,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         <select
           value={(value as string) || ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-black border border-white/20 text-white py-2 px-3 text-sm outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+          className="w-full bg-black border border-white/20 text-white py-3 px-4 text-sm outline-none focus:border-white transition-colors appearance-none cursor-pointer"
         >
           <option value="" disabled>
             Sélectionnez...
@@ -260,7 +259,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               key={opt.value}
               type="button"
               onClick={() => onChange(opt.value)}
-              className={`px-10 py-6 border text-[14px] font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`px-7 py-4 border text-[13px] font-bold uppercase tracking-widest transition-all duration-300 ${
                 value === opt.value
                   ? "bg-white !text-black border-white"
                   : "bg-white/5 text-gray-300 border-white/10 hover:border-white/40 hover:bg-white/10"
@@ -274,7 +273,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
 
       {/* CHECKBOX GROUP */}
       {field.type === "checkbox-group" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
           {field.options?.map((opt) => {
             const checked = ((value as string[]) || []).includes(opt.value);
             return (
@@ -282,14 +281,14 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                 key={opt.value}
                 type="button"
                 onClick={() => onToggleCheckbox(opt.value)}
-                className={`flex items-center gap-4 px-8 py-6 border text-left transition-all duration-300 group ${
+                className={`flex items-center gap-4 px-6 py-4 border text-left transition-all duration-300 group ${
                   checked
                     ? "bg-white/10 border-white/40 text-white"
                     : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"
                 }`}
               >
                 <div
-                  className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
+                  className={`w-5 h-5 border flex-shrink-0 flex items-center justify-center transition-all ${
                     checked ? "bg-white border-white" : "border-white/20"
                   }`}
                 >
@@ -299,7 +298,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                     </svg>
                   )}
                 </div>
-                <span className="text-[14px] font-bold uppercase tracking-widest">{opt.label}</span>
+                <span className="text-[13px] font-bold uppercase tracking-widest">{opt.label}</span>
               </button>
             );
           })}
@@ -311,14 +310,14 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         <button
           type="button"
           onClick={() => onChange(!value)}
-          className={`flex items-center gap-3 px-4 py-3 border transition-all duration-300 ${
+          className={`flex items-center gap-4 px-6 py-4 border transition-all duration-300 ${
             value
               ? "bg-white/10 border-white/40 text-white"
               : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20"
           }`}
         >
           <div
-            className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
+            className={`w-5 h-5 border flex-shrink-0 flex items-center justify-center transition-all ${
               value ? "bg-white border-white" : "border-white/20"
             }`}
           >
@@ -328,13 +327,13 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               </svg>
             )}
           </div>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{field.label}</span>
+          <span className="text-[13px] font-bold uppercase tracking-widest">{field.label}</span>
         </button>
       )}
 
       {/* Helper Text */}
       {field.helperText && (
-        <p className="text-[8px] text-gray-500 mt-1">{field.helperText}</p>
+        <p className="text-[10px] text-gray-500 mt-1">{field.helperText}</p>
       )}
 
       {/* Error */}
@@ -342,7 +341,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[9px] text-red-400 font-bold uppercase tracking-wider mt-1"
+          className="text-[11px] text-red-400 font-bold uppercase tracking-wider mt-1"
         >
           ⚠ {error}
         </motion.p>

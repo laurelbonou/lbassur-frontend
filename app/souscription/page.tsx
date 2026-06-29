@@ -202,7 +202,7 @@ function SouscriptionContent() {
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8 block"
+            className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8 block"
           >
             Souscription 100% Digitale
           </motion.span>
@@ -253,10 +253,10 @@ function SouscriptionContent() {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-white block mb-1 group-hover:translate-x-1 transition-transform">
+                          <span className="text-[12px] font-black uppercase tracking-widest text-white block mb-1 group-hover:translate-x-1 transition-transform">
                             {config.title}
                           </span>
-                          <span className="text-[8px] text-gray-500">{config.subtitle}</span>
+                          <span className="text-[10px] text-gray-500">{config.subtitle}</span>
                         </div>
                         <ChevronRight size={16} className="text-gray-600 group-hover:text-white transition-colors" />
                       </div>
@@ -266,14 +266,14 @@ function SouscriptionContent() {
 
                 {/* Phase 2 preview */}
                 <div className="mt-8 pt-6 border-t border-white/10">
-                  <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
                     Bientôt Disponible
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {["RC", "Transport", "Caution", "TRC", "Flotte", "Incendie", "Cyber", "Agricole"].map((t) => (
                       <span
                         key={t}
-                        className="px-3 py-1.5 border border-white/5 text-[7px] font-bold uppercase tracking-widest text-gray-600"
+                        className="px-3 py-1.5 border border-white/5 text-[9px] font-bold uppercase tracking-widest text-gray-600"
                       >
                         {t}
                       </span>
@@ -350,10 +350,10 @@ function SouscriptionContent() {
                 {isProcessing && (
                   <div className="absolute inset-0 bg-[#050505]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
                     <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin mb-6" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white animate-pulse">
+                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-white animate-pulse">
                       Traitement Sécurisé en cours...
                     </p>
-                    <p className="text-[8px] text-gray-500 mt-2 uppercase tracking-wider">
+                    <p className="text-[10px] text-gray-500 mt-2 uppercase tracking-wider">
                       Ne fermez pas cette page
                     </p>
                   </div>
@@ -366,7 +366,7 @@ function SouscriptionContent() {
 
                 {/* Amount */}
                 <div className="bg-white/5 border border-white/10 p-6 flex justify-between items-center">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">
                     Montant à Payer
                   </span>
                   <span className="text-2xl font-black text-white tabular-nums">
@@ -397,7 +397,7 @@ function SouscriptionContent() {
                 {/* Notice */}
                 <div className="flex items-start gap-3 bg-white/[0.02] border border-white/10 p-4">
                   <AlertCircle size={14} className="text-gray-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-[8px] text-gray-500 leading-relaxed">
+                  <p className="text-[10px] text-gray-500 leading-relaxed">
                     Le paiement est sécurisé et chiffré par FeexPay. Vous recevrez une attestation provisoire par email
                     immédiatement après confirmation du paiement.
                   </p>
@@ -407,7 +407,7 @@ function SouscriptionContent() {
                 <div className="flex justify-between items-center border-t border-white/10 pt-6">
                   <button
                     onClick={() => goToStep(3)}
-                    className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+                    className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
                   >
                     <ChevronLeft size={14} /> Retour
                   </button>
@@ -452,7 +452,7 @@ function SouscriptionContent() {
 
                 {/* Reference Number */}
                 <div className="bg-white/5 border border-white/10 p-4 max-w-sm mx-auto mb-8">
-                  <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mb-1">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">
                     Numéro de référence
                   </span>
                   <span className="text-lg font-black text-white tabular-nums tracking-widest">
@@ -466,20 +466,20 @@ function SouscriptionContent() {
                       href={receiptUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
+                      className="inline-flex items-center justify-center gap-3 bg-white !text-black px-8 py-4 text-[13px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
                     >
                       <Download size={14} />
                       Télécharger la Quittance
                     </a>
                   ) : (
-                    <button className="inline-flex items-center justify-center gap-3 bg-white/5 text-gray-500 px-8 py-4 text-[10px] font-black uppercase tracking-widest cursor-not-allowed">
+                    <button className="inline-flex items-center justify-center gap-3 bg-white/5 text-gray-500 px-8 py-4 text-[13px] font-black uppercase tracking-widest cursor-not-allowed">
                       <Download size={14} />
                       Quittance non disponible
                     </button>
                   )}
                   <button
                     onClick={() => window.print()}
-                    className="inline-flex items-center justify-center gap-3 border border-white/20 text-white px-8 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                    className="inline-flex items-center justify-center gap-3 border border-white/20 text-white px-8 py-4 text-[13px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
                   >
                     <Printer size={14} />
                     Imprimer la Page
@@ -489,7 +489,7 @@ function SouscriptionContent() {
                 <div className="mt-10">
                   <Link
                     href="/"
-                    className="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1"
+                    className="text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1"
                   >
                     Retour à l&apos;accueil
                   </Link>

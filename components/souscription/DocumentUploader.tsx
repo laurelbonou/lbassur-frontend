@@ -93,10 +93,10 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
       <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
         <UploadCloud className="text-gray-400" size={20} />
         <div>
-          <h2 className="text-lg font-black uppercase tracking-widest text-white">
+          <h2 className="text-xl font-black uppercase tracking-widest text-white">
             Pièces Justificatives
           </h2>
-          <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider">
+          <p className="text-[11px] text-gray-400 mt-1 uppercase tracking-wider">
             Conformes à la législation béninoise
           </p>
         </div>
@@ -149,24 +149,24 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white truncate">
+                      <span className="text-[11px] font-black uppercase tracking-widest text-white truncate">
                         {doc.name}
                       </span>
                       {doc.required && (
                         <span className="text-red-400 text-[10px] font-black">*</span>
                       )}
                       {!doc.required && (
-                        <span className="text-[7px] font-bold text-gray-500 uppercase tracking-wider border border-white/10 px-1.5 py-0.5">
+                        <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider border border-white/10 px-1.5 py-0.5">
                           Optionnel
                         </span>
                       )}
                     </div>
-                    <p className="text-[8px] text-gray-500 mt-0.5 truncate">
+                    <p className="text-[10px] text-gray-500 mt-0.5 truncate">
                       {uploadedFile
                         ? uploadedFile.file.name
                         : doc.description}
                     </p>
-                    <p className="text-[7px] text-gray-600 mt-0.5 uppercase tracking-wider">
+                    <p className="text-[9px] text-gray-600 mt-0.5 uppercase tracking-wider">
                       {doc.acceptedFormats.map((f) => f.toUpperCase()).join(", ")} · Max {doc.maxSizeMB} MB
                     </p>
                   </div>
@@ -194,7 +194,7 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
                         setActiveDocId(doc.id);
                         fileInputRef.current?.click();
                       }}
-                      className="px-4 py-2 border border-white/20 text-[8px] font-black uppercase tracking-widest text-white hover:bg-white hover:text-black transition-all duration-300"
+                      className="px-5 py-3 border border-white/20 text-[11px] font-black uppercase tracking-widest text-white hover:bg-white hover:!text-black transition-all duration-300"
                     >
                       Parcourir
                     </button>
@@ -243,7 +243,7 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
             className="flex items-center gap-3 bg-red-400/10 border border-red-400/30 p-4"
           >
             <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
-            <span className="text-[9px] font-bold text-red-300 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-red-300 uppercase tracking-wider">
               {error}
             </span>
             <button
@@ -258,7 +258,7 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
 
       {/* Status Summary */}
       <div className="bg-white/5 border border-white/10 p-4 flex items-center justify-between">
-        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
           Documents fournis
         </span>
         <span className="text-sm font-black text-white tabular-nums">
@@ -270,13 +270,13 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
       <div className="flex justify-between items-center border-t border-white/10 pt-6">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
         >
           ← Retour à la Fiche
         </button>
         <button
           onClick={handleSubmit}
-          className="flex items-center gap-2 bg-white text-black px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
+          className="flex items-center gap-2 bg-white !text-black px-10 py-5 text-[13px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
         >
           Continuer →
         </button>

@@ -37,9 +37,9 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 ${
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black transition-all duration-500 ${
                 isCompleted
-                  ? "bg-white text-black"
+                  ? "bg-white !text-black"
                   : isCurrent
                   ? "bg-black text-white border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                   : "bg-black text-gray-600 border border-white/10"
@@ -48,7 +48,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
               {isCompleted ? <Check size={14} /> : idx + 1}
             </motion.div>
             <span
-              className={`text-[7px] md:text-[8px] font-black uppercase tracking-widest text-center whitespace-nowrap transition-colors duration-500 ${
+              className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center whitespace-nowrap transition-colors duration-500 ${
                 isCompleted || isCurrent ? "text-white" : "text-gray-600 hidden sm:block"
               }`}
             >

@@ -192,7 +192,7 @@ export default function SimulationPage() {
                                     <div
                                         className={`h-1 flex-1 transition-all duration-1000 ${idx <= currentStepIndex ? "bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]" : "bg-white/10"}`}
                                     />
-                                    <span className={`text-[7px] lg:text-[8px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-white" : "text-gray-600 hidden sm:block"}`}>
+                                    <span className={`text-[9px] lg:text-[10px] uppercase tracking-widest font-black text-center transition-colors duration-700 ${idx <= currentStepIndex ? "text-white" : "text-gray-600 hidden sm:block"}`}>
                                         {s.title}
                                     </span>
                                 </div>
@@ -234,7 +234,7 @@ export default function SimulationPage() {
                                                 <button
                                                     key={type}
                                                     onClick={() => updateForm("type", type)}
-                                                    className="bg-white/5 py-8 px-6 border border-white/10 hover:border-white hover:bg-white hover:text-black transition-all duration-500 text-center font-bold uppercase text-[9px] lg:text-[10px] tracking-[0.2em] lg:tracking-[0.3em] text-white"
+                                                    className="bg-white/5 py-8 px-6 border border-white/10 hover:border-white hover:bg-white hover:!text-black transition-all duration-500 text-center font-bold uppercase text-[11px] lg:text-[12px] tracking-[0.2em] lg:tracking-[0.3em] text-white"
                                                 >
                                                     {type}
                                                 </button>
@@ -372,14 +372,14 @@ export default function SimulationPage() {
                                                                                     </div>
                                                                                     <div>
                                                                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                                                            <span className="font-bold uppercase text-[9px] lg:text-[10px] tracking-widest text-white">{ins.name}</span>
+                                                                                            <span className="font-bold uppercase text-[10px] lg:text-[11px] tracking-widest text-white">{ins.name}</span>
                                                                                             {ins.tag && (
-                                                                                                <span className={`text-[7px] lg:text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-white text-black" : "bg-white/10 text-gray-300 border border-white/10"}`}>
+                                                                                                <span className={`text-[8px] lg:text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${isLowest ? "bg-white !text-black" : "bg-white/10 text-gray-300 border border-white/10"}`}>
                                                                                                     {ins.tag}
                                                                                                 </span>
                                                                                             )}
                                                                                         </div>
-                                                                                        <p className="text-[8px] lg:text-[9px] text-gray-400 font-light max-w-[150px] lg:max-w-[200px] truncate">{ins.guarantees}</p>
+                                                                                        <p className="text-[9px] lg:text-[10px] text-gray-400 font-light max-w-[150px] lg:max-w-[200px] truncate">{ins.guarantees}</p>
                                                                                         {ins.rating && (
                                                                                             <div className="flex items-center gap-1 mt-1">
                                                                                                 {Array.from({ length: 5 }).map((_, j) => (
@@ -394,11 +394,11 @@ export default function SimulationPage() {
                                                                                         <div className={`text-xl lg:text-2xl font-black tabular-nums ${isLowest ? "text-white" : "text-gray-400"}`}>
                                                                                             {ins.price!.toLocaleString()}
                                                                                         </div>
-                                                                                        <span className="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-1">F.CFA</span>
+                                                                                        <span className="text-[9px] lg:text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">F.CFA</span>
                                                                                     </div>
                                                                                     <a 
                                                                                         href={`/souscription?type=${encodeURIComponent(formData.type)}&insurer=${encodeURIComponent(ins.name)}&price=${ins.price}&guarantees=${encodeURIComponent(ins.guarantees)}`}
-                                                                                        className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition-colors ${isLowest ? 'bg-white text-black hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                                                                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors ${isLowest ? 'bg-white !text-black hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
                                                                                     >
                                                                                         Souscrire
                                                                                     </a>
@@ -444,7 +444,7 @@ export default function SimulationPage() {
                                                     </button>
                                                     <a
                                                         href={`/compare?type=${encodeURIComponent(formData.type)}`}
-                                                        className="flex-[1.5] bg-white text-black py-4 lg:py-5 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] lg:tracking-[0.4em] hover:bg-gray-200 transition-all duration-500 hover:scale-105 active:scale-95 text-center shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center justify-center"
+                                                        className="flex-[1.5] bg-white !text-black py-4 lg:py-5 text-[11px] lg:text-[12px] font-black uppercase tracking-[0.2em] lg:tracking-[0.4em] hover:bg-gray-200 transition-all duration-500 hover:scale-105 active:scale-95 text-center shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center justify-center"
                                                     >
                                                         Voir les Offres
                                                     </a>
@@ -466,7 +466,7 @@ export default function SimulationPage() {
 }
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
-    <button onClick={onClick} className="mt-10 lg:mt-16 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.3em] lg:tracking-[0.4em] text-gray-500 hover:text-white transition-colors duration-500 flex items-center justify-start lg:justify-center w-full gap-3 group">
+    <button onClick={onClick} className="mt-10 lg:mt-16 text-[11px] lg:text-[12px] font-bold uppercase tracking-[0.3em] lg:tracking-[0.4em] text-gray-500 hover:text-white transition-colors duration-500 flex items-center justify-start lg:justify-center w-full gap-3 group">
         <span className="transition-transform duration-500 group-hover:-translate-x-1">←</span> Configuration Précédente
     </button>
 );
