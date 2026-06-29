@@ -164,9 +164,9 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
 
         <button
           onClick={handleNext}
-          className="flex items-center gap-3 bg-white !text-black px-10 py-5 text-xs sm:text-sm font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
+          className="flex items-center gap-3 bg-white !text-black px-12 py-6 text-[15px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
         >
-          {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={18} />
+          {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={20} />
         </button>
       </div>
     </div>
@@ -260,7 +260,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               key={opt.value}
               type="button"
               onClick={() => onChange(opt.value)}
-              className={`px-8 py-4 border text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`px-10 py-6 border text-[14px] font-bold uppercase tracking-widest transition-all duration-300 ${
                 value === opt.value
                   ? "bg-white !text-black border-white"
                   : "bg-white/5 text-gray-300 border-white/10 hover:border-white/40 hover:bg-white/10"
@@ -282,7 +282,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                 key={opt.value}
                 type="button"
                 onClick={() => onToggleCheckbox(opt.value)}
-                className={`flex items-center gap-4 px-6 py-4 border text-left transition-all duration-300 group ${
+                className={`flex items-center gap-4 px-8 py-6 border text-left transition-all duration-300 group ${
                   checked
                     ? "bg-white/10 border-white/40 text-white"
                     : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"
@@ -299,7 +299,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                     </svg>
                   )}
                 </div>
-                <span className="text-xs sm:text-sm font-bold uppercase tracking-widest">{opt.label}</span>
+                <span className="text-[14px] font-bold uppercase tracking-widest">{opt.label}</span>
               </button>
             );
           })}
