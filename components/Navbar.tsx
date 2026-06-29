@@ -70,7 +70,7 @@ export default function Navbar() {
             </Link>
             <Link 
               href="/simulation"
-              className="bg-white text-black px-6 py-2.5 text-[13px] font-bold rounded-md hover:bg-gray-200 transition-all duration-200 active:scale-95"
+              className="bg-white !text-black px-6 py-2.5 text-[13px] font-bold rounded-md hover:bg-gray-200 transition-all duration-200 active:scale-95"
             >
               Comparateur
             </Link>
@@ -142,7 +142,7 @@ export default function Navbar() {
             <Link 
               href="/simulation"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="bg-white text-black text-center py-4 text-lg font-bold rounded-md mt-4"
+              className="bg-white !text-black text-center py-4 text-lg font-bold rounded-md mt-4"
             >
               Comparateur
             </Link>
