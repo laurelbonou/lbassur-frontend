@@ -117,12 +117,12 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
             <motion.div
               key={doc.id}
               layout
-              className={`border transition-all duration-300 ${
+              className={`group border transition-all duration-300 ${
                 uploadedFile
                   ? "border-white/30 bg-white/5"
                   : isDragging
                   ? "border-white/60 bg-white/10"
-                  : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04]"
               }`}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -131,7 +131,7 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
               onDragLeave={() => setDragOver(null)}
               onDrop={(e) => handleDrop(doc.id, e)}
             >
-              <div className="p-5 flex items-center justify-between gap-4">
+              <div className="p-5 md:p-6 flex items-center justify-between gap-4">
                 {/* Left — Info */}
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div
@@ -183,9 +183,10 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
                       )}
                       <button
                         onClick={() => removeFile(doc.id)}
-                        className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-colors rounded-sm"
+                        className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500 transition-colors rounded-sm border border-transparent hover:border-red-500"
+                        title="Supprimer"
                       >
-                        <X size={14} />
+                        <X size={16} />
                       </button>
                     </>
                   ) : (
@@ -194,8 +195,9 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
                         setActiveDocId(doc.id);
                         fileInputRef.current?.click();
                       }}
-                      className="px-5 py-3 border border-white/20 text-[11px] font-black uppercase tracking-widest text-white hover:bg-white hover:!text-black transition-all duration-300"
+                      className="px-6 py-3 bg-white !text-black text-[11px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-gray-200 transition-transform active:scale-95 rounded-sm shadow-sm"
                     >
+                      <UploadCloud size={16} />
                       Parcourir
                     </button>
                   )}
@@ -240,17 +242,18 @@ export default function DocumentUploader({ requiredDocuments, onComplete, onBack
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-3 bg-red-400/10 border border-red-400/30 p-4"
+            className="flex items-center gap-4 bg-red-500/10 border border-red-500/30 p-5 rounded-sm"
           >
-            <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
-            <span className="text-[11px] font-bold text-red-300 uppercase tracking-wider">
+            <AlertCircle size={20} className="text-red-400 flex-shrink-0" />
+            <span className="text-xs font-bold text-red-300 uppercase tracking-widest leading-relaxed">
               {error}
             </span>
             <button
               onClick={() => setError(null)}
-              className="ml-auto text-red-400 hover:text-red-300"
+              className="ml-auto text-red-400 hover:text-white transition-colors p-1"
+              title="Fermer"
             >
-              <X size={14} />
+              <X size={18} />
             </button>
           </motion.div>
         )}
