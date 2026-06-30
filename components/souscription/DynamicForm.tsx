@@ -97,7 +97,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
             />
             <span
               className={`text-[9px] md:text-[10px] uppercase tracking-widest font-black text-center transition-colors duration-500 ${
-                idx <= currentSectionIdx ? "text-white" : "text-gray-600 hidden md:block"
+                idx <= currentSectionIdx ? "text-white" : "text-gray-400 hidden md:block"
               }`}
             >
               {s.letter}. {s.title}
@@ -156,7 +156,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
       <div className="flex justify-between items-center border-t border-white/10 pt-6 mt-10">
         <button
           onClick={handlePrev}
-          className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded transition-colors"
         >
           <ChevronLeft size={16} /> {isFirstSection ? "Retour" : "Section Précédente"}
         </button>
@@ -184,11 +184,11 @@ interface FieldRendererProps {
 
 function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: FieldRendererProps) {
   const baseInputClass =
-    "w-full bg-transparent border-b border-white/20 pb-3 pt-1 text-white outline-none focus:border-white transition-colors text-sm placeholder:text-gray-600";
+    "w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white outline-none focus:border-white/40 focus:bg-white/10 transition-colors text-sm placeholder:text-gray-500";
 
   return (
     <div className="space-y-3">
-      <label className="text-[11px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-1">
+      <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
         {field.label}
         {field.required && <span className="text-red-400">*</span>}
       </label>
@@ -215,7 +215,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
             max={field.validation?.max}
           />
           {field.suffix && (
-            <span className="absolute right-0 bottom-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+            <span className="absolute right-4 bottom-3.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               {field.suffix}
             </span>
           )}
@@ -229,7 +229,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
           rows={3}
-          className={`${baseInputClass} border border-white/10 rounded-sm p-4 resize-none`}
+          className={`${baseInputClass} resize-none`}
         />
       )}
 
@@ -254,20 +254,30 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
       {/* RADIO */}
       {field.type === "radio" && (
         <div className="flex flex-wrap gap-4 mt-2">
-          {field.options?.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange(opt.value)}
-              className={`p-6 border text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex-1 min-w-[200px] flex justify-center items-center text-center ${
-                value === opt.value
-                  ? "bg-white !text-black border-white shadow-lg"
-                  : "bg-white/5 text-gray-300 border-white/20 hover:border-white/50 hover:bg-white/10"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+          {field.options?.map((opt) => {
+            const checked = value === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange(opt.value)}
+                className={`py-4 px-6 border text-[14px] font-bold uppercase tracking-wide transition-all duration-300 flex-1 min-w-[200px] flex items-center justify-center gap-3 ${
+                  checked
+                    ? "bg-white !text-black border-white shadow-lg"
+                    : "bg-white/5 text-gray-300 border-white/20 hover:border-white/50 hover:bg-white/10"
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center transition-all ${
+                    checked ? "border-black bg-black" : "border-white/40 bg-black"
+                  }`}
+                >
+                  {checked && <div className="w-2 h-2 rounded-full bg-white" />}
+                </div>
+                <span>{opt.label}</span>
+              </button>
+            );
+          })}
         </div>
       )}
 
