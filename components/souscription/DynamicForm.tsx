@@ -230,6 +230,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
           <PhoneInput
             international
             defaultCountry="BJ"
+            limitMaxLength={true}
             placeholder={field.placeholder || "Téléphone"}
             value={(value as string) || ""}
             onChange={(val) => onChange(val)}
