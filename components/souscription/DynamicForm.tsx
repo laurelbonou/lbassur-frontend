@@ -163,7 +163,7 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
 
         <button
           onClick={handleNext}
-          className="flex items-center gap-3 bg-white !text-black px-10 py-5 text-[13px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95"
+          className="flex items-center justify-center gap-3 bg-white !text-black p-6 text-[15px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors active:scale-95 min-w-[200px]"
         >
           {isLastSection ? "Valider la Fiche" : "Suivant"} <ChevronRight size={18} />
         </button>
@@ -259,7 +259,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               key={opt.value}
               type="button"
               onClick={() => onChange(opt.value)}
-              className={`p-6 border text-[15px] font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`p-6 border text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex-1 min-w-[200px] flex justify-center items-center text-center ${
                 value === opt.value
                   ? "bg-white !text-black border-white shadow-lg"
                   : "bg-white/5 text-gray-300 border-white/20 hover:border-white/50 hover:bg-white/10"
