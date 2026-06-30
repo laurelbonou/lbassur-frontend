@@ -214,6 +214,14 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error, dynami
                 const raw = e.target.value.replace(/[^\d]/g, "");
                 const formatted = raw ? Number(raw).toLocaleString("fr-FR") : "";
                 onChange(formatted);
+              } else if (field.id === "immatriculation") {
+                // Format plaque Bénin: 2 lettres, 4 chiffres, 2 lettres (ex: AB 1234 RB)
+                const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                let res = "";
+                if (val.length > 0) res += val.substring(0, 2);
+                if (val.length > 2) res += " " + val.substring(2, 6);
+                if (val.length > 6) res += " " + val.substring(6, 8);
+                onChange(res);
               } else {
                 onChange(e.target.value);
               }
