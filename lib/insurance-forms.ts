@@ -31,8 +31,8 @@ export interface FormField {
   required: boolean;
   options?: FormFieldOption[];
   validation?: {
-    min?: number;
-    max?: number;
+    min?: number | string;
+    max?: number | string;
     pattern?: string;
     message?: string;
   };
@@ -120,7 +120,7 @@ const AUTOMOBILE_FORM: InsuranceFormConfig = {
       fields: [
         { id: "marque", label: "Marque", type: "text", placeholder: "Ex: Toyota", required: true },
         { id: "modele", label: "Modèle", type: "text", placeholder: "Ex: Corolla", required: true },
-        { id: "annee", label: "Année de mise en circulation", type: "number", placeholder: "Ex: 2020", required: true, validation: { min: 1990, max: new Date().getFullYear() + 1 } },
+        { id: "annee", label: "Année de mise en circulation", type: "number", placeholder: "Ex: 2020", required: true, validation: { min: 1990, max: new Date().getFullYear() } },
         { id: "immatriculation", label: "Immatriculation", type: "text", placeholder: "Ex: AB 1234 RB", required: true },
         { id: "puissance_fiscale", label: "Puissance fiscale", type: "text", placeholder: "Ex: 7 CV", required: true },
         { id: "nb_places", label: "Nombre de places", type: "number", placeholder: "Ex: 5", required: true, validation: { min: 1, max: 60 } },
@@ -484,7 +484,7 @@ const VIE_FORM: InsuranceFormConfig = {
       title: "État Civil",
       fields: [
         { id: "nom", label: "Nom et Prénoms", type: "text", placeholder: "Ex: KOFFI Jean-Baptiste", required: true, fullWidth: true },
-        { id: "date_naissance", label: "Date de naissance", type: "date", required: true },
+        { id: "date_naissance", label: "Date de naissance", type: "date", required: true, validation: { max: new Date().toISOString().split('T')[0] } },
         { id: "lieu_naissance", label: "Lieu de naissance", type: "text", placeholder: "Ville, Pays", required: true },
         { id: "nationalite", label: "Nationalité", type: "text", placeholder: "Ex: Béninoise", required: true },
         { id: "telephone", label: "Téléphone", type: "tel", placeholder: "+229 XX XX XX XX", required: true },
@@ -754,7 +754,7 @@ const VOYAGE_FORM: InsuranceFormConfig = {
       title: "Identification du Voyageur",
       fields: [
         { id: "nom", label: "Nom et Prénoms", type: "text", placeholder: "Exactement comme sur le passeport", required: true, fullWidth: true },
-        { id: "date_naissance", label: "Date de naissance", type: "date", required: true },
+        { id: "date_naissance", label: "Date de naissance", type: "date", required: true, validation: { max: new Date().toISOString().split('T')[0] } },
         { id: "nationalite", label: "Nationalité", type: "text", placeholder: "Ex: Béninoise", required: true },
         { id: "telephone", label: "Téléphone", type: "tel", placeholder: "+229 XX XX XX XX", required: true },
         { id: "email", label: "Email", type: "email", placeholder: "contact@exemple.com", required: true },

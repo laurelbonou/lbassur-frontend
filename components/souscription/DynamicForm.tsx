@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import type { InsuranceFormConfig, FormField, FormSection } from "@/lib/insurance-forms";
 
 interface DynamicFormProps {
@@ -193,8 +195,8 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         {field.required && <span className="text-red-400">*</span>}
       </label>
 
-      {/* TEXT / EMAIL / TEL / NUMBER / DATE / CURRENCY */}
-      {(field.type === "text" || field.type === "email" || field.type === "tel" || field.type === "number" || field.type === "date" || field.type === "currency") && (
+      {/* TEXT / EMAIL / NUMBER / DATE / CURRENCY */}
+      {(field.type === "text" || field.type === "email" || field.type === "number" || field.type === "date" || field.type === "currency") && (
         <div className="relative">
           <input
             type={field.type === "currency" ? "text" : field.type}
@@ -219,6 +221,23 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
               {field.suffix}
             </span>
           )}
+        </div>
+      )}
+
+      {/* TELEPHONE */}
+      {field.type === "tel" && (
+        <div className="relative">
+          <PhoneInput
+            international
+            defaultCountry="BJ"
+            placeholder={field.placeholder || "Téléphone"}
+            value={(value as string) || ""}
+            onChange={(val) => onChange(val)}
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white transition-colors focus-within:border-white/40 focus-within:bg-white/10"
+            numberInputProps={{
+              className: "bg-transparent outline-none w-full text-sm text-white placeholder:text-gray-500 ml-3"
+            }}
+          />
         </div>
       )}
 
@@ -291,7 +310,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                 key={opt.value}
                 type="button"
                 onClick={() => onToggleCheckbox(opt.value)}
-                className={`flex items-center gap-4 px-6 py-4 border text-left transition-all duration-300 group ${
+                className={`flex items-center gap-4 px-6 min-h-[54px] border text-left transition-all duration-300 group ${
                   checked
                     ? "bg-white/10 border-white/40 text-white"
                     : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"
@@ -320,7 +339,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         <button
           type="button"
           onClick={() => onChange(!value)}
-          className={`flex items-center gap-4 px-6 py-4 border transition-all duration-300 ${
+          className={`flex items-center gap-4 px-6 min-h-[54px] border transition-all duration-300 ${
             value
               ? "bg-white/10 border-white/40 text-white"
               : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20"
