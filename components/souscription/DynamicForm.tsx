@@ -261,7 +261,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                 key={opt.value}
                 type="button"
                 onClick={() => onChange(opt.value)}
-                className={`py-4 px-6 border text-[14px] font-bold uppercase tracking-wide transition-all duration-300 flex-1 min-w-[200px] flex items-center justify-center gap-3 ${
+                className={`py-5 px-6 border text-[14px] font-bold uppercase tracking-wide transition-all duration-300 flex-1 min-w-[200px] flex items-center justify-center gap-3 ${
                   checked
                     ? "bg-white !text-black border-white shadow-lg"
                     : "bg-white/5 text-gray-300 border-white/20 hover:border-white/50 hover:bg-white/10"
