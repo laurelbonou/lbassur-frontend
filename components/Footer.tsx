@@ -19,8 +19,8 @@ export default function Footer() {
               <div>
                 <h4 className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-6">Nos Offres</h4>
                 <ul className="space-y-4">
-                  <li><Link href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Particuliers</Link></li>
-                  <li><Link href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Entreprises</Link></li>
+                  <li><a href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Particuliers</a></li>
+                  <li><a href="/#offres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Entreprises</a></li>
                   <li><Link href="/simulation" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Comparateur <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
                   <li><a href="https://itoju.lbassur.bj" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Itoju Santé <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></a></li>
                 </ul>
@@ -30,10 +30,10 @@ export default function Footer() {
               <div>
                 <h4 className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-6">Le Cabinet</h4>
                 <ul className="space-y-4">
-                  <li><Link href="/#apropos" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Qui sommes-nous</Link></li>
-                  <li><Link href="/#methode" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Notre Méthode</Link></li>
-                  <li><Link href="/#actualites" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Actualités</Link></li>
-                  <li><Link href="/#contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
+                  <li><a href="/#apropos" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Qui sommes-nous</a></li>
+                  <li><a href="/#methode" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Notre Méthode</a></li>
+                  <li><a href="/#actualites" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Actualités</a></li>
+                  <li><a href="/#contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
                 </ul>
               </div>
 
@@ -53,13 +53,13 @@ export default function Footer() {
 
             {/* Bottom: Brand Info */}
             <div>
-              <Link href="/" className="block mb-6">
+              <a href="/" className="block mb-6">
                  <img 
                     src="/images/logo.jpg" 
                     alt="LBASSUR Logo" 
                     className="h-10 w-auto rounded-sm brightness-90"
                  />
-              </Link>
+              </a>
               <p className="text-gray-400 text-sm font-light leading-relaxed mb-6 max-w-md">
                 Votre partenaire de confiance en courtage d'assurance au Bénin. Nous défendons vos intérêts avec indépendance et transparence.
               </p>

@@ -30,20 +30,20 @@ export default function Navbar() {
         }`}
       >
         <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-3">
             <img 
                 src="/images/logo.jpg" 
                 alt="LBASSUR Logo" 
                 className="h-10 w-auto rounded-sm"
             />
             <span className="text-xl font-bold tracking-tight text-white">LBASSUR</span>
-          </Link>
+          </a>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
-            <Link href="/" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+            <a href="/" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Accueil
-            </Link>
+            </a>
             <Link href="/#apropos" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               À Propos
             </Link>
@@ -90,13 +90,13 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black pt-24 px-6">
           <div className="flex flex-col gap-6">
-            <Link 
+            <a 
               href="/" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
               Accueil
-            </Link>
+            </a>
             <Link 
               href="/#apropos" 
               onClick={() => setIsMobileMenuOpen(false)}
