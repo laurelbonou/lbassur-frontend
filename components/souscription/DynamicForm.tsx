@@ -96,8 +96,8 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
               }`}
             />
             <span
-              className={`text-[9px] md:text-[10px] uppercase tracking-widest font-black text-center transition-colors duration-500 ${
-                idx <= currentSectionIdx ? "text-white" : "text-gray-400 hidden md:block"
+              className={`text-[9px] md:text-[10px] uppercase tracking-wide font-bold text-center leading-tight transition-colors duration-500 ${
+                idx <= currentSectionIdx ? "text-white" : "text-gray-500 hidden md:block"
               }`}
             >
               {s.letter}. {s.title}
