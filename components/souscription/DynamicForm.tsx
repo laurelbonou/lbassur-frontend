@@ -311,7 +311,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
                 key={opt.value}
                 type="button"
                 onClick={() => onToggleCheckbox(opt.value)}
-                className={`flex items-center gap-4 px-6 min-h-[54px] border text-left transition-all duration-300 group ${
+                className={`flex items-center justify-center gap-4 px-6 min-h-[54px] border text-center transition-all duration-300 group ${
                   checked
                     ? "bg-white/10 border-white/40 text-white"
                     : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"
@@ -340,7 +340,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
         <button
           type="button"
           onClick={() => onChange(!value)}
-          className={`flex items-center gap-4 px-6 min-h-[54px] border transition-all duration-300 ${
+          className={`flex items-center justify-center gap-4 px-6 min-h-[54px] border text-center transition-all duration-300 ${
             value
               ? "bg-white/10 border-white/40 text-white"
               : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20"
