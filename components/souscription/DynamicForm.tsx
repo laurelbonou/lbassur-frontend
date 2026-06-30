@@ -253,16 +253,16 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
 
       {/* RADIO */}
       {field.type === "radio" && (
-        <div className="flex flex-wrap gap-3 mt-1">
+        <div className="flex flex-wrap gap-4 mt-2">
           {field.options?.map((opt) => (
             <button
               key={opt.value}
               type="button"
               onClick={() => onChange(opt.value)}
-              className={`px-7 py-4 border text-[13px] font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`px-8 py-5 rounded-md border text-[14px] font-bold uppercase tracking-widest transition-all duration-300 flex-1 min-w-[200px] text-center flex items-center justify-center ${
                 value === opt.value
-                  ? "bg-white !text-black border-white"
-                  : "bg-white/5 text-gray-300 border-white/10 hover:border-white/40 hover:bg-white/10"
+                  ? "bg-white !text-black border-white shadow-lg"
+                  : "bg-white/5 text-gray-300 border-white/20 hover:border-white/50 hover:bg-white/10"
               }`}
             >
               {opt.label}
