@@ -47,6 +47,11 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
   const validateSection = (): boolean => {
     const newErrors: Record<string, string> = {};
     for (const field of section.fields) {
+      // Ignore hidden fields
+      if (field.showIf && !field.showIf(formData)) {
+        continue;
+      }
+
       if (field.required) {
         const value = formData[field.id];
         if (field.type === "checkbox-group") {
