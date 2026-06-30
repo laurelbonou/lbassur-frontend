@@ -134,22 +134,28 @@ export default function DynamicForm({ config, onComplete, onBack, onSectionCompl
 
           {/* Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {section.fields.map((field) => (
-              <div
-                key={field.id}
-                className={field.fullWidth || field.type === "checkbox-group" || field.type === "radio" || field.type === "textarea"
-                  ? "md:col-span-2"
-                  : ""}
-              >
-                <FieldRenderer
-                  field={field}
-                  value={formData[field.id]}
-                  onChange={(val) => updateField(field.id, val)}
-                  onToggleCheckbox={(val) => toggleCheckboxGroup(field.id, val)}
-                  error={errors[field.id]}
-                />
-              </div>
-            ))}
+            {section.fields
+              .filter((field) => !field.showIf || field.showIf(formData))
+              .map((field) => {
+                const dynamicOptions = field.dependsOn && field.getOptions ? field.getOptions(formData[field.dependsOn]) : undefined;
+                return (
+                  <div
+                    key={field.id}
+                    className={field.fullWidth || field.type === "checkbox-group" || field.type === "radio" || field.type === "textarea"
+                      ? "md:col-span-2"
+                      : ""}
+                  >
+                    <FieldRenderer
+                      field={field}
+                      value={formData[field.id]}
+                      onChange={(val) => updateField(field.id, val)}
+                      onToggleCheckbox={(val) => toggleCheckboxGroup(field.id, val)}
+                      error={errors[field.id]}
+                      dynamicOptions={dynamicOptions}
+                    />
+                  </div>
+                );
+              })}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -182,9 +188,10 @@ interface FieldRendererProps {
   onChange: (value: unknown) => void;
   onToggleCheckbox: (value: string) => void;
   error?: string;
+  dynamicOptions?: { value: string; label: string }[];
 }
 
-function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: FieldRendererProps) {
+function FieldRenderer({ field, value, onChange, onToggleCheckbox, error, dynamicOptions }: FieldRendererProps) {
   const baseInputClass =
     "w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white outline-none focus:border-white/40 focus:bg-white/10 transition-colors text-sm placeholder:text-gray-500";
 
@@ -263,7 +270,7 @@ function FieldRenderer({ field, value, onChange, onToggleCheckbox, error }: Fiel
           <option value="" disabled>
             Sélectionnez...
           </option>
-          {field.options?.map((opt) => (
+          {(dynamicOptions || field.options)?.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>

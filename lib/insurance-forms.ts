@@ -39,6 +39,9 @@ export interface FormField {
   helperText?: string;
   fullWidth?: boolean;
   suffix?: string; // e.g. "FCFA", "m²"
+  dependsOn?: string;
+  getOptions?: (dependentValue: any) => FormFieldOption[];
+  showIf?: (formData: Record<string, any>) => boolean;
 }
 
 export interface FormSection {
@@ -118,8 +121,62 @@ const AUTOMOBILE_FORM: InsuranceFormConfig = {
       letter: "B",
       title: "Informations sur le Véhicule",
       fields: [
-        { id: "marque", label: "Marque", type: "text", placeholder: "Ex: Toyota", required: true },
-        { id: "modele", label: "Modèle", type: "text", placeholder: "Ex: Corolla", required: true },
+        {
+          id: "marque",
+          label: "Marque",
+          type: "select",
+          required: true,
+          options: [
+            { value: "toyota", label: "Toyota" },
+            { value: "hyundai", label: "Hyundai" },
+            { value: "peugeot", label: "Peugeot" },
+            { value: "renault", label: "Renault" },
+            { value: "kia", label: "Kia" },
+            { value: "nissan", label: "Nissan" },
+            { value: "lexus", label: "Lexus" },
+            { value: "mercedes", label: "Mercedes-Benz" },
+            { value: "bmw", label: "BMW" },
+            { value: "autre", label: "Autre..." }
+          ]
+        },
+        {
+          id: "marque_autre",
+          label: "Précisez la marque",
+          type: "text",
+          required: true,
+          showIf: (data) => data.marque === "autre"
+        },
+        {
+          id: "modele",
+          label: "Modèle",
+          type: "select",
+          required: true,
+          dependsOn: "marque",
+          getOptions: (marqueValue) => {
+            const models: Record<string, string[]> = {
+              toyota: ["Corolla", "Yaris", "RAV4", "Camry", "Prado", "Hilux", "Highlander", "Matrix", "Avensis"],
+              hyundai: ["Tucson", "Elantra", "Santa Fe", "Sonata", "Accent"],
+              peugeot: ["208", "308", "508", "2008", "3008", "5008"],
+              renault: ["Clio", "Megane", "Captur", "Duster", "Koleos"],
+              kia: ["Sportage", "Sorento", "Rio", "Cerato", "Picanto"],
+              nissan: ["Qashqai", "Altima", "Patrol", "X-Trail", "Pathfinder"],
+              lexus: ["RX330", "RX350", "ES300", "LX470"],
+              mercedes: ["Classe C", "Classe E", "Classe ML/GLE", "Classe S"],
+              bmw: ["Série 3", "Série 5", "X3", "X5"]
+            };
+            const list = models[String(marqueValue)] || [];
+            const options = list.map(m => ({ value: m.toLowerCase(), label: m }));
+            options.push({ value: "autre", label: "Autre..." });
+            return options;
+          }
+        },
+        {
+          id: "modele_autre",
+          label: "Précisez le modèle",
+          type: "text",
+          required: true,
+          showIf: (data) => data.modele === "autre"
+        },
         { id: "annee", label: "Année de mise en circulation", type: "number", placeholder: "Ex: 2020", required: true, validation: { min: 1990, max: new Date().getFullYear() } },
         { id: "immatriculation", label: "Immatriculation", type: "text", placeholder: "Ex: AB 1234 RB", required: true },
         { id: "puissance_fiscale", label: "Puissance fiscale", type: "text", placeholder: "Ex: 7 CV", required: true },
