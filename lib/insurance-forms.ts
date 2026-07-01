@@ -42,6 +42,7 @@ export interface FormField {
   dependsOn?: string;
   getOptions?: (dependentValue: any) => FormFieldOption[];
   showIf?: (formData: Record<string, any>) => boolean;
+  defaultValue?: any;
 }
 
 export interface FormSection {
@@ -269,6 +270,7 @@ const AUTOMOBILE_FORM: InsuranceFormConfig = {
           label: "Formule",
           type: "radio",
           required: true,
+          defaultValue: "rc_simple",
           options: [
             { value: "rc_simple", label: "Responsabilité Civile simple" },
             { value: "tiers_complet", label: "Tiers Complet" },

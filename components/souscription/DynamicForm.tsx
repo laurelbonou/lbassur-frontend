@@ -17,7 +17,17 @@ interface DynamicFormProps {
 
 export default function DynamicForm({ config, onComplete, onBack, onSectionComplete, initialData }: DynamicFormProps) {
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
-  const [formData, setFormData] = useState<Record<string, unknown>>(initialData || {});
+  const [formData, setFormData] = useState<Record<string, unknown>>(() => {
+    const initial = { ...initialData };
+    config.sections.forEach(sec => {
+      sec.fields.forEach(f => {
+        if (f.defaultValue !== undefined && initial[f.id] === undefined) {
+          initial[f.id] = f.defaultValue;
+        }
+      });
+    });
+    return initial;
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const section = config.sections[currentSectionIdx];
