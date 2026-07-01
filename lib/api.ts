@@ -138,5 +138,12 @@ export const api = {
     });
     if (!res.ok) throw new Error("Failed to finalize contract");
     return res.json();
-  }
+  },
+
+  // --- Broker API ---
+  lookupBroker: async (code: string) => {
+    const res = await fetch(`${API_BASE_URL}/brokers/lookup/${encodeURIComponent(code)}`);
+    if (!res.ok) throw new Error("Broker not found");
+    return res.json();
+  },
 };

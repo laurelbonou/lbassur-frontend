@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import StepIndicator from "@/components/souscription/StepIndicator";
 import DynamicForm from "@/components/souscription/DynamicForm";
 import DocumentUploader from "@/components/souscription/DocumentUploader";
+import BrokerSelector from "@/components/souscription/BrokerSelector";
 
 import SubscriptionSummary from "@/components/souscription/SubscriptionSummary";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,12 +22,13 @@ import type { InsuranceFormConfig } from "@/lib/insurance-forms";
 // ── Steps ────────────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { id: "select",    title: "Type d'Assurance",    shortTitle: "Type" },
-  { id: "form",      title: "Fiche de Cotation",   shortTitle: "Fiche" },
+  { id: "select",    title: "Type d'Assurance",      shortTitle: "Type" },
+  { id: "form",      title: "Fiche de Cotation",     shortTitle: "Fiche" },
   { id: "documents", title: "Pièces Justificatives", shortTitle: "Pièces" },
-  { id: "summary",   title: "Récapitulatif",       shortTitle: "Résumé" },
-  { id: "payment",   title: "Paiement",            shortTitle: "Paiement" },
-  { id: "success",   title: "Confirmation",        shortTitle: "Confirmé" },
+  { id: "broker",    title: "Courtier",              shortTitle: "Courtier" },
+  { id: "summary",   title: "Récapitulatif",         shortTitle: "Résumé" },
+  { id: "payment",   title: "Paiement",              shortTitle: "Paiement" },
+  { id: "success",   title: "Confirmation",          shortTitle: "Confirmé" },
 ];
 
 // ── Main Page ────────────────────────────────────────────────────────────────
@@ -52,6 +54,8 @@ function SouscriptionContent() {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ docId: string; file: File; preview?: string }[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [brokerCode, setBrokerCode] = useState<string | null>(null);
+  const [brokerName, setBrokerName] = useState<string | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<{
     id: string;
     insurer: string;
@@ -102,7 +106,13 @@ function SouscriptionContent() {
 
   const handleDocumentsComplete = (files: { docId: string; file: File; preview?: string }[]) => {
     setUploadedFiles(files);
-    setCurrentStep(3); // Go to summary
+    setCurrentStep(3); // Go to broker selection
+  };
+
+  const handleBrokerComplete = (data: { brokerCode: string | null; brokerName: string | null }) => {
+    setBrokerCode(data.brokerCode);
+    setBrokerName(data.brokerName);
+    setCurrentStep(4); // Go to summary
   };
 
   const handleProceedToPayment = async (signature: string | null) => {
@@ -137,6 +147,7 @@ function SouscriptionContent() {
           documents,
           signatureData: signature || undefined,
           selectedOfferId: selectedOffer?.id,
+          brokerCode: brokerCode || undefined,
       };
 
       let quote;
@@ -147,7 +158,7 @@ function SouscriptionContent() {
       }
 
       setQuoteId(quote.id);
-      setCurrentStep(4); // Go to payment
+      setCurrentStep(5); // Go to payment
     } catch (error) {
       console.error(error);
       alert("Une erreur est survenue lors du traitement.");
@@ -186,7 +197,7 @@ function SouscriptionContent() {
   const onPaymentSuccess = (response: any) => {
     console.log("FeexPay Response:", response);
     setReference(response?.reference || `LB-${Date.now().toString(36).toUpperCase().slice(-8)}`);
-    setCurrentStep(5); // Go to success
+    setCurrentStep(6); // Go to success
   };
 
   const currentStepId = STEPS[currentStep]?.id;
@@ -318,7 +329,23 @@ function SouscriptionContent() {
               </motion.div>
             )}
 
-            {/* ── STEP 3: SUMMARY ── */}
+            {/* ── STEP 3: BROKER SELECTION ── */}
+            {currentStepId === "broker" && (
+              <motion.div
+                key="broker"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <BrokerSelector
+                  onComplete={handleBrokerComplete}
+                  onBack={() => goToStep(2)}
+                  initialBrokerCode={brokerCode}
+                />
+              </motion.div>
+            )}
+
+            {/* ── STEP 4: SUMMARY ── */}
             {currentStepId === "summary" && selectedConfig && (
               <motion.div
                 key="summary"
@@ -332,7 +359,7 @@ function SouscriptionContent() {
                   uploadedFilesCount={uploadedFiles.length}
                   selectedOffer={selectedOffer}
                   onProceedToPayment={handleProceedToPayment}
-                  onBack={() => goToStep(2)}
+                  onBack={() => goToStep(3)}
                   onEditStep={(step) => goToStep(step)}
                 />
               </motion.div>
@@ -377,20 +404,29 @@ function SouscriptionContent() {
 
                 {/* Payment Methods */}
                 <div className="flex justify-center py-4">
-                  {quoteId ? (
+                {quoteId ? (
                     <FeexPayButton 
                       amount={selectedOffer?.price || 0} 
-                      description={`Souscription ${selectedConfig?.title}`} 
+                      description={`Souscription ${selectedConfig?.title || "Assurance"}`.replace(/[^a-zA-Z0-9\s]/g, '')} 
                       id={process.env.NEXT_PUBLIC_FEEXPAY_SHOP_ID!} 
                       token={process.env.NEXT_PUBLIC_FEEXPAY_TOKEN!} 
                       callback={onPaymentSuccess}
-                      callback_url={`${process.env.NEXT_PUBLIC_API_URL || "https://lbassur.bj/api"}/payments/webhook`}
+                      callback_url={`${typeof window !== 'undefined' ? window.location.origin : ''}/souscription?step=success`}
+                      callback_info={{
+                        description: `Souscription ${selectedConfig?.title || "Assurance"}`,
+                        fullname: String(formData["fullName"] || formData["nom"] || "Client"),
+                        email: String(formData["email"] || formData["courriel"] || ""),
+                        phone: String(formData["phone"] || formData["telephone"] || ""),
+                      }}
                       mode="LIVE"
                       currency="XOF"
                       customId={quoteId}
                     />
                   ) : (
-                    <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Préparation du paiement...</p>
+                    </div>
                   )}
                 </div>
 
@@ -406,7 +442,7 @@ function SouscriptionContent() {
                 {/* Navigation */}
                 <div className="flex justify-between items-center border-t border-white/10 pt-6">
                   <button
-                    onClick={() => goToStep(3)}
+                    onClick={() => goToStep(4)}
                     className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
                   >
                     <ChevronLeft size={14} /> Retour
