@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 const corporateInfo = [
   { label: "Téléphone", value: "+229 01 52 75 55 55" },
-  { label: "Siège social", value: "N° DE PARCELLE 238, MAISON FRANCOIS BONOU, Agblangandan, Sèmé Kpodji, Ouémé - Bénin" },
+  { label: "Siège social", value: "Cotonou, Bénin" },
   { label: "Activité principale", value: "Assurance" },
   { label: "Forme juridique", value: "SARL" },
   { label: "Immatriculation RCCM", value: "RB/PNO/21 B 3312" },

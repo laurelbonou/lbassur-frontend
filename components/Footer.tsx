@@ -42,8 +42,7 @@ export default function Footer() {
                 <h4 className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-6">Contact & Accès</h4>
                 <ul className="space-y-4">
                   <li className="text-sm text-gray-400 font-light leading-relaxed">
-                      N° DE PARCELLE 238, MAISON FRANCOIS BONOU<br />
-                      Agblangandan, Sèmé Kpodji, Ouémé - Bénin
+                      Cotonou, Bénin
                   </li>
                   <li className="text-sm text-white font-medium">+229 01 52 75 55 55</li>
                   <li className="text-sm text-white font-medium">contact@lbassur.bj</li>
