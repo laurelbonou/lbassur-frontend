@@ -4,7 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Car, Heart, ChevronRight, Check, Briefcase, Zap, Clock, Coins, Star } from "lucide-react";
+import { Shield, Car, Heart, ChevronRight, Check, Briefcase, Zap, Clock, Coins, Star, MapPin, Trees } from "lucide-react";
 import { api } from "@/lib/api";
 
 // Removed mock tariffs
@@ -18,8 +18,30 @@ type FormData = {
     autoPower: string;
     autoEnergy: string;
     autoDuration: string;
+    autoZone: string;
     priority: string;
 };
+
+/**
+ * Zone de circulation. Les compagnies qui différencient leurs tarifs par risque
+ * géographique appliquent une prime plus élevée là où les accidents sont les
+ * plus fréquents. Les autres pratiquent le même prix partout et apparaissent
+ * dans les deux cas.
+ */
+const ZONES = [
+    {
+        val: "STATUS_1_HIGH_RISK",
+        title: "Grand Cotonou",
+        desc: "Cotonou, Abomey-Calavi, Sèmè-Podji et centres-villes denses",
+        icon: MapPin,
+    },
+    {
+        val: "STATUS_2_STANDARD_RISK",
+        title: "Autres communes",
+        desc: "Circulation moins dense, risque d'accident plus faible",
+        icon: Trees,
+    },
+];
 
 const CATEGORIES = [
     { id: "iardt", title: "IARDT (Dommages & RC)", icon: Shield },
@@ -42,6 +64,7 @@ export default function SimulationPage() {
         autoPower: "",
         autoEnergy: "",
         autoDuration: "",
+        autoZone: "",
         priority: "",
     });
     const [loading, setLoading] = useState(false);
@@ -58,7 +81,8 @@ export default function SimulationPage() {
                 { id: "autoUsage", title: "Usage" },
                 { id: "autoPower", title: "Puissance" },
                 { id: "autoEnergy", title: "Énergie" },
-                { id: "autoDuration", title: "Durée" }
+                { id: "autoDuration", title: "Durée" },
+                { id: "autoZone", title: "Zone" }
             );
         } else if (formData.type) {
             flow.push({ id: "priority", title: "Priorité" });
@@ -79,7 +103,10 @@ export default function SimulationPage() {
                     usage: data.autoUsage,
                     power: data.autoPower,
                     energy: data.autoEnergy,
-                    duration: data.autoDuration
+                    duration: data.autoDuration,
+                    // Sans zone, le backend renvoie tous les tarifs, y compris les
+                    // deux variantes des compagnies qui différencient par risque.
+                    ...(data.autoZone ? { pricingStatus: data.autoZone } : {}),
                 };
                 
                 const response = await api.simulateAuto(payload);
@@ -130,7 +157,7 @@ export default function SimulationPage() {
 
     const resetForm = () => {
         setCurrentStepIndex(0);
-        setFormData({ category: "", type: "", autoUsage: "", autoPower: "", autoEnergy: "", autoDuration: "", priority: "" });
+        setFormData({ category: "", type: "", autoUsage: "", autoPower: "", autoEnergy: "", autoDuration: "", autoZone: "", priority: "" });
         setResults([]);
     };
 
@@ -316,6 +343,29 @@ export default function SimulationPage() {
                                     </motion.div>
                                 )}
 
+                                {currentStep.id === "autoZone" && (
+                                    <motion.div key="autoZone" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
+                                        <h2 className="text-xl lg:text-2xl font-bold mb-4 uppercase text-gray-500 tracking-widest">Zone de Circulation</h2>
+                                        <p className="text-gray-500 text-[10px] lg:text-[11px] mb-10 font-light leading-relaxed">
+                                            Où le véhicule circule le plus souvent. Certaines compagnies ajustent leur prime selon la densité du trafic.
+                                        </p>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {ZONES.map(zone => (
+                                                <button key={zone.val} onClick={() => updateForm("autoZone", zone.val)} className="bg-white/5 p-6 lg:p-8 border border-white/10 hover:border-white/40 hover:bg-white/10 transition-all duration-500 text-left group">
+                                                    <div className="flex items-center gap-4 lg:gap-6 mb-3">
+                                                        <div className="w-8 h-8 lg:w-10 lg:h-10 bg-black rounded-full flex items-center justify-center group-hover:bg-white transition-colors duration-500 border border-white/10">
+                                                            <zone.icon size={16} className="text-white group-hover:text-black transition-colors" />
+                                                        </div>
+                                                        <span className="font-bold uppercase tracking-[0.2em] text-[10px] lg:text-[11px] text-white">{zone.title}</span>
+                                                    </div>
+                                                    <p className="text-gray-400 text-[9px] lg:text-[10px] pl-12 lg:pl-16 font-light">{zone.desc}</p>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <BackButton onClick={prevStep} />
+                                    </motion.div>
+                                )}
+
                                 {/* ÉTAPE PRIORITY */}
                                 {currentStep.id === "priority" && (
                                     <motion.div key="priority" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.6 }}>
@@ -415,7 +465,7 @@ export default function SimulationPage() {
                                                         </div>
 
                                                         <p className="text-[8px] lg:text-[9px] text-gray-500 uppercase tracking-widest mb-10 font-light">
-                                                            * Primes de référence Zone Rouge, Bénin. Tarifs définitifs selon souscription.
+                                                            * Primes indicatives, {formData.autoZone === "STATUS_1_HIGH_RISK" ? "Grand Cotonou" : "hors Grand Cotonou"}. Tarifs définitifs selon souscription.
                                                         </p>
                                                     </>
                                                 ) : (
