@@ -81,11 +81,21 @@ export const api = {
   },
 
   uploadDocuments: async (formData: FormData) => {
-    const res = await fetch(`${API_BASE_URL}/uploads`, {
+    const res = await fetch(`${API_BASE_URL}/uploads?folder=documents`, {
       method: "POST",
       body: formData,
     });
     if (!res.ok) throw new Error("Failed to upload documents");
+    return res.json();
+  },
+
+  /** Photos et notes vocales de sinistre — rangées dans leur propre dossier. */
+  uploadClaimFiles: async (formData: FormData) => {
+    const res = await fetch(`${API_BASE_URL}/uploads?folder=sinistres`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) throw new Error("Failed to upload claim files");
     return res.json();
   },
 
