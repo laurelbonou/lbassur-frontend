@@ -258,7 +258,7 @@ export default function ClientDashboard() {
                     const status = CLAIM_STATUS[claim.status as keyof typeof CLAIM_STATUS];
                     return (
                       <div key={claim.id} className="bg-[#050505] border border-white/10 p-6 hover:bg-white/[0.02] transition-colors">
-                        <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <div className="flex flex-wrap items-center gap-3 mb-1">
                           <h3 className="text-sm font-bold text-white uppercase tracking-wide">
                             Sinistre du {new Date(claim.incidentDate).toLocaleDateString("fr-FR")}
                           </h3>
@@ -267,9 +267,25 @@ export default function ClientDashboard() {
                           </span>
                         </div>
 
+                        {/* La référence est ce que le client cite au téléphone. */}
+                        <p className="text-[10px] font-mono text-gray-500 tracking-wider mb-4">
+                          {claim.reference}
+                        </p>
+
                         <p className="text-xs text-gray-400 max-w-2xl whitespace-pre-line mb-4">
                           {claim.description}
                         </p>
+
+                        {claim.adminNote && (
+                          <div className="bg-white/5 border-l-2 border-white/30 pl-4 py-3 mb-4 max-w-2xl">
+                            <div className="text-[9px] uppercase tracking-widest text-gray-500 mb-1">
+                              Message de LBASSUR
+                            </div>
+                            <p className="text-xs text-gray-300 whitespace-pre-line">
+                              {claim.adminNote}
+                            </p>
+                          </div>
+                        )}
 
                         <div className="pt-4 border-t border-white/10 flex flex-wrap gap-x-6 gap-y-2 text-[9px] uppercase tracking-widest text-gray-600">
                           <span className="flex items-center gap-1">
