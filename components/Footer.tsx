@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Linkedin, Twitter, Facebook } from "lucide-react";
+import { CONNEXION_CLIENT, espacePartenaires } from "@/lib/espaces";
 
 export default function Footer() {
+  const partenaires = espacePartenaires();
+
   return (
     <footer className="bg-black text-white py-20 border-t border-white/5 relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
@@ -47,6 +50,25 @@ export default function Footer() {
                   <li className="text-sm text-white font-medium">+229 01 52 75 55 55</li>
                   <li className="text-sm text-white font-medium">contact@lbassur.bj</li>
                 </ul>
+
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <h4 className="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mb-6">Espaces</h4>
+                  <ul className="space-y-4">
+                    <li>
+                      <Link href={CONNEXION_CLIENT} className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">
+                        Espace client <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </Link>
+                    </li>
+                    {/* N'apparait qu'une fois l'espace partenaires reellement deploye. */}
+                    {partenaires && (
+                      <li>
+                        <a href={partenaires} className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">
+                          Espace partenaires <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
 

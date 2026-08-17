@@ -3,11 +3,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, UserRound } from "lucide-react";
+import { CONNEXION_CLIENT, ESPACE_CLIENT } from "@/lib/espaces";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Demarre a false pour que le premier rendu client soit identique au rendu
+  // serveur : localStorage n'existe pas cote serveur, l'ajuster ici plutot
+  // qu'a l'initialisation evite une erreur d'hydratation.
+  const [estConnecte, setEstConnecte] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +21,15 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    setEstConnecte(Boolean(localStorage.getItem("client_token")));
+  }, []);
+
+  // Le tableau de bord renvoie lui-meme vers la connexion si la session a
+  // expire : on peut donc pointer directement dessus des qu'un jeton existe.
+  const lienEspace = estConnecte ? ESPACE_CLIENT : CONNEXION_CLIENT;
+  const libelleEspace = estConnecte ? "Mon espace" : "Se connecter";
 
   return (
     <>
@@ -62,13 +76,20 @@ export default function Navbar() {
             
             <div className="w-px h-4 bg-white/20 mx-2" />
             
-            <Link 
+            <Link
               href="/compare"
               className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200"
             >
               Toutes les offres
             </Link>
-            <Link 
+            <Link
+              href={lienEspace}
+              className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200"
+            >
+              <UserRound size={14} />
+              {libelleEspace}
+            </Link>
+            <Link
               href="/simulation"
               className="bg-white !text-black px-6 py-2.5 text-[13px] font-bold rounded-md hover:bg-gray-200 transition-all duration-200 active:scale-95"
             >
@@ -132,14 +153,22 @@ export default function Navbar() {
             >
               Contact
             </Link>
-            <Link 
+            <Link
               href="/compare"
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
               Toutes les offres
             </Link>
-            <Link 
+            <Link
+              href={lienEspace}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center gap-3 text-2xl font-bold text-white border-b border-white/10 pb-4"
+            >
+              <UserRound size={22} />
+              {libelleEspace}
+            </Link>
+            <Link
               href="/simulation"
               onClick={() => setIsMobileMenuOpen(false)}
               className="bg-white !text-black text-center py-4 text-lg font-bold rounded-md mt-4"
