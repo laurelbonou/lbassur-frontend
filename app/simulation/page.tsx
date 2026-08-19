@@ -117,7 +117,11 @@ export default function SimulationPage() {
                     guarantees: r.guarantees.join(' + '),
                     tag: r.tag,
                     rating: r.rating,
-                    logo: r.logoUrl
+                    logo: r.logoUrl,
+                    // Sans ça, une compagnie proposant un tarif avec et sans
+                    // bonus apparaît deux fois, à plusieurs milliers de francs
+                    // d'écart, sans rien qui explique la différence.
+                    bonusRate: r.bonusRate ? Number(r.bonusRate) : null,
                 }));
                 
                 setResults(mappedResults);
@@ -430,6 +434,20 @@ export default function SimulationPage() {
                                                                                             )}
                                                                                         </div>
                                                                                         <p className="text-[9px] lg:text-[10px] text-gray-400 font-light max-w-[150px] lg:max-w-[200px] truncate">{ins.guarantees}</p>
+                                                                                        {/*
+                                                                                            Le bonus porte sur la prime RC, pas sur le total :
+                                                                                            on nomme la reduction sans jamais afficher une
+                                                                                            economie calculee, qui serait fausse.
+                                                                                        */}
+                                                                                        {ins.bonusRate ? (
+                                                                                            <span className="inline-block mt-1.5 px-2 py-0.5 text-[8px] lg:text-[9px] font-bold uppercase tracking-widest border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+                                                                                                Bonus {ins.bonusRate} %
+                                                                                            </span>
+                                                                                        ) : (
+                                                                                            <span className="inline-block mt-1.5 px-2 py-0.5 text-[8px] lg:text-[9px] font-bold uppercase tracking-widest border border-white/10 text-gray-500">
+                                                                                                Sans bonus
+                                                                                            </span>
+                                                                                        )}
                                                                                         {ins.rating && (
                                                                                             <div className="flex items-center gap-1 mt-1">
                                                                                                 {Array.from({ length: 5 }).map((_, j) => (
