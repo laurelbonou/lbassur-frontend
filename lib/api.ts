@@ -109,46 +109,11 @@ export const api = {
     return res.json();
   },
 
-  // --- Admin API ---
-  getQuoteRequests: async () => {
-    const res = await fetch(`${API_BASE_URL}/quote-requests`, {
-      headers: { "x-api-key": process.env.NEXT_PUBLIC_ADMIN_API_KEY || "super-secret-admin-key" }
-    });
-    if (!res.ok) throw new Error("Failed to fetch quote requests");
-    return res.json();
-  },
-
-  getQuoteRequest: async (id: string) => {
-    // Re-using the same list logic to find one since there is no GET /quote-requests/:id
-    // Wait, I should add a backend route for GET /quote-requests/:id or just filter from the list
-    // Or I'll fetch all and find the one. For now let's just fetch all and find it:
-    const data = await api.getQuoteRequests();
-    const quote = data.find((q: any) => q.id === id);
-    if (!quote) throw new Error("Quote not found");
-    return quote;
-  },
-
-  sendToInsurer: async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/quote-requests/${id}/send-to-insurer`, {
-      method: "POST",
-      headers: { "x-api-key": process.env.NEXT_PUBLIC_ADMIN_API_KEY || "super-secret-admin-key" }
-    });
-    if (!res.ok) throw new Error("Failed to send to insurer");
-    return res.json();
-  },
-
-  finalizeContract: async (id: string, policyNumber: string) => {
-    const res = await fetch(`${API_BASE_URL}/quote-requests/${id}/finalize-contract`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "x-api-key": process.env.NEXT_PUBLIC_ADMIN_API_KEY || "super-secret-admin-key"
-      },
-      body: JSON.stringify({ policyNumber })
-    });
-    if (!res.ok) throw new Error("Failed to finalize contract");
-    return res.json();
-  },
+  // Les routes d'administration ne sont PAS exposees ici. Elles exigent
+  // ADMIN_API_KEY, et toute variable NEXT_PUBLIC_ est integree au
+  // JavaScript envoye a chaque visiteur : publier cette cle donnerait a
+  // n'importe qui l'acces complet a l'API d'administration. L'espace admin
+  // les appelle par son propre relais, ou la cle reste cote serveur.
 
   // --- Broker API ---
   lookupBroker: async (code: string) => {
