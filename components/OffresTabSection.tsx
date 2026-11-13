@@ -9,7 +9,7 @@ const offresParticuliers = [
         id: "auto-voyage",
         title: "Auto & Voyage",
         icon: Car,
-        image: "/images/auto et voyage.png",
+        image: "/images/auto et voyage.webp",
         items: [
             "Assurance automobile",
             "Assurance moto",
@@ -20,7 +20,7 @@ const offresParticuliers = [
         id: "habitation-quotidien",
         title: "Habitation & Quotidien",
         icon: Home,
-        image: "/images/habitation et quotidien.png",
+        image: "/images/habitation et quotidien.webp",
         items: [
             "Multirisque habitation",
             "Responsabilité civile chef de famille",
@@ -31,7 +31,7 @@ const offresParticuliers = [
         id: "vie-avenir",
         title: "Vie & Avenir",
         icon: GraduationCap,
-        image: "/images/vie et avenir.png",
+        image: "/images/vie et avenir.webp",
         items: [
             "Épargne retraite",
             "Assurance études",
@@ -46,7 +46,7 @@ const offresEntreprises = [
         id: "dommages-flottes",
         title: "Dommages & Flottes",
         icon: Building2,
-        image: "/images/entreprises_dommages.png",
+        image: "/images/entreprises_dommages.webp",
         items: [
             "Multirisque entreprise / professionnelle",
             "Flottes automobile",
@@ -58,7 +58,7 @@ const offresEntreprises = [
         id: "responsabilites-specifiques",
         title: "Responsabilités & Risques Spéciaux",
         icon: BriefcaseBusiness,
-        image: "/images/entreprises_responsabilites.png",
+        image: "/images/entreprises_responsabilites.webp",
         items: [
             "Responsabilité civile (Entreprise, Décennale, RCMS/D&O)",
             "Cyber sécurité",
@@ -70,7 +70,7 @@ const offresEntreprises = [
         id: "transports-cautions",
         title: "Transports & Cautions",
         icon: Anchor,
-        image: "/images/entreprises_transports.png",
+        image: "/images/entreprises_transports.webp",
         items: [
             "Assurance transports (Marchandises, Aviation, Corps de navire)",
             "Crédit caution (Marchés, Commerciales, Garanties bancaires)"

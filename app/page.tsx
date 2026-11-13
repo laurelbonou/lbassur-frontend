@@ -10,6 +10,11 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import ActualitesSection from "@/components/ActualitesSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

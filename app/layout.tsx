@@ -35,9 +35,10 @@ export const metadata: Metadata = {
     "assurance voyage"
   ],
   authors: [{ name: "LBASSUR" }],
-  alternates: {
-    canonical: "/",
-  },
+  // Pas de `alternates` ici : les metadonnees d'un layout sont heritees par
+  // toutes les pages enfants. Un `canonical: "/"` pose a ce niveau faisait
+  // declarer a chaque page qu'elle etait un doublon de l'accueil, ce qui la
+  // faisait sortir de l'index Google. Chaque page declare desormais la sienne.
   openGraph: {
     title: "LBASSUR - Premier Courtier d'Assurance au Bénin",
     description: "Trouvez la meilleure assurance au Bénin avec LBASSUR. Solutions sur mesure pour auto, habitation, santé et entreprises.",

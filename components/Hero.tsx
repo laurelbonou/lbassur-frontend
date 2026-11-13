@@ -7,22 +7,22 @@ import { ArrowRight } from "lucide-react";
 
 const heroSlides = [
     {
-        image: "/images/petite fille avec son père en couleur.png",
+        image: "/images/petite fille avec son père en couleur.webp",
         alt: "Petite fille avec son père",
         title: "S'assurer Juste,\net non Juste S'assurer.",
     },
     {
-        image: "/images/petite fille avec son cerf volant.png",
+        image: "/images/petite fille avec son cerf volant.webp",
         alt: "Petite fille avec son cerf volant",
         title: "Votre sérénité,\nnotre priorité.",
     },
     {
-        image: "/images/petite fille allant a l'école avec son sac.png",
+        image: "/images/petite fille allant a l'école avec son sac.webp",
         alt: "Petite fille allant à l'école",
         title: "L'assurance repensée\npour vous.",
     },
     {
-        image: "/images/fille diplomée avec ses parents.png",
+        image: "/images/fille diplomée avec ses parents.webp",
         alt: "Fille diplômée avec ses parents",
         title: "Des garanties fiables\npour avancer.",
     },

@@ -2,7 +2,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Simulation d'Assurance en Ligne",
-  description: "Faites une simulation rapide et gratuite de votre assurance Auto, Santé ou Habitation avec LBASSUR."
+  description: "Faites une simulation rapide et gratuite de votre assurance Auto, Santé ou Habitation avec LBASSUR.",
+  alternates: { canonical: "/simulation" },
 };
 
 export default function SimulationLayout({ children }: { children: React.ReactNode }) {
