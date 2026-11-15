@@ -47,10 +47,22 @@ const LIBELLE_CONTRAT: Record<string, string> = {
  * Un backend injoignable ne doit pas rendre une page blanche : on affiche la
  * page avec un message, le reste du site restant navigable.
  */
+/**
+ * Delai maximum des appels faits pendant le build.
+ *
+ * Render met en veille les services inactifs : un reveil prend parfois une
+ * minute. Sans borne, un build Vercel peut rester suspendu sur cet appel et
+ * ne jamais aboutir. Huit secondes suffisent a un service eveille ; au-dela,
+ * la page se construit sans les offres plutot que de bloquer la mise en
+ * ligne du site entier.
+ */
+const DELAI_BUILD_MS = 8000;
+
 async function chargerOffres(): Promise<{ offres: Offre[]; erreur: boolean }> {
   try {
     const res = await fetch(`${API_BASE_URL}/recruitment/offers`, {
       next: { revalidate: 300 },
+      signal: AbortSignal.timeout(DELAI_BUILD_MS),
     });
     if (!res.ok) return { offres: [], erreur: true };
     return { offres: await res.json(), erreur: false };

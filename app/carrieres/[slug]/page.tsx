@@ -72,7 +72,9 @@ async function chargerOffre(slug: string): Promise<OffreDetail | null> {
   try {
     const res = await fetch(
       `${API_BASE_URL}/recruitment/offers/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 300 } },
+      // Borne identique a la liste : un backend endormi ne doit pas suspendre
+      // le rendu d'une page.
+      { next: { revalidate: 300 }, signal: AbortSignal.timeout(8000) },
     );
     if (!res.ok) return null;
     return await res.json();

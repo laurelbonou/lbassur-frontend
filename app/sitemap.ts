@@ -19,6 +19,9 @@ async function offresEmploi(): Promise<MetadataRoute.Sitemap> {
   try {
     const res = await fetch(`${API_BASE_URL}/recruitment/offers`, {
       next: { revalidate: 300 },
+      // Un sitemap ampute des offres reste un sitemap valide ; un build
+      // suspendu empeche toute mise en ligne.
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) return [];
     const offres = await res.json();
