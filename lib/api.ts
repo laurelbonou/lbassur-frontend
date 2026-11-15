@@ -121,4 +121,120 @@ export const api = {
     if (!res.ok) throw new Error("Broker not found");
     return res.json();
   },
+  // --- Recrutement ---
+
+  /** Lit le corps d'erreur du backend pour afficher son message, pas un texte generique. */
+  getJobOffers: async () => {
+    const res = await fetch(`${API_BASE_URL}/recruitment/offers`);
+    if (!res.ok) throw new Error("Impossible de charger les offres d'emploi");
+    return res.json();
+  },
+
+  getJobOffer: async (slug: string) => {
+    const res = await fetch(`${API_BASE_URL}/recruitment/offers/${encodeURIComponent(slug)}`);
+    if (!res.ok) throw new Error("Offre introuvable");
+    return res.json();
+  },
+
+  /**
+   * Televerse les fichiers d'une candidature.
+   *
+   * Passe par la route d'upload existante : la limite de taille et le controle
+   * des nombres magiques restent au meme endroit pour tout le site.
+   */
+  uploadApplicationFiles: async (files: File[]) => {
+    const form = new FormData();
+    files.forEach((f) => form.append("files", f));
+    const res = await fetch(`${API_BASE_URL}/uploads?folder=candidatures`, {
+      method: "POST",
+      body: form,
+    });
+    if (!res.ok) throw new Error(await messageErreur(res, "Echec du televersement"));
+    return res.json() as Promise<{ files: UploadedFile[] }>;
+  },
+
+  /**
+   * Ce que le module de recrutement sait faire selon sa configuration.
+   *
+   * Interroge avant de promettre quoi que ce soit au candidat : si la
+   * preselection assistee n'est pas en service, le formulaire ne doit pas
+   * annoncer un pre-remplissage qui n'aura pas lieu.
+   */
+  getRecruitmentCapabilities: async (): Promise<{ screening: boolean }> => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/recruitment/capabilities`);
+      if (!res.ok) return { screening: false };
+      return await res.json();
+    } catch {
+      return { screening: false };
+    }
+  },
+
+  /** Propose un profil structure a partir du CV deja televerse. */
+  prefillFromCv: async (asset: {
+    publicId: string;
+    resourceType: string;
+    format?: string;
+    mimeType: string;
+  }) => {
+    const res = await fetch(`${API_BASE_URL}/recruitment/prefill-from-cv`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(asset),
+    });
+    if (!res.ok) throw new Error(await messageErreur(res, "Lecture du CV impossible"));
+    return res.json();
+  },
+
+  applyToJob: async (slug: string, payload: unknown) => {
+    const res = await fetch(
+      `${API_BASE_URL}/recruitment/offers/${encodeURIComponent(slug)}/apply`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+    );
+    if (!res.ok) throw new Error(await messageErreur(res, "Envoi de la candidature impossible"));
+    return res.json();
+  },
+
+  trackApplication: async (reference: string, email: string) => {
+    const res = await fetch(`${API_BASE_URL}/recruitment/track`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference, email }),
+    });
+    if (!res.ok) throw new Error(await messageErreur(res, "Suivi introuvable"));
+    return res.json();
+  },
 };
+
+export type UploadedFile = {
+  originalname: string;
+  publicId: string;
+  resourceType: string;
+  format: string;
+  mimeType: string;
+  size: number;
+  url: string;
+};
+
+/**
+ * Remonte le message d'erreur du backend plutot qu'un texte generique.
+ *
+ * Le serveur sait pourquoi il refuse (« vous avez deja postule a cette offre »,
+ * « champs obligatoires manquants ») ; le masquer derriere « une erreur est
+ * survenue » oblige le candidat a deviner ce qu'il doit corriger.
+ */
+async function messageErreur(res: Response, defaut: string): Promise<string> {
+  try {
+    const corps = await res.json();
+    const m = corps?.message;
+    if (Array.isArray(m)) return m.join(" ");
+    if (typeof m === "string") return m;
+  } catch {
+    /* corps non JSON : on garde le message par defaut */
+  }
+  return defaut;
+}

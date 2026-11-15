@@ -1,202 +1,232 @@
-"use client";
-
-import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Briefcase, ChevronRight, FileText, Send, ChevronDown } from "lucide-react";
-import Link from "next/link";
+import { MapPin, Briefcase, Clock, ArrowUpRight, Search, FileSearch } from "lucide-react";
 
-function CustomSelect({ options, defaultLabel }: { options: string[], defaultLabel: string }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selected, setSelected] = useState(defaultLabel);
-    const ref = useRef<HTMLDivElement>(null);
+/**
+ * Liste des offres, rendue côté serveur.
+ *
+ * Volontairement pas un composant client : une offre d'emploi n'a d'intérêt que
+ * si elle se trouve, et Google n'indexe pas ce qui n'apparaît qu'après un appel
+ * fetch dans le navigateur. Revalidation toutes les 5 minutes — une offre
+ * publiée ne change pas d'une seconde à l'autre.
+ */
+export const revalidate = 300;
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (ref.current && !ref.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.length > 0
+    ? process.env.NEXT_PUBLIC_API_URL
+    : "https://lbassur-backend.onrender.com/api/v1";
 
-    return (
-        <div ref={ref} className="relative min-w-[200px]">
-            <div 
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-black/50 border border-white/10 rounded-xl py-4 px-6 text-white flex justify-between items-center cursor-pointer hover:border-blue-500/30 transition-colors"
-            >
-                <span className="text-sm">{selected}</span>
-                <ChevronDown size={16} className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-            </div>
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 w-full mt-2 bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl"
-                    >
-                        {options.map((opt) => (
-                            <div 
-                                key={opt}
-                                onClick={() => { setSelected(opt); setIsOpen(false); }}
-                                className={`px-6 py-3 text-sm cursor-pointer transition-colors ${selected === opt ? "bg-blue-500/20 text-blue-400 font-bold" : "text-gray-300 hover:bg-white/5 hover:text-white"}`}
-                            >
-                                {opt}
-                            </div>
-                        ))}
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
-    );
+type Offre = {
+  id: string;
+  reference: string;
+  slug: string;
+  title: string;
+  department?: string | null;
+  location: string;
+  contractType: string;
+  remote: boolean;
+  summary: string;
+  status: "PUBLISHED" | "CLOSED";
+  publishedAt?: string | null;
+  closingDate?: string | null;
+  experienceYears?: number | null;
+};
+
+const LIBELLE_CONTRAT: Record<string, string> = {
+  CDI: "CDI",
+  CDD: "CDD",
+  STAGE: "Stage",
+  ALTERNANCE: "Alternance",
+  FREELANCE: "Freelance",
+  CONSULTANT: "Consultant",
+};
+
+/**
+ * Un backend injoignable ne doit pas rendre une page blanche : on affiche la
+ * page avec un message, le reste du site restant navigable.
+ */
+async function chargerOffres(): Promise<{ offres: Offre[]; erreur: boolean }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/recruitment/offers`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return { offres: [], erreur: true };
+    return { offres: await res.json(), erreur: false };
+  } catch {
+    return { offres: [], erreur: true };
+  }
 }
 
-const jobs = [
-    {
-        id: "conseiller-clientele",
-        title: "Conseiller Clientèle Assurance (H/F)",
-        company: "LBASSUR",
-        type: "CDI",
-        location: "Cotonou, Bénin",
-        deadline: "Immédiat",
-        status: "Ouverte",
-        description: "Vous avez la fibre commerciale et souhaitez évoluer dans le courtage en assurances ? Rejoignez notre équipe pour conseiller et accompagner nos clients dans leur protection quotidienne."
-    }
-];
+export default async function CarrieresPage() {
+  const { offres, erreur } = await chargerOffres();
+  const ouvertes = offres.filter((o) => o.status === "PUBLISHED");
+  const closes = offres.filter((o) => o.status === "CLOSED");
 
-export default function CareersPage() {
-    return (
-        <main className="bg-black min-h-screen text-white overflow-hidden">
-            <Navbar />
+  return (
+    <main className="bg-black min-h-screen text-white">
+      <Navbar />
 
-            {/* Hero Section */}
-            <section className="relative pt-40 pb-20 px-6 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/[0.03] rounded-full blur-[120px] -z-0"></div>
-                
-                <div className="container mx-auto max-w-5xl relative z-10 text-center">
-                    <span className="glass inline-block py-2 px-6 rounded-full text-[10px] uppercase tracking-[0.4em] text-blue-400 font-bold mb-8">
-                        Rejoignez-nous
-                    </span>
-                    <h1 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter font-oswald text-white mb-6">
-                        Carrières
-                    </h1>
-                    <p className="text-gray-400 text-xl font-light">
-                        Construisons ensemble l'avenir de l'assurance en Afrique.
-                    </p>
-                </div>
-            </section>
+      {/* En-tête */}
+      <section className="pt-32 pb-16 px-6">
+        <div className="container mx-auto max-w-5xl">
+          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-4">
+            // Nous rejoindre
+          </p>
+          <h1 className="text-4xl md:text-6xl font-bold uppercase font-oswald mb-6">
+            Carrières
+          </h1>
+          <p className="text-gray-400 font-light leading-relaxed max-w-2xl">
+            LBASSUR accompagne particuliers et entreprises au Bénin depuis 2021. Nous
+            recrutons des profils qui partagent notre exigence : défendre l&apos;intérêt
+            de l&apos;assuré, avec indépendance et transparence.
+          </p>
 
-            {/* Search/Filter Section */}
-            <section className="py-10 px-6 relative z-10">
-                <div className="container mx-auto max-w-5xl">
-                    <div className="glass p-4 rounded-2xl flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-                            <input 
-                                type="text" 
-                                placeholder="Rechercher un poste, un mot-clé..." 
-                                className="w-full bg-black/50 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-blue-500/50 transition-colors"
-                            />
-                        </div>
-                        <div className="flex gap-4 overflow-x-auto pb-2 md:pb-0">
-                            <CustomSelect 
-                                defaultLabel="Tous les contrats" 
-                                options={["Tous les contrats", "CDI", "CDD", "Stage"]} 
-                            />
-                            <CustomSelect 
-                                defaultLabel="Toutes les localisations" 
-                                options={["Toutes les localisations", "Cotonou", "Porto-Novo", "Parakou"]} 
-                            />
-                            <CustomSelect 
-                                defaultLabel="Tous les statuts" 
-                                options={["Tous les statuts", "Ouverte", "Clôturée"]} 
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <Link
+              href="/carrieres/suivi"
+              className="inline-flex items-center gap-2 border border-white/15 px-5 py-3 text-xs uppercase tracking-widest font-bold hover:border-white/40 transition-colors"
+            >
+              <FileSearch size={14} />
+              Suivre ma candidature
+            </Link>
+          </div>
+        </div>
+      </section>
 
-            {/* Job Listings */}
-            <section className="py-10 px-6">
-                <div className="container mx-auto max-w-5xl">
-                    <h2 className="text-xl font-oswald tracking-wide mb-8">{jobs.length} offre(s) trouvée(s)</h2>
+      {/* Offres */}
+      <section className="px-6 pb-24">
+        <div className="container mx-auto max-w-5xl">
+          <div className="flex items-baseline justify-between border-b border-white/10 pb-5 mb-10">
+            <h2 className="text-lg font-bold uppercase tracking-wider">
+              Postes ouverts
+            </h2>
+            <span className="text-xs text-gray-500 font-medium">
+              {ouvertes.length} {ouvertes.length > 1 ? "offres" : "offre"}
+            </span>
+          </div>
 
-                    <div className="space-y-6">
-                        {jobs.map((job) => (
-                            <motion.div 
-                                key={job.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 hover:border-blue-500/30 transition-all duration-300 group"
-                            >
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <span className="px-3 py-1 bg-white/10 text-xs uppercase tracking-wider rounded-md font-bold">{job.type}</span>
-                                            <span className={`px-3 py-1 text-xs uppercase tracking-wider rounded-md font-bold ${job.status === 'Ouverte' ? 'bg-blue-500/20 text-blue-400' : 'bg-red-500/20 text-red-400'}`}>
-                                                {job.status}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-white mb-2">{job.title}</h3>
-                                        <div className="flex items-center gap-6 text-sm text-gray-400">
-                                            <span className="flex items-center gap-2"><Briefcase size={16}/> {job.company}</span>
-                                            <span className="flex items-center gap-2"><MapPin size={16}/> {job.location}</span>
-                                            <span className="flex items-center gap-2">Clôture : {job.deadline}</span>
-                                        </div>
-                                    </div>
-                                    <Link href={`#`} className="px-6 py-3 bg-white text-black font-bold uppercase tracking-wider text-xs rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
-                                        Aperçu <ChevronRight size={16} />
-                                    </Link>
-                                </div>
-                                <p className="text-gray-400 font-light leading-relaxed">
-                                    {job.description}
-                                </p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+          {erreur && (
+            <p className="text-sm text-gray-400 border border-white/10 p-8 text-center">
+              Les offres sont momentanément indisponibles. Merci de réessayer dans
+              quelques instants, ou écrivez-nous à{" "}
+              <a href="mailto:contact@lbassur.bj" className="text-white underline">
+                contact@lbassur.bj
+              </a>
+              .
+            </p>
+          )}
 
-            {/* Spontaneous Application */}
-            <section className="py-20 px-6">
-                <div className="container mx-auto max-w-5xl">
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="glass border border-blue-500/20 rounded-3xl p-8 md:p-12 relative overflow-hidden"
-                    >
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] -z-10"></div>
-                        
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-10">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs uppercase tracking-wider rounded-md font-bold">Ouverte</span>
-                                    <span className="text-gray-400 text-sm font-bold uppercase tracking-wider"><FileText size={16} className="inline mr-2" />Candidature Spontanée</span>
-                                </div>
-                                <h3 className="text-3xl font-bold font-oswald tracking-wide mb-4">Rejoindre LBASSUR</h3>
-                                <p className="text-gray-400 font-light leading-relaxed mb-8">
-                                    Vous souhaitez faire partie de l'aventure LBASSUR ? Votre profil et vos ambitions nous intéressent. N'hésitez pas à nous transmettre votre candidature spontanée, notre équipe l'étudiera avec attention.
-                                </p>
-                            </div>
-                            <div className="shrink-0">
-                                <button className="px-8 py-4 bg-blue-500 text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-blue-400 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center gap-3">
-                                    <Send size={18} />
-                                    Postuler
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+          {!erreur && ouvertes.length === 0 && (
+            <div className="border border-white/10 p-10 text-center">
+              <Search size={22} className="mx-auto mb-4 text-gray-600" />
+              <p className="text-gray-300 font-medium mb-2">
+                Aucun poste ouvert pour le moment.
+              </p>
+              <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
+                Nous étudions néanmoins les candidatures spontanées. Envoyez votre CV
+                à{" "}
+                <a href="mailto:contact@lbassur.bj" className="text-white underline">
+                  contact@lbassur.bj
+                </a>{" "}
+                en précisant le type de poste recherché.
+              </p>
+            </div>
+          )}
 
-            <Footer />
-        </main>
-    );
+          <div className="space-y-4">
+            {ouvertes.map((offre) => (
+              <CarteOffre key={offre.id} offre={offre} />
+            ))}
+          </div>
+
+          {closes.length > 0 && (
+            <>
+              <h2 className="text-lg font-bold uppercase tracking-wider border-b border-white/10 pb-5 mb-10 mt-20">
+                Recrutements clos
+              </h2>
+              <div className="space-y-4 opacity-50">
+                {closes.map((offre) => (
+                  <CarteOffre key={offre.id} offre={offre} close />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  );
+}
+
+function CarteOffre({ offre, close = false }: { offre: Offre; close?: boolean }) {
+  const contenu = (
+    <>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          <span className="text-[10px] uppercase tracking-widest font-bold border border-white/20 px-2.5 py-1">
+            {LIBELLE_CONTRAT[offre.contractType] ?? offre.contractType}
+          </span>
+          {offre.department && (
+            <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">
+              {offre.department}
+            </span>
+          )}
+          {close && (
+            <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">
+              Candidatures closes
+            </span>
+          )}
+        </div>
+
+        <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-white transition-colors">
+          {offre.title}
+        </h3>
+        <p className="text-sm text-gray-400 font-light leading-relaxed mb-4 line-clamp-2">
+          {offre.summary}
+        </p>
+
+        <div className="flex flex-wrap gap-5 text-xs text-gray-500">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin size={12} />
+            {offre.location}
+            {offre.remote && " · Télétravail possible"}
+          </span>
+          {offre.experienceYears != null && (
+            <span className="inline-flex items-center gap-1.5">
+              <Briefcase size={12} />
+              {offre.experienceYears} an{offre.experienceYears > 1 ? "s" : ""} d&apos;expérience
+            </span>
+          )}
+          {offre.closingDate && !close && (
+            <span className="inline-flex items-center gap-1.5">
+              <Clock size={12} />
+              Jusqu&apos;au{" "}
+              {new Date(offre.closingDate).toLocaleDateString("fr-FR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <ArrowUpRight
+        size={18}
+        className="text-gray-600 group-hover:text-white transition-colors shrink-0 mt-1"
+      />
+    </>
+  );
+
+  return (
+    <Link
+      href={`/carrieres/${offre.slug}`}
+      className="group flex gap-6 border border-white/10 p-6 md:p-8 hover:border-white/30 hover:bg-white/[0.02] transition-all duration-300"
+    >
+      {contenu}
+    </Link>
+  );
 }
