@@ -16,7 +16,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { FeexPayProvider, FeexPayButton } from "@feexpay/react-sdk";
 import "@feexpay/react-sdk/style.css";
-import { getFormConfigByInsuranceType, getAvailableForms } from "@/lib/insurance-forms";
+import { getFormConfigByInsuranceType, getFormsByAudience } from "@/lib/insurance-forms";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";
 
 // ── Steps ────────────────────────────────────────────────────────────────────
@@ -63,6 +63,10 @@ function SouscriptionContent() {
     guarantees: string;
     type: string;
   } | null>(null);
+  /** Branche demandée dans l'URL mais introuvable : affichée, jamais ignorée. */
+  const [typeNonResolu, setTypeNonResolu] = useState<string | null>(null);
+
+  const fichesParAudience = getFormsByAudience();
 
   // Initialize from URL params
   useEffect(() => {
@@ -77,6 +81,9 @@ function SouscriptionContent() {
       if (config && config.available) {
         setSelectedConfig(config);
         setCurrentStep(1); // Skip type selection
+        setTypeNonResolu(null);
+      } else {
+        setTypeNonResolu(type);
       }
     }
 
@@ -255,42 +262,62 @@ function SouscriptionContent() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {getAvailableForms().map((config) => (
-                    <button
-                      key={config.id}
-                      onClick={() => handleSelectType(config)}
-                      className="bg-white/5 p-6 border border-white/10 hover:border-white/40 hover:bg-white/10 transition-all duration-500 text-left group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-[12px] font-black uppercase tracking-widest text-white block mb-1 group-hover:translate-x-1 transition-transform">
-                            {config.title}
-                          </span>
-                          <span className="text-[10px] text-gray-500">{config.subtitle}</span>
-                        </div>
-                        <ChevronRight size={16} className="text-gray-600 group-hover:text-white transition-colors" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Phase 2 preview */}
-                <div className="mt-8 pt-6 border-t border-white/10">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
-                    Bientôt Disponible
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {["RC", "Transport", "Caution", "TRC", "Flotte", "Incendie", "Cyber", "Agricole"].map((t) => (
-                      <span
-                        key={t}
-                        className="px-3 py-1.5 border border-white/5 text-[9px] font-bold uppercase tracking-widest text-gray-600"
-                      >
-                        {t}
-                      </span>
-                    ))}
+                {/*
+                  Le visiteur arrivé du comparateur avec une branche que nous ne
+                  savons pas rattacher à une fiche ne doit pas se retrouver
+                  devant une grille muette, à se demander où est passé son
+                  choix. On le lui dit, et on lui laisse une sortie.
+                */}
+                {typeNonResolu && (
+                  <div className="border border-amber-500/30 bg-amber-500/5 p-5 flex gap-3">
+                    <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-amber-200 mb-1.5">
+                        Branche non reconnue : {typeNonResolu}
+                      </p>
+                      <p className="text-[11px] text-gray-400 leading-relaxed">
+                        Choisissez la fiche correspondante ci-dessous, ou
+                        écrivez-nous à{" "}
+                        <a href="mailto:contact@lbassur.bj" className="text-white underline">
+                          contact@lbassur.bj
+                        </a>{" "}
+                        : un conseiller établit la cotation directement.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {[
+                  { titre: "Particuliers", fiches: fichesParAudience.particuliers },
+                  { titre: "Professionnels & Entreprises", fiches: fichesParAudience.entreprises },
+                ]
+                  .filter((groupe) => groupe.fiches.length > 0)
+                  .map((groupe) => (
+                    <div key={groupe.titre} className="space-y-4">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] pt-2">
+                        {groupe.titre}
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {groupe.fiches.map((config) => (
+                          <button
+                            key={config.id}
+                            onClick={() => handleSelectType(config)}
+                            className="bg-white/5 p-6 border border-white/10 hover:border-white/40 hover:bg-white/10 transition-all duration-500 text-left group"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="min-w-0">
+                                <span className="text-[12px] font-black uppercase tracking-widest text-white block mb-1 group-hover:translate-x-1 transition-transform">
+                                  {config.title}
+                                </span>
+                                <span className="text-[10px] text-gray-500">{config.subtitle}</span>
+                              </div>
+                              <ChevronRight size={16} className="text-gray-600 group-hover:text-white transition-colors shrink-0" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
               </motion.div>
             )}
 

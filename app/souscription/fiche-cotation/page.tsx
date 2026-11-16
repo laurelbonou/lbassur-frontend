@@ -5,7 +5,11 @@ import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PrintableForm from "@/components/souscription/PrintableForm";
-import { getFormConfigById, getAvailableForms } from "@/lib/insurance-forms";
+import {
+  getFormConfigById,
+  getFormConfigByInsuranceType,
+  getFormsByAudience,
+} from "@/lib/insurance-forms";
 import type { InsuranceFormConfig } from "@/lib/insurance-forms";
 import { ChevronRight, Printer, FileText } from "lucide-react";
 import { motion } from "framer-motion";
@@ -26,11 +30,21 @@ export default function FicheCotationPage() {
 function FicheCotationContent() {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type");
-  const initialConfig = typeParam ? getFormConfigById(typeParam) : null;
+
+  /*
+    Le paramètre peut être un identifiant technique (`automobile`) comme un
+    libellé lisible (`Assurance Automobile`) : les liens du site emploient les
+    deux. N'accepter que le premier, c'est casser toute adresse partagée.
+  */
+  const initialConfig = typeParam
+    ? getFormConfigById(typeParam) ?? getFormConfigByInsuranceType(typeParam)
+    : null;
 
   const [selectedConfig, setSelectedConfig] = useState<InsuranceFormConfig | null>(
     initialConfig && initialConfig.available ? initialConfig : null
   );
+
+  const fichesParAudience = getFormsByAudience();
 
   if (!selectedConfig) {
     return (
@@ -56,27 +70,41 @@ function FicheCotationContent() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-            {getAvailableForms().map((config) => (
-              <button
-                key={config.id}
-                onClick={() => setSelectedConfig(config)}
-                className="bg-[#050505] border border-white/10 hover:border-white/40 hover:bg-white/5 transition-all duration-500 p-6 text-left group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white block mb-1">
-                      {config.title}
-                    </span>
-                    <span className="text-[8px] text-gray-500">{config.subtitle}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600 group-hover:text-white transition-colors">
-                    <Printer size={14} />
-                    <ChevronRight size={14} />
+          <div className="max-w-2xl mx-auto space-y-10">
+            {[
+              { titre: "Particuliers", fiches: fichesParAudience.particuliers },
+              { titre: "Professionnels & Entreprises", fiches: fichesParAudience.entreprises },
+            ]
+              .filter((groupe) => groupe.fiches.length > 0)
+              .map((groupe) => (
+                <div key={groupe.titre}>
+                  <p className="text-[9px] font-bold text-gray-500 uppercase tracking-[0.3em] mb-4 border-b border-white/10 pb-3">
+                    {groupe.titre}
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {groupe.fiches.map((config) => (
+                      <button
+                        key={config.id}
+                        onClick={() => setSelectedConfig(config)}
+                        className="bg-[#050505] border border-white/10 hover:border-white/40 hover:bg-white/5 transition-all duration-500 p-6 text-left group"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white block mb-1">
+                              {config.title}
+                            </span>
+                            <span className="text-[8px] text-gray-500">{config.subtitle}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600 group-hover:text-white transition-colors shrink-0">
+                            <Printer size={14} />
+                            <ChevronRight size={14} />
+                          </div>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </button>
-            ))}
+              ))}
           </div>
         </div>
         <Footer />

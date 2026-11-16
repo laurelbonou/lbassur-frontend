@@ -3,6 +3,18 @@
 //  Conformes à la législation béninoise et au code CIMA
 // ─────────────────────────────────────────────────────────────────────────────
 
+import {
+  PROFESSIONAL_FORMS,
+  COMMON_ENTERPRISE_DOCUMENTS,
+} from "./insurance-forms-pro";
+
+/**
+ * Les douze branches professionnelles vivent dans `insurance-forms-pro.ts`.
+ * Elles n'importent d'ici que des types, effacés à la compilation : il n'y a
+ * donc pas de cycle d'import à l'exécution.
+ */
+export { COMMON_ENTERPRISE_DOCUMENTS };
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export type FieldType =
@@ -71,17 +83,6 @@ export interface InsuranceFormConfig {
   requiredDocuments: RequiredDocument[];
   available: boolean; // Phase 1 = true, Phase 2 = false
 }
-
-// ── Documents communs (entreprises) ──────────────────────────────────────────
-
-export const COMMON_ENTERPRISE_DOCUMENTS: RequiredDocument[] = [
-  { id: "rccm", name: "RCCM", description: "Registre du Commerce et du Crédit Mobilier", required: true, acceptedFormats: ["pdf", "jpg", "png"], maxSizeMB: 5 },
-  { id: "ifu", name: "IFU", description: "Identifiant Fiscal Unique", required: true, acceptedFormats: ["pdf", "jpg", "png"], maxSizeMB: 5 },
-  { id: "statuts", name: "Statuts de l'entreprise", description: "Statuts enregistrés de la société", required: true, acceptedFormats: ["pdf"], maxSizeMB: 10 },
-  { id: "etats-financiers", name: "États financiers (3 dernières années)", description: "Bilans et comptes de résultat certifiés", required: true, acceptedFormats: ["pdf"], maxSizeMB: 15 },
-  { id: "organigramme", name: "Organigramme", description: "Structure organisationnelle de l'entreprise", required: false, acceptedFormats: ["pdf", "jpg", "png"], maxSizeMB: 5 },
-  { id: "liste-personnel", name: "Liste du personnel", description: "Liste nominative des employés", required: false, acceptedFormats: ["pdf", "xlsx"], maxSizeMB: 5 },
-];
 
 // ═════════════════════════════════════════════════════════════════════════════
 //  PHASE 1 — ASSURANCE AUTOMOBILE
@@ -370,7 +371,10 @@ const SANTE_FORM: InsuranceFormConfig = {
   title: "Assurance Santé",
   subtitle: "Fiche de recensement des bénéficiaires",
   icon: "Heart",
-  available: false,
+  // La fiche est complète depuis la phase 1 et le comparateur propose des
+  // offres santé : la laisser indisponible renvoyait le client au choix du
+  // type après qu'il avait déjà choisi son assureur et son tarif.
+  available: true,
   sections: [
     {
       id: "identification",
@@ -921,25 +925,6 @@ const VOYAGE_FORM: InsuranceFormConfig = {
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
-//  PHASE 2 — STUBS (Structures prêtes, pas encore de formulaires complets)
-// ═════════════════════════════════════════════════════════════════════════════
-
-const PHASE2_STUBS: InsuranceFormConfig[] = [
-  { id: "rc", title: "Responsabilité Civile", subtitle: "Fiche RC Générale", icon: "AlertTriangle", available: false, sections: [], requiredDocuments: [] },
-  { id: "transport", title: "Assurance Transport", subtitle: "Fiche Transport Facultés", icon: "Truck", available: false, sections: [], requiredDocuments: [] },
-  { id: "caution", title: "Assurance Caution", subtitle: "Fiche de demande de caution", icon: "FileCheck", available: false, sections: [], requiredDocuments: [] },
-  { id: "trc", title: "Tous Risques Chantier", subtitle: "Fiche de risque Chantier", icon: "HardHat", available: false, sections: [], requiredDocuments: [] },
-  { id: "flotte", title: "Assurance Flotte", subtitle: "Fiche Flotte Automobile", icon: "CarFront", available: false, sections: [], requiredDocuments: [] },
-  { id: "incendie", title: "Assurance Incendie", subtitle: "Fiche de risque Incendie", icon: "Flame", available: false, sections: [], requiredDocuments: [] },
-  { id: "individuelle_accidents", title: "Individuelle Accidents", subtitle: "Fiche Individuelle Accidents", icon: "UserCheck", available: false, sections: [], requiredDocuments: [] },
-  { id: "maritime", title: "Assurance Maritime / Aérienne", subtitle: "Fiche Corps Maritime/Aérien", icon: "Ship", available: false, sections: [], requiredDocuments: [] },
-  { id: "cyber", title: "Assurance Cyber-risques", subtitle: "Fiche Cyber", icon: "ShieldAlert", available: false, sections: [], requiredDocuments: [] },
-  { id: "agricole", title: "Assurance Agricole", subtitle: "Fiche Risques Agricoles", icon: "Wheat", available: false, sections: [], requiredDocuments: [] },
-  { id: "multirisque_pro", title: "Multirisque Professionnelle", subtitle: "Fiche de risque Professionnel", icon: "Building2", available: false, sections: [], requiredDocuments: [] },
-  { id: "deces_prevoyance", title: "Assurance Décès / Prévoyance", subtitle: "Fiche de souscription Prévoyance", icon: "HeartPulse", available: false, sections: [], requiredDocuments: [] },
-];
-
-// ═════════════════════════════════════════════════════════════════════════════
 //  REGISTRE GLOBAL — Export principal
 // ═════════════════════════════════════════════════════════════════════════════
 
@@ -949,7 +934,7 @@ export const ALL_INSURANCE_FORMS: InsuranceFormConfig[] = [
   VIE_FORM,
   HABITATION_FORM,
   VOYAGE_FORM,
-  ...PHASE2_STUBS,
+  ...PROFESSIONAL_FORMS,
 ];
 
 /**
@@ -960,29 +945,85 @@ export function getFormConfigById(id: string): InsuranceFormConfig | undefined {
 }
 
 /**
- * Mappe un type d'assurance (ex: "Assurance Auto") vers l'ID du formulaire
+ * Résolution d'un libellé de branche vers une fiche.
+ *
+ * Le site désigne la même branche sous plusieurs noms : le simulateur propose
+ * « Assurance Habitation », le comparateur renvoie « Multirisque Habitation »,
+ * et la fiche elle-même s'intitule « Multirisque Habitation ». Une table écrite
+ * à la main manquait précisément ces écarts : le client qui simulait une
+ * assurance habitation puis cliquait sur « Souscrire » était renvoyé au choix
+ * du type, alors que sa fiche existait.
+ *
+ * On indexè donc d'abord chaque fiche par son propre titre — toute nouvelle
+ * branche devient adressable sans rien ajouter ici — puis on complète par les
+ * libellés alternatifs employés ailleurs dans le site.
  */
-const TYPE_TO_FORM_ID: Record<string, string> = {
-  "Assurance Auto": "automobile",
-  "Assurance Automobile": "automobile",
-  "Assurance Moto": "automobile", // Utilise le même formulaire pour l'instant
-  "Assurance Santé": "sante",
-  "Individuelle Accident": "vie",
-  "Assurance Voyage": "voyage",
-  "Épargne & Retraite": "vie",
-  "Assurance Éducation": "vie",
-  "Assurance Obsèques": "vie",
-  "Assurance Emprunteur": "vie",
-  "Multirisque Habitation": "habitation",
-  "Multirisque Professionnelle": "multirisque_pro",
-  "Multirisque Pro": "multirisque_pro",
-  "Responsabilité Civile": "rc",
-  "Assurance Transport": "transport",
-  "Assurance Flotte": "flotte",
+function normaliserLibelle(valeur: string): string {
+  return valeur
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/** Libellés alternatifs → identifiant de fiche. */
+const ALIAS_TYPES: Record<string, string> = {
+  "assurance auto": "automobile",
+  "auto": "automobile",
+  "assurance moto": "automobile",
+  "moto": "automobile",
+  "assurance habitation": "habitation",
+  "habitation": "habitation",
+  "multirisque pro": "multirisque_pro",
+  "multirisque professionnel": "multirisque_pro",
+  "assurance professionnelle": "multirisque_pro",
+  "rc": "rc",
+  "rc generale": "rc",
+  "responsabilite civile generale": "rc",
+  "responsabilite civile professionnelle": "rc",
+  "individuelle accident": "individuelle_accidents",
+  "individuelle accidents": "individuelle_accidents",
+  "assurance individuelle accident": "individuelle_accidents",
+  "assurance vie": "vie",
+  "epargne retraite": "vie",
+  "assurance education": "vie",
+  "assurance obseques": "vie",
+  "assurance emprunteur": "vie",
+  "prevoyance": "deces_prevoyance",
+  "assurance deces": "deces_prevoyance",
+  "assurance prevoyance": "deces_prevoyance",
+  "trc": "trc",
+  "tous risques chantier": "trc",
+  "assurance chantier": "trc",
+  "cyber": "cyber",
+  "assurance cyber": "cyber",
+  "cyber risques": "cyber",
+  "assurance maritime": "maritime",
+  "assurance aerienne": "maritime",
+  "corps maritime": "maritime",
+  "assurance sante": "sante",
+  "sante": "sante",
+  "assurance voyage": "voyage",
+  "voyage": "voyage",
+  "flotte": "flotte",
+  "flotte automobile": "flotte",
+  "transport": "transport",
+  "transport facultes": "transport",
+  "caution": "caution",
+  "incendie": "incendie",
+  "agricole": "agricole",
+  "assurance agricole": "agricole",
 };
 
+/** Titre officiel de chaque fiche → identifiant, construit à la volée. */
+const TITRES_VERS_ID: Record<string, string> = Object.fromEntries(
+  ALL_INSURANCE_FORMS.map((config) => [normaliserLibelle(config.title), config.id]),
+);
+
 export function getFormConfigByInsuranceType(insuranceType: string): InsuranceFormConfig | undefined {
-  const formId = TYPE_TO_FORM_ID[insuranceType];
+  const cle = normaliserLibelle(insuranceType);
+  const formId = ALIAS_TYPES[cle] ?? TITRES_VERS_ID[cle];
   if (!formId) return undefined;
   return getFormConfigById(formId);
 }
@@ -992,4 +1033,42 @@ export function getFormConfigByInsuranceType(insuranceType: string): InsuranceFo
  */
 export function getAvailableForms(): InsuranceFormConfig[] {
   return ALL_INSURANCE_FORMS.filter((f) => f.available);
+}
+
+/**
+ * Répartition des fiches par public.
+ *
+ * Dix-sept branches dans une grille unique, ce n'est plus un choix, c'est un
+ * mur. Le particulier venu assurer sa voiture n'a que faire d'une Tous Risques
+ * Chantier, et réciproquement. La séparation se fait ici plutôt que dans
+ * chaque page, pour que les deux écrans de choix restent cohérents.
+ */
+const FICHES_PARTICULIERS = [
+  "automobile",
+  "habitation",
+  "sante",
+  "voyage",
+  "vie",
+  "individuelle_accidents",
+  "deces_prevoyance",
+];
+
+export function getFormsByAudience(): {
+  particuliers: InsuranceFormConfig[];
+  entreprises: InsuranceFormConfig[];
+} {
+  const disponibles = getAvailableForms();
+  const rang = (config: InsuranceFormConfig) => {
+    const i = FICHES_PARTICULIERS.indexOf(config.id);
+    return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+  };
+
+  return {
+    particuliers: disponibles
+      .filter((config) => FICHES_PARTICULIERS.includes(config.id))
+      .sort((a, b) => rang(a) - rang(b)),
+    entreprises: disponibles.filter(
+      (config) => !FICHES_PARTICULIERS.includes(config.id),
+    ),
+  };
 }
