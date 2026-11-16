@@ -31,6 +31,42 @@ const STEPS = [
   { id: "success",   title: "Confirmation",          shortTitle: "Confirmé" },
 ];
 
+// ── Identité du souscripteur ─────────────────────────────────────────────────
+
+/**
+ * Chaque fiche nomme ses champs selon son métier : une fiche particulier
+ * demande un `nom`, une fiche entreprise une `raison_sociale`, le Tous Risques
+ * Chantier un `souscripteur`. Le parcours de souscription, lui, doit toujours
+ * remonter un nom, un téléphone et un email au backend.
+ *
+ * La liste vit donc ici, à un seul endroit. Elle était auparavant recopiée
+ * dans les deux appels, et ne connaissait que `nom` et `prenom` : les dix
+ * fiches entreprise auraient enregistré leurs demandes sous « Client En
+ * Ligne », laissant le courtier avec un dossier anonyme.
+ */
+const CLES_NOM = ["fullName", "nom", "raison_sociale", "souscripteur", "prenom"];
+const CLES_TELEPHONE = ["phone", "telephone"];
+const CLES_EMAIL = ["email", "courriel"];
+
+function premiereValeur(
+  data: Record<string, unknown>,
+  cles: string[],
+): string | undefined {
+  for (const cle of cles) {
+    const valeur = data[cle];
+    if (typeof valeur === "string" && valeur.trim() !== "") return valeur.trim();
+  }
+  return undefined;
+}
+
+function identiteSouscripteur(data: Record<string, unknown>) {
+  return {
+    fullName: premiereValeur(data, CLES_NOM) ?? "Client En Ligne",
+    phone: premiereValeur(data, CLES_TELEPHONE) ?? "00000000",
+    email: premiereValeur(data, CLES_EMAIL),
+  };
+}
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 
 export default function SouscriptionPage() {
@@ -145,9 +181,7 @@ function SouscriptionContent() {
       }
 
       const quotePayload = {
-          fullName: formData["fullName"] || formData["nom"] || formData["prenom"] || "Client En Ligne",
-          phone: formData["phone"] || formData["telephone"] || "00000000",
-          email: formData["email"] || formData["courriel"] || undefined,
+          ...identiteSouscripteur(formData),
           insuranceType: selectedConfig?.id,
           budget: selectedOffer?.price || 0,
           payload: { ...formData, price: selectedOffer?.price },
@@ -183,11 +217,7 @@ function SouscriptionContent() {
   const handleSectionComplete = async (sectionIndex: number, data: Record<string, unknown>) => {
     if (sectionIndex === 0 && !draftId) {
       try {
-        const draft = await api.createDraft({
-          fullName: data["fullName"] || data["nom"] || data["prenom"] || "Client En Ligne",
-          phone: data["phone"] || data["telephone"] || "00000000",
-          email: data["email"] || data["courriel"] || undefined,
-        });
+        const draft = await api.createDraft(identiteSouscripteur(data));
         setDraftId(draft.id);
       } catch (err) {
         console.error("Failed to save draft", err);
