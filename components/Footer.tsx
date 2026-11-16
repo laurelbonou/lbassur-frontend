@@ -36,6 +36,7 @@ export default function Footer() {
                   <li><a href="/#apropos" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Qui sommes-nous</a></li>
                   <li><a href="/#methode" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Notre Méthode</a></li>
                   <li><a href="/#actualites" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Actualités</a></li>
+                  <li><Link href="/carrieres" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1 group">Carrières <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
                   <li><a href="/#contact" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
                 </ul>
               </div>
@@ -119,8 +120,14 @@ export default function Footer() {
             © {new Date().getFullYear()} LBASSUR SARL. Tous droits réservés.
           </p>
           <div className="flex gap-6">
-            <Link href="#" className="text-xs text-gray-500 hover:text-white transition-colors duration-200">Mentions Légales</Link>
-            <Link href="#" className="text-xs text-gray-500 hover:text-white transition-colors duration-200">Politique de Confidentialité</Link>
+            {/*
+              Ces deux liens pointaient sur « # ». Les pages existaient, mais
+              rien n'y menait : des mentions obligatoires qu'aucun visiteur ne
+              pouvait atteindre, et deux pages que Google ne voyait liées
+              depuis nulle part.
+            */}
+            <Link href="/mentions-legales" className="text-xs text-gray-500 hover:text-white transition-colors duration-200">Mentions Légales</Link>
+            <Link href="/politique-confidentialite" className="text-xs text-gray-500 hover:text-white transition-colors duration-200">Politique de Confidentialité</Link>
           </div>
         </div>
         

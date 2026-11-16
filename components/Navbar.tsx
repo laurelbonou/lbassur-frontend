@@ -53,8 +53,12 @@ export default function Navbar() {
             <span className="text-xl font-bold tracking-tight text-white">LBASSUR</span>
           </a>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-8">
+          {/*
+            Barre bureau. L'espacement est passé de gap-8 à gap-6 en ajoutant
+            « Carrières » : à 1024 px, sept entrées plus les trois actions ne
+            tiennent pas avec 32 px entre chaque.
+          */}
+          <div className="hidden lg:flex items-center gap-6">
             <a href="/" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Accueil
             </a>
@@ -69,6 +73,9 @@ export default function Navbar() {
             </Link>
             <Link href="/#actualites" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Actualités
+            </Link>
+            <Link href="/carrieres" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
+              Carrières
             </Link>
             <Link href="/#contact" className="text-[13px] font-semibold text-gray-300 hover:text-white transition-colors duration-200">
               Contact
@@ -139,15 +146,22 @@ export default function Navbar() {
             >
               Notre Méthode
             </Link>
-            <Link 
-              href="/#actualites" 
+            <Link
+              href="/#actualites"
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
               Actualités
             </Link>
-            <Link 
-              href="/#contact" 
+            <Link
+              href="/carrieres"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-bold text-white border-b border-white/10 pb-4"
+            >
+              Carrières
+            </Link>
+            <Link
+              href="/#contact"
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-2xl font-bold text-white border-b border-white/10 pb-4"
             >
